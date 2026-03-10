@@ -365,15 +365,58 @@ export default function Home() {
   const [error, setError] = useState("");
   const [showJumpscare, setShowJumpscare] = useState(false);
 
+  const playJumpscareSound = () => {
+    try {
+      // @ts-expect-error - webkitAudioContext is a vendor prefix
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioContextClass();
+      
+      const gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+      gainNode.connect(audioCtx.destination);
+
+      // Deep robotic rumble
+      const osc = audioCtx.createOscillator();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(45, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(15, audioCtx.currentTime + 0.8);
+      osc.connect(gainNode);
+
+      // High-pitched piercing static
+      const osc2 = audioCtx.createOscillator();
+      osc2.type = "square";
+      osc2.frequency.setValueAtTime(1200, audioCtx.currentTime);
+      osc2.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.4);
+      osc2.connect(gainNode);
+
+      // White noise blast
+      const bufferSize = audioCtx.sampleRate * 0.9;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.connect(gainNode);
+
+      osc.start(); osc2.start(); noise.start();
+      osc.stop(audioCtx.currentTime + 0.9);
+      osc2.stop(audioCtx.currentTime + 0.9);
+      noise.stop(audioCtx.currentTime + 0.9);
+    } catch (e) { console.error("Audio playback locked", e); }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setLoading(true); setError("");
+
     try {
       const res = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
       const data = await res.json();
       if (res.ok) {
         setShowJumpscare(true);
+        playJumpscareSound();
         setTimeout(() => setShowJumpscare(false), 900);
         setSuccess(true);
       } else setError(data.error || "Something went wrong.");
