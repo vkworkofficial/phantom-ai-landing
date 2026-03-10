@@ -23,11 +23,11 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 /* ═══════════════════════════════════════════════════ */
 
 const REDDIT_COMMENTS = [
-  { user: "throwaway_founder", sub: "r/startups", text: "We posted everywhere — Reddit, Indie Hackers, Product Hunt. Got 200 signups. Exactly 6 people actually used the product. Two of them were my co-founder's mom.", upvotes: 1847, time: "2 years ago" },
-  { user: "saas_grind_92", sub: "r/SaaS", text: "Beta testing is the tax you pay for building in a vacuum. We recruited 50 testers, 4 gave feedback, and 3 said 'looks nice'. We shipped a broken auth flow to 2000 real users a week later.", upvotes: 2312, time: "1 year ago" },
-  { user: "eng_lead_tired", sub: "r/QualityAssurance", text: "Manual QA is the single biggest bottleneck in our release cycle. We ship code in hours but testing every edge case takes literal days. Nobody wants to admit it but most startups just... don't test.", upvotes: 3891, time: "8 months ago" },
-  { user: "indie_dev_pain", sub: "r/startups", text: "I'm so tired of tweeting 'looking for beta testers!' into the void. Everyone ignores it. The people who DO sign up never open the app. Is there literally any way to automate this?", upvotes: 1104, time: "3 years ago" },
-  { user: "first_time_cto", sub: "r/Entrepreneur", text: "The silence after launching is genuinely terrifying. You have no idea if users hate it, can't figure it out, or just never came back after signup. We needed 100 testers and got 0 useful reports.", upvotes: 688, time: "1 month ago" },
+  { user: "danielmtl", sub: "r/startups", text: "We posted everywhere — Reddit, Indie Hackers, Product Hunt. Got 200 signups. Exactly 6 people actually used the product. Two of them were my co-founder's mom.", upvotes: 1847, time: "2 years ago" },
+  { user: "jmhacks_", sub: "r/SaaS", text: "Beta testing is the tax you pay for building in a vacuum. We recruited 50 testers, 4 gave feedback, and 3 said 'looks nice'. We shipped a broken auth flow to 2000 real users a week later.", upvotes: 2312, time: "1 year ago" },
+  { user: "rachelnguyen92", sub: "r/QualityAssurance", text: "Manual QA is the single biggest bottleneck in our release cycle. We ship code in hours but testing every edge case takes literal days. Nobody wants to admit it but most startups just... don't test.", upvotes: 3891, time: "8 months ago" },
+  { user: "alexk_dev", sub: "r/startups", text: "I'm so tired of tweeting 'looking for beta testers!' into the void. Everyone ignores it. The people who DO sign up never open the app. Is there literally any way to automate this?", upvotes: 1104, time: "3 years ago" },
+  { user: "supriya_builds", sub: "r/Entrepreneur", text: "The silence after launching is genuinely terrifying. You have no idea if users hate it, can't figure it out, or just never came back after signup. We needed 100 testers and got 0 useful reports.", upvotes: 688, time: "1 month ago" },
 ];
 
 /* ═══════════════════════════════════════════════════ */
@@ -112,7 +112,7 @@ function AnimatedCodeSnippet() {
     "",
     "on:",
     "  pull_request:",
-    "    types: [opened, sync]",
+    "    types: [opened, synchronize]",
     "",
     "jobs:",
     "  haunt:",
@@ -124,9 +124,10 @@ function AnimatedCodeSnippet() {
     "        uses: phantom-ai/action@v2",
     "        with:",
     "          ghosts: 500",
-    "          consensus: 0.85",
-    "          model: phantom-core-v4",
-    "          fail-on: \">0.7\"",
+    "          consensus-threshold: 0.85",
+    "          behavioral-model: phantom-core-v4",
+    "          fail-on-friction: \">0.7\"",
+    '          personas: "first-timer, power-user"',
   ];
 
   const [visibleLines, setVisibleLines] = useState(0);
@@ -139,7 +140,7 @@ function AnimatedCodeSnippet() {
   return (
     <div className="w-full rounded-md border border-[#30363d] bg-[#0d1117] overflow-hidden hover:border-[#8b949e] transition-colors duration-300">
       <div className="flex items-center px-4 py-2 border-b border-[#30363d] bg-[#161b22]"><div className="text-xs text-[#8b949e] font-mono select-none">.github/workflows/phantom.yml</div></div>
-      <div className="p-4 overflow-x-auto min-h-[380px]">
+      <div className="p-4 overflow-x-auto min-h-[320px] md:min-h-[380px]">
         <pre className="text-[13px] leading-relaxed font-mono"><code>
           {codeLines.slice(0, visibleLines).map((line, i) => {
             let color = "text-[#c9d1d9]";
@@ -398,7 +399,7 @@ export default function Home() {
             </Reveal>
             <Reveal delay={0.3}>
               <p className="text-xl md:text-2xl text-[#8b949e] max-w-2xl font-normal leading-relaxed mb-10">
-                Stop begging strangers on Reddit to click around your app. Phantom deploys 500 instrumented headless browsers — each running a proprietary behavioral model — to surface every broken flow, confusing label, and rage-quit moment. With multi-agent consensus, so you only see real bugs, not noise.
+                Stop begging strangers on Reddit to test your app. Deploy 500 AI agents that find every broken flow and rage-quit moment — in 30 minutes.
               </p>
             </Reveal>
             <Reveal delay={0.4}>
