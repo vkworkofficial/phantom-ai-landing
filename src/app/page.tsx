@@ -363,6 +363,7 @@ export default function Home() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showJumpscare, setShowJumpscare] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -371,17 +372,37 @@ export default function Home() {
     try {
       const res = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
       const data = await res.json();
-      if (res.ok) setSuccess(true); else setError(data.error || "Something went wrong.");
+      if (res.ok) {
+        setShowJumpscare(true);
+        setTimeout(() => setShowJumpscare(false), 900);
+        setSuccess(true);
+      } else setError(data.error || "Something went wrong.");
     } catch { setError("Network error. Please try again."); } finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans selection:bg-primary/30">
+    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans selection:bg-primary/30 relative overflow-hidden">
+      
+      {/* Jumpscare Overlay */}
+      {showJumpscare && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none mix-blend-lighten overflow-hidden bg-[#0d1117]">
+          <div className="absolute inset-0 bg-primary opacity-10 animate-[glitch_0.1s_ease-in-out_infinite]" />
+          <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 3, opacity: 0.8 }} exit={{ opacity: 0 }} transition={{ duration: 0.8, ease: "easeIn" }} className="w-[80vw] h-[80vh] flex items-center justify-center">
+            <svg viewBox="0 0 100 100" className="w-full h-full animate-[glitch_0.05s_ease-in-out_infinite]" style={{ filter: "drop-shadow(0 0 50px #ea580c)" }}>
+              <path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="#ea580c" />
+              <path d="M 35 42 L 45 48" stroke="#0d1117" strokeWidth="4" strokeLinecap="round" /><path d="M 45 42 L 35 48" stroke="#0d1117" strokeWidth="4" strokeLinecap="round" />
+              <path d="M 55 42 L 65 48" stroke="#0d1117" strokeWidth="4" strokeLinecap="round" /><path d="M 65 42 L 55 48" stroke="#0d1117" strokeWidth="4" strokeLinecap="round" />
+              <path d="M 42 60 L 45 56 L 48 60 L 51 56 L 54 60 L 57 56" stroke="#0d1117" strokeWidth="3" fill="none" />
+            </svg>
+          </motion.div>
+        </div>
+      )}
+
       <header className="sticky top-0 z-40 bg-[#010409]/95 backdrop-blur-sm border-b border-[#30363d]">
         <div className="max-w-[1280px] mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <svg width="24" height="24" viewBox="0 0 100 100" fill="none"><path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="hsl(var(--primary))" /><circle cx="39" cy="45" r="5" fill="hsl(var(--background))" /><circle cx="61" cy="45" r="5" fill="hsl(var(--background))" /></svg>
-            <span className="font-semibold text-white tracking-tight text-lg">Phantom AI</span>
+          <div className="flex items-center gap-2.5">
+            <svg width="28" height="28" viewBox="0 0 100 100" fill="none" className="mb-0.5"><path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="hsl(var(--primary))" /><circle cx="39" cy="45" r="5" fill="hsl(var(--background))" /><circle cx="61" cy="45" r="5" fill="hsl(var(--background))" /></svg>
+            <span className="font-bold text-white tracking-tighter text-[22px]">Phantom AI</span>
           </div>
           <Button primary onClick={() => document.getElementById("waitlist-input")?.focus()}>Summon your ghosts</Button>
         </div>
