@@ -217,7 +217,7 @@ function CustomizeGhost() {
     return () => clearInterval(interval);
   }, []);
 
-  const personaName = chaosMode ? "Adversarial Fuzzer" : techSavvy > 70 ? patience < 40 ? "Impatient Power User" : "Methodical Engineer" : techSavvy < 30 ? patience > 70 ? "Patient First-Timer" : "Frustrated Novice" : screenReader ? "Accessibility Auditor" : device === "Mobile" ? "Mobile-First User" : "Average Explorer";
+  const personaName = chaosMode ? "Rage-Tester (Chaos Mode)" : techSavvy > 70 ? patience < 40 ? "Impatient Power User" : "Methodical Engineer" : techSavvy < 30 ? patience > 70 ? "Patient First-Timer" : "Frustrated Novice" : screenReader ? "Blindfolded User (A11y)" : device === "Mobile" ? "Mobile-First Scroller" : "Average Explorer";
 
   const sel = "w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-sm text-[#c9d1d9] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner appearance-none cursor-pointer";
 
@@ -251,8 +251,8 @@ function CustomizeGhost() {
             <input type="range" min="0" max="100" value={patience} onChange={(e) => setPatience(parseInt(e.target.value))} className="w-full h-2 bg-[#0d1117] rounded-lg appearance-none cursor-pointer border border-[#30363d] accent-primary" />
           </div>
           <div className="space-y-3">
-            <ToggleRow label="Adversarial Fuzzing" description="Inject malformed inputs, SQL strings, XSS payloads, rage-click patterns." active={chaosMode} onToggle={() => setChaosMode(!chaosMode)} />
-            <ToggleRow label="Accessibility Audit" description="Enforce WCAG 2.2 AA. Test ARIA, focus traps, keyboard nav." active={screenReader} onToggle={() => setScreenReader(!screenReader)} />
+            <ToggleRow label="Rage-Testing Mode" description="Agent will aggressively submit malformed forms, rage-click buttons, and attempt XSS injection." active={chaosMode} onToggle={() => setChaosMode(!chaosMode)} />
+            <ToggleRow label="Blindfolded Mode (A11y)" description="Agent relies strictly on screen reader tree (WCAG AA). Fails if focus traps or missing ARIA tags exist." active={screenReader} onToggle={() => setScreenReader(!screenReader)} />
           </div>
         </div>
 
@@ -261,9 +261,9 @@ function CustomizeGhost() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none animate-[glow-pulse_4s_ease-in-out_infinite]" />
           <div className={`relative w-32 h-32 mb-4 animate-[float_4s_ease-in-out_infinite] ${chaosMode ? "animate-[glitch_0.3s_ease-in-out_infinite]" : ""}`}>
             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_25px_rgba(234,88,12,0.2)] transition-all duration-500">
-              <path d="M 20 50 C 20 20, 80 20, 80 50 L 80 90 L 70 80 L 60 90 L 50 80 L 40 90 L 30 80 L 20 90 Z" fill={chaosMode ? "#ea580c" : "#c9d1d9"} className="transition-colors duration-500" />
-              {chaosMode ? (<g><path d="M 35 42 L 45 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 45 42 L 35 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 55 42 L 65 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 65 42 L 55 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /></g>) : blinking ? (<g><rect x="35" y="44" width="10" height="2" fill="#0d1117" rx="1" /><rect x="55" y="44" width="10" height="2" fill="#0d1117" rx="1" /></g>) : (<g><circle cx="40" cy="45" r="5" fill="#0d1117" /><circle cx="60" cy="45" r="5" fill="#0d1117" /><circle cx="42" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /><circle cx="62" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /></g>)}
-              {chaosMode ? <path d="M 42 60 L 45 56 L 48 60 L 51 56 L 54 60 L 57 56" stroke="#0d1117" strokeWidth="2" fill="none" /> : <path d="M 45 58 Q 50 62 55 58" stroke="#0d1117" strokeWidth="2" fill="none" strokeLinecap="round" />}
+              <path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill={chaosMode ? "#ea580c" : "#c9d1d9"} className="transition-colors duration-500" />
+              {chaosMode ? (<g><path d="M 35 42 L 45 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 45 42 L 35 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 55 42 L 65 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 65 42 L 55 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /></g>) : blinking ? (<g><rect x="35" y="44" width="8" height="2" fill="#0d1117" rx="1" /><rect x="57" y="44" width="8" height="2" fill="#0d1117" rx="1" /></g>) : (<g><circle cx="39" cy="45" r="5" fill="#0d1117" /><circle cx="61" cy="45" r="5" fill="#0d1117" /><circle cx="41" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /><circle cx="63" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /></g>)}
+              {chaosMode ? <path d="M 42 60 L 45 56 L 48 60 L 51 56 L 54 60 L 57 56" stroke="#0d1117" strokeWidth="2" fill="none" /> : <path d="M 45 58 Q 50 62 55 58" stroke="#0d1117" strokeWidth="2.5" fill="none" strokeLinecap="round" />}
               {screenReader && !chaosMode && (<g><ellipse cx="30" cy="35" rx="8" ry="6" fill="none" stroke="#8b949e" strokeWidth="2" /><ellipse cx="70" cy="35" rx="8" ry="6" fill="none" stroke="#8b949e" strokeWidth="2" /><path d="M 38 35 Q 50 28 62 35" fill="none" stroke="#8b949e" strokeWidth="2" /></g>)}
               {device === "Mobile" && (<g transform="translate(75, 55)"><rect x="0" y="0" width="10" height="16" rx="2" fill="#30363d" stroke="#8b949e" strokeWidth="1" /><rect x="2" y="2" width="6" height="9" fill="#161b22" rx="0.5" /></g>)}
               {network === "Slow (3G)" && (<g transform="translate(50, 18)"><circle cx="0" cy="0" r="3" fill="none" stroke="#ff7b72" strokeWidth="1.5" strokeDasharray="2 2" className="animate-spin" style={{ transformOrigin: "center" }} /></g>)}
@@ -380,7 +380,7 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-[#010409]/95 backdrop-blur-sm border-b border-[#30363d]">
         <div className="max-w-[1280px] mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 2C10.477 2 6 6.477 6 12v14l3-3 3 3 3-3 3 3 3-3 3 3V12c0-5.523-4.477-10-10-10z" fill="hsl(var(--primary))" /><circle cx="12" cy="13" r="2" fill="hsl(var(--background))" /><circle cx="20" cy="13" r="2" fill="hsl(var(--background))" /></svg>
+            <svg width="24" height="24" viewBox="0 0 100 100" fill="none"><path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="hsl(var(--primary))" /><circle cx="39" cy="45" r="5" fill="hsl(var(--background))" /><circle cx="61" cy="45" r="5" fill="hsl(var(--background))" /></svg>
             <span className="font-semibold text-white tracking-tight text-lg">Phantom AI</span>
           </div>
           <Button primary onClick={() => document.getElementById("waitlist-input")?.focus()}>Summon your ghosts</Button>
@@ -394,7 +394,7 @@ export default function Home() {
             <Reveal delay={0.1}><Badge className="mb-6 border-primary/30 text-primary" showDot>Private Beta — we&apos;re still slightly haunted ourselves</Badge></Reveal>
             <Reveal delay={0.2}>
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1] mb-6">
-                AI that <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#ffbd2e]">haunts</span> your product <br className="hidden md:block" /><span className="text-[#8b949e]">before users do.</span>
+                AI that <span className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">haunts</span> your product <br className="hidden md:block" /><span className="text-[#8b949e]">before users do.</span>
               </h1>
             </Reveal>
             <Reveal delay={0.3}>
