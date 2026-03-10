@@ -262,7 +262,28 @@ function CustomizeGhost() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none animate-[glow-pulse_4s_ease-in-out_infinite]" />
           <div className={`relative w-32 h-32 mb-4 animate-[float_4s_ease-in-out_infinite] ${chaosMode ? "animate-[glitch_0.3s_ease-in-out_infinite]" : ""}`}>
             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_25px_rgba(234,88,12,0.2)] transition-all duration-500">
-              <path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill={chaosMode ? "#ea580c" : "#c9d1d9"} className="transition-colors duration-500" />
+              <path d={
+                (() => {
+                  const stretchY = 50 + ((50 - patience) / 100) * 10; 
+                  const headY = 20 + ((patience - 50) / 100) * 12;
+                  const bY = 90 + ((patience - 50) / 100) * 5;
+                  const waveH = 9 + ((100 - patience) / 100) * 6;
+                  
+                  let p = `M 23 ${stretchY} C 23 ${headY}, 77 ${headY}, 77 ${stretchY} `;
+                  
+                  if (chaosMode) {
+                    p += `L 77 ${bY} L 68 ${bY - waveH*1.5} L 59 ${bY} L 50 ${bY - waveH*1.5} L 41 ${bY} L 32 ${bY - waveH*1.5} L 23 ${bY} Z`;
+                  } else {
+                    const p1 = bY; const p2 = bY - waveH;
+                    if (techSavvy > 65) {
+                      p += `L 77 ${p1} L 68 ${p2} L 59 ${p1} L 50 ${p2} L 41 ${p1} L 32 ${p2} L 23 ${p1} Z`;
+                    } else {
+                      p += `L 77 ${p1} Q 72.5 ${p1+waveH/2} 68 ${p1} Q 63.5 ${p2} 59 ${p1} Q 54.5 ${p1+waveH/2} 50 ${p1} Q 45.5 ${p2} 41 ${p1} Q 36.5 ${p1+waveH/2} 32 ${p1} Q 27.5 ${p2} 23 ${p1} Z`;
+                    }
+                  }
+                  return p;
+                })()
+              } fill={chaosMode ? "#ea580c" : "#c9d1d9"} className="transition-all duration-300 ease-out" />
               {chaosMode ? (<g><path d="M 35 42 L 45 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 45 42 L 35 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 55 42 L 65 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 65 42 L 55 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /></g>) : blinking ? (<g><rect x="35" y="44" width="8" height="2" fill="#0d1117" rx="1" /><rect x="57" y="44" width="8" height="2" fill="#0d1117" rx="1" /></g>) : (<g><circle cx="39" cy="45" r="5" fill="#0d1117" /><circle cx="61" cy="45" r="5" fill="#0d1117" /><circle cx="41" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /><circle cx="63" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /></g>)}
               {chaosMode ? <path d="M 42 60 L 45 56 L 48 60 L 51 56 L 54 60 L 57 56" stroke="#0d1117" strokeWidth="2" fill="none" /> : <path d="M 45 58 Q 50 62 55 58" stroke="#0d1117" strokeWidth="2.5" fill="none" strokeLinecap="round" />}
               {screenReader && !chaosMode && (<g><ellipse cx="30" cy="35" rx="8" ry="6" fill="none" stroke="#8b949e" strokeWidth="2" /><ellipse cx="70" cy="35" rx="8" ry="6" fill="none" stroke="#8b949e" strokeWidth="2" /><path d="M 38 35 Q 50 28 62 35" fill="none" stroke="#8b949e" strokeWidth="2" /></g>)}
@@ -398,37 +419,59 @@ export default function Home() {
       const audioCtx = new AudioContextClass();
       
       const gainNode = audioCtx.createGain();
-      gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+      gainNode.gain.setValueAtTime(2.5, audioCtx.currentTime); // Extra loud
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.2);
       gainNode.connect(audioCtx.destination);
 
-      // Deep robotic rumble
-      const osc = audioCtx.createOscillator();
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(45, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(15, audioCtx.currentTime + 0.8);
-      osc.connect(gainNode);
+      // Distortion for horrific crunch
+      const distortion = audioCtx.createWaveShaper();
+      function makeDistortionCurve(amount = 400) {
+        const n_samples = 44100, curve = new Float32Array(n_samples), deg = Math.PI / 180;
+        for (let i = 0; i < n_samples; ++i) {
+          const x = i * 2 / n_samples - 1;
+          curve[i] = (3 + amount) * x * 20 * deg / (Math.PI + amount * Math.abs(x));
+        } return curve;
+      }
+      distortion.curve = makeDistortionCurve(400);
+      distortion.oversample = '4x';
+      distortion.connect(gainNode);
 
-      // High-pitched piercing static
-      const osc2 = audioCtx.createOscillator();
-      osc2.type = "square";
-      osc2.frequency.setValueAtTime(1200, audioCtx.currentTime);
-      osc2.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.4);
-      osc2.connect(gainNode);
+      // Terrifying frequency sweep scream
+      const screamOsc = audioCtx.createOscillator();
+      screamOsc.type = "sawtooth";
+      screamOsc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      screamOsc.frequency.exponentialRampToValueAtTime(3500, audioCtx.currentTime + 0.2); // Shriek up
+      screamOsc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.9);   // Fall down
+      screamOsc.connect(distortion);
+
+      const screechOsc = audioCtx.createOscillator();
+      screechOsc.type = "square";
+      screechOsc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+      screechOsc.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 0.2);
+      screechOsc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.9);
+      screechOsc.connect(distortion);
+
+      // Sub-bass rumble
+      const subOsc = audioCtx.createOscillator();
+      subOsc.type = "sine";
+      subOsc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      subOsc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 1.2);
+      subOsc.connect(gainNode);
 
       // White noise blast
-      const bufferSize = audioCtx.sampleRate * 0.9;
+      const bufferSize = audioCtx.sampleRate * 1.5;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
       const noise = audioCtx.createBufferSource();
       noise.buffer = buffer;
-      noise.connect(gainNode);
+      noise.connect(distortion);
 
-      osc.start(); osc2.start(); noise.start();
-      osc.stop(audioCtx.currentTime + 0.9);
-      osc2.stop(audioCtx.currentTime + 0.9);
-      noise.stop(audioCtx.currentTime + 0.9);
+      screamOsc.start(); screechOsc.start(); subOsc.start(); noise.start();
+      screamOsc.stop(audioCtx.currentTime + 1.2);
+      screechOsc.stop(audioCtx.currentTime + 1.2);
+      subOsc.stop(audioCtx.currentTime + 1.2);
+      noise.stop(audioCtx.currentTime + 1.2);
     } catch (e) { console.error("Audio playback locked", e); }
   };
 
@@ -519,11 +562,11 @@ export default function Home() {
                   <Button primary type="submit" className="h-10 px-6 shrink-0 text-[15px] group" disabled={loading}>{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Join waitlist"}</Button>
                 </form>
                 <div className="mt-6">
-                  <p className="text-[12px] text-[#484f58] mb-3">Backed by</p>
-                  <div className="flex items-center gap-6 opacity-50 hover:opacity-70 transition-opacity duration-300">
-                    <div className="flex items-center gap-1"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="#F26522"><rect width="24" height="24" rx="2" /><path fill="white" d="M12 13.5l3.5-5.5h-2L12 11l-1.5-3h-2l3.5 5.5v4.5h2v-4.5z" /></svg><span className="font-bold tracking-tight text-white text-sm">Y Combinator</span></div>
-                    <div className="flex items-center gap-1"><svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L22 20H2z" /></svg><span className="font-bold tracking-tight text-white text-sm">Vercel</span></div>
-                    <div className="flex items-center gap-1"><svg className="w-4 h-4 text-[#5E6AD2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 20L20 4M4 4l16 16" /></svg><span className="font-bold tracking-tighter text-white text-sm">Linear</span></div>
+                  <p className="text-[12px] text-[#484f58] mb-3">Trusted by startups at</p>
+                  <div className="flex items-center gap-6 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex items-center gap-1"><svg className="w-6 h-6" viewBox="0 0 24 24" fill="#F26522"><rect width="24" height="24" rx="2" /><path fill="white" d="M12 13.5l3.5-5.5h-2L12 11l-1.5-3h-2l3.5 5.5v4.5h2v-4.5z" /></svg><span className="font-bold tracking-tight text-white text-[15px]">Y Combinator</span></div>
+                    <div className="flex items-center gap-1"><span className="font-bold tracking-tighter text-white text-[18px]">a16z</span></div>
+                    <div className="flex items-center gap-0.5"><span className="font-extrabold tracking-tighter text-white text-[16px]">info</span><span className="font-light tracking-tight text-white text-[16px]">edge</span></div>
                   </div>
                 </div>
               </div>
