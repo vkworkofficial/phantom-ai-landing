@@ -232,24 +232,24 @@ function CustomizeGhost() {
         {/* Controls */}
         <div className="lg:col-span-5 p-6 md:p-8 space-y-5 border-b lg:border-b-0 lg:border-r border-[#30363d]">
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Gender</label><select value={gender} onChange={(e) => setGender(e.target.value)} className={sel}><option>Any</option><option>Male</option><option>Female</option><option>Non-binary</option></select></div>
-            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Age Range</label><select value={age} onChange={(e) => setAge(e.target.value)} className={sel}><option>18-24</option><option>25-34</option><option>35-44</option><option>45-54</option><option>55+</option></select></div>
+            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Gender</label><motion.select whileTap={{ scale: 0.97 }} value={gender} onChange={(e) => setGender(e.target.value)} className={sel}><option>Any</option><option>Male</option><option>Female</option><option>Non-binary</option></motion.select></div>
+            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Age Range</label><motion.select whileTap={{ scale: 0.97 }} value={age} onChange={(e) => setAge(e.target.value)} className={sel}><option>18-24</option><option>25-34</option><option>35-44</option><option>45-54</option><option>55+</option></motion.select></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Geo Region</label><select value={location} onChange={(e) => setLocation(e.target.value)} className={sel}><option>Global</option><option>US / Canada</option><option>EU / UK</option><option>APAC</option><option>LATAM</option><option>MEA</option></select></div>
-            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Device</label><select value={device} onChange={(e) => setDevice(e.target.value)} className={sel}><option>Desktop</option><option>Mobile</option><option>Tablet</option></select></div>
+            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Geo Region</label><motion.select whileTap={{ scale: 0.97 }} value={location} onChange={(e) => setLocation(e.target.value)} className={sel}><option>Global</option><option>US / Canada</option><option>EU / UK</option><option>APAC</option><option>LATAM</option><option>MEA</option></motion.select></div>
+            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Device</label><motion.select whileTap={{ scale: 0.97 }} value={device} onChange={(e) => setDevice(e.target.value)} className={sel}><option>Desktop</option><option>Mobile</option><option>Tablet</option></motion.select></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Network</label><select value={network} onChange={(e) => setNetwork(e.target.value)} className={sel}><option>Fast (5G)</option><option>Moderate (4G)</option><option>Slow (3G)</option><option>Offline-first</option></select></div>
-            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Locale</label><select value={language} onChange={(e) => setLanguage(e.target.value)} className={sel}><option>English</option><option>Spanish</option><option>Japanese</option><option>Arabic (RTL)</option><option>Hindi</option><option>Portuguese</option></select></div>
+            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Network</label><motion.select whileTap={{ scale: 0.97 }} value={network} onChange={(e) => setNetwork(e.target.value)} className={sel}><option>Fast (5G)</option><option>Moderate (4G)</option><option>Slow (3G)</option><option>Offline-first</option></motion.select></div>
+            <div><label className="text-xs font-semibold text-[#8b949e] block mb-2 uppercase tracking-wide">Locale</label><motion.select whileTap={{ scale: 0.97 }} value={language} onChange={(e) => setLanguage(e.target.value)} className={sel}><option>English</option><option>Spanish</option><option>Japanese</option><option>Arabic (RTL)</option><option>Hindi</option><option>Portuguese</option></motion.select></div>
           </div>
           <div className="pt-2">
             <div className="flex justify-between mb-2"><label className="text-sm font-semibold text-[#c9d1d9]">Heuristic: Tech Savviness</label><span className="text-sm text-[#8b949e] font-mono">{techSavvy}%</span></div>
-            <input type="range" min="0" max="100" value={techSavvy} onChange={(e) => setTechSavvy(parseInt(e.target.value))} className="w-full h-2 bg-[#0d1117] rounded-lg appearance-none cursor-pointer border border-[#30363d] accent-primary" />
+            <motion.input whileTap={{ scale: 0.98 }} type="range" min="0" max="100" value={techSavvy} onChange={(e) => setTechSavvy(parseInt(e.target.value))} className="w-full h-2 bg-[#0d1117] rounded-lg appearance-none cursor-pointer border border-[#30363d] accent-primary" />
           </div>
           <div>
             <div className="flex justify-between mb-2"><label className="text-sm font-semibold text-[#c9d1d9]">Heuristic: Patience Threshold</label><span className="text-sm text-[#8b949e] font-mono">{patience}%</span></div>
-            <input type="range" min="0" max="100" value={patience} onChange={(e) => setPatience(parseInt(e.target.value))} className="w-full h-2 bg-[#0d1117] rounded-lg appearance-none cursor-pointer border border-[#30363d] accent-primary" />
+            <motion.input whileTap={{ scale: 0.98 }} type="range" min="0" max="100" value={patience} onChange={(e) => setPatience(parseInt(e.target.value))} className="w-full h-2 bg-[#0d1117] rounded-lg appearance-none cursor-pointer border border-[#30363d] accent-primary" />
           </div>
           <div className="space-y-3">
             <ToggleRow label="Rage-Testing Mode" description="Agent will aggressively submit malformed forms, rage-click buttons, and attempt XSS injection." active={chaosMode} onToggle={() => setChaosMode(!chaosMode)} />
@@ -262,33 +262,117 @@ function CustomizeGhost() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none animate-[glow-pulse_4s_ease-in-out_infinite]" />
           <div className={`relative w-32 h-32 mb-4 animate-[float_4s_ease-in-out_infinite] ${chaosMode ? "animate-[glitch_0.3s_ease-in-out_infinite]" : ""}`}>
             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_25px_rgba(234,88,12,0.2)] transition-all duration-500">
-              <path d={
-                (() => {
-                  const stretchY = 50 + ((50 - patience) / 100) * 10; 
-                  const headY = 20 + ((patience - 50) / 100) * 12;
-                  const bY = 90 + ((patience - 50) / 100) * 5;
-                  const waveH = 9 + ((100 - patience) / 100) * 6;
-                  
-                  let p = `M 23 ${stretchY} C 23 ${headY}, 77 ${headY}, 77 ${stretchY} `;
-                  
-                  if (chaosMode) {
-                    p += `L 77 ${bY} L 68 ${bY - waveH*1.5} L 59 ${bY} L 50 ${bY - waveH*1.5} L 41 ${bY} L 32 ${bY - waveH*1.5} L 23 ${bY} Z`;
-                  } else {
-                    const p1 = bY; const p2 = bY - waveH;
-                    if (techSavvy > 65) {
-                      p += `L 77 ${p1} L 68 ${p2} L 59 ${p1} L 50 ${p2} L 41 ${p1} L 32 ${p2} L 23 ${p1} Z`;
-                    } else {
-                      p += `L 77 ${p1} Q 72.5 ${p1+waveH/2} 68 ${p1} Q 63.5 ${p2} 59 ${p1} Q 54.5 ${p1+waveH/2} 50 ${p1} Q 45.5 ${p2} 41 ${p1} Q 36.5 ${p1+waveH/2} 32 ${p1} Q 27.5 ${p2} 23 ${p1} Z`;
-                    }
-                  }
-                  return p;
-                })()
-              } fill={chaosMode ? "#ea580c" : "#c9d1d9"} className="transition-all duration-300 ease-out" />
-              {chaosMode ? (<g><path d="M 35 42 L 45 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 45 42 L 35 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 55 42 L 65 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 65 42 L 55 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /></g>) : blinking ? (<g><rect x="35" y="44" width="8" height="2" fill="#0d1117" rx="1" /><rect x="57" y="44" width="8" height="2" fill="#0d1117" rx="1" /></g>) : (<g><circle cx="39" cy="45" r="5" fill="#0d1117" /><circle cx="61" cy="45" r="5" fill="#0d1117" /><circle cx="41" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /><circle cx="63" cy="43" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} /></g>)}
-              {chaosMode ? <path d="M 42 60 L 45 56 L 48 60 L 51 56 L 54 60 L 57 56" stroke="#0d1117" strokeWidth="2" fill="none" /> : <path d="M 45 58 Q 50 62 55 58" stroke="#0d1117" strokeWidth="2.5" fill="none" strokeLinecap="round" />}
-              {screenReader && !chaosMode && (<g><ellipse cx="30" cy="35" rx="8" ry="6" fill="none" stroke="#8b949e" strokeWidth="2" /><ellipse cx="70" cy="35" rx="8" ry="6" fill="none" stroke="#8b949e" strokeWidth="2" /><path d="M 38 35 Q 50 28 62 35" fill="none" stroke="#8b949e" strokeWidth="2" /></g>)}
-              {device === "Mobile" && (<g transform="translate(75, 55)"><rect x="0" y="0" width="10" height="16" rx="2" fill="#30363d" stroke="#8b949e" strokeWidth="1" /><rect x="2" y="2" width="6" height="9" fill="#161b22" rx="0.5" /></g>)}
-              {network === "Slow (3G)" && (<g transform="translate(50, 18)"><circle cx="0" cy="0" r="3" fill="none" stroke="#ff7b72" strokeWidth="1.5" strokeDasharray="2 2" className="animate-spin" style={{ transformOrigin: "center" }} /></g>)}
+              {/* Base Ghost Shape */}
+              <path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill={chaosMode ? "#ea580c" : "#c9d1d9"} className="transition-all duration-300 ease-out" />
+              
+              {/* Eyes & Glasses */}
+              {chaosMode ? (
+                 <g><path d="M 35 42 L 45 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 45 42 L 35 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 55 42 L 65 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /><path d="M 65 42 L 55 48" stroke="#0d1117" strokeWidth="3" strokeLinecap="round" /></g>
+              ) : screenReader ? (
+                 <g>
+                   {/* Blindfold */}
+                   <path d="M 16 43 L 84 45 L 83 53 L 17 51 Z" fill="#161b22" />
+                   <path d="M 12 45 L 18 51 M 88 45 L 82 53" stroke="#161b22" strokeWidth="3" strokeLinecap="round" />
+                   <path d="M 16 43 C 35 40, 65 48, 83 53" stroke="#0d1117" strokeWidth="1" fill="none" />
+                 </g>
+              ) : techSavvy > 70 ? (
+                 <g>
+                   {/* VR Headset / Cyber Visor */}
+                   <rect x="28" y="38" width="44" height="15" rx="4" fill="#0d1117" stroke={chaosMode ? "#ea580c" : "#3fb950"} strokeWidth="2" style={{ filter: `drop-shadow(0px 0px 8px ${chaosMode ? "#ea580c" : "#3fb950"})` }} />
+                   <path d="M 33 45.5 L 67 45.5" stroke={chaosMode ? "#ea580c" : "#3fb950"} strokeWidth="2" strokeDasharray="4 2" className="animate-pulse" />
+                   <path d="M 23 45 L 28 45 M 72 45 L 77 45" stroke="#0d1117" strokeWidth="4" />
+                 </g>
+              ) : techSavvy < 30 ? (
+                 <g>
+                   {/* Confused / Oval eyes with Sweat Drop */}
+                   <ellipse cx="39" cy="45" rx="4" ry="6" fill="#0d1117" />
+                   <ellipse cx="61" cy="45" rx="4" ry="6" fill="#0d1117" />
+                   <circle cx="39" cy="43" r="1.5" fill="white" opacity="0.8" />
+                   <circle cx="61" cy="43" r="1.5" fill="white" opacity="0.8" />
+                   {/* Sweat Drop */}
+                   <path d="M 73 35 C 73 42, 80 42, 80 35 C 80 28, 76.5 25, 76.5 25 C 76.5 25, 73 28, 73 35 Z" fill="#79c0ff" opacity="0.8" className="animate-bounce" />
+                 </g>
+              ) : patience > 80 ? (
+                 <g>
+                   {/* Happy / Cute Anime Eyes */}
+                   <circle cx="39" cy="45" r="6" fill="#0d1117" />
+                   <circle cx="61" cy="45" r="6" fill="#0d1117" />
+                   <circle cx="37" cy="43" r="2.5" fill="white" />
+                   <circle cx="59" cy="43" r="2.5" fill="white" />
+                   <circle cx="41" cy="47" r="1" fill="white" opacity="0.5" />
+                   <circle cx="63" cy="47" r="1" fill="white" opacity="0.5" />
+                 </g>
+              ) : patience < 40 ? (
+                 <g>
+                   {/* Angry Eyes */}
+                   <path d="M 31 40 L 45 45 L 45 48 L 31 46 Z" fill="#0d1117" />
+                   <path d="M 69 40 L 55 45 L 55 48 L 69 46 Z" fill="#0d1117" />
+                   <circle cx="39" cy="46" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} />
+                   <circle cx="61" cy="46" r="2" fill="#ea580c" style={{ filter: "drop-shadow(0px 0px 4px #ea580c)" }} />
+                 </g>
+              ) : blinking ? (
+                 <g>
+                   <rect x="34" y="44" width="10" height="2" fill="#0d1117" rx="1" />
+                   <rect x="56" y="44" width="10" height="2" fill="#0d1117" rx="1" />
+                 </g>
+              ) : (
+                 <g>
+                   {/* Default Eyes */}
+                   <circle cx="39" cy="45" r="5" fill="#0d1117" />
+                   <circle cx="61" cy="45" r="5" fill="#0d1117" />
+                   <circle cx="41" cy="43" r="1.5" fill="white" opacity="0.6" />
+                   <circle cx="63" cy="43" r="1.5" fill="white" opacity="0.6" />
+                 </g>
+              )}
+
+              {/* Mouth */}
+              {chaosMode ? (
+                 <path d="M 40 60 L 44 55 L 50 62 L 56 55 L 60 60 L 56 65 L 50 58 L 44 65 Z" fill="#0d1117" />
+              ) : techSavvy < 30 ? (
+                 <path d="M 45 61 Q 50 58 55 61" stroke="#0d1117" strokeWidth="2.5" fill="none" strokeLinecap="round" /> /* Worried */
+              ) : patience > 80 ? (
+                 <path d="M 44 58 Q 50 65 56 58" stroke="#0d1117" strokeWidth="2.5" fill="none" strokeLinecap="round" /> /* Big Smile */
+              ) : patience < 40 ? (
+                 <path d="M 45 62 L 55 62" stroke="#0d1117" strokeWidth="2.5" fill="none" strokeLinecap="round" /> /* Flat / Angry */
+              ) : (
+                 <path d="M 47 60 Q 50 62 53 60" stroke="#0d1117" strokeWidth="2" fill="none" strokeLinecap="round" /> /* Default small smile */
+              )}
+
+              {/* Props / Devices */}
+              {device === "Mobile" ? (
+                 <g transform="translate(68, 55)">
+                   <rect x="0" y="0" width="16" height="26" rx="3" fill="#161b22" stroke="#8b949e" strokeWidth="1" />
+                   <rect x="1.5" y="1.5" width="13" height="23" rx="1.5" fill="#0d1117" />
+                   {/* Phone Screen glowing if tech savvy */}
+                   <rect x="3" y="4" width="10" height="15" fill={techSavvy > 50 ? "#3fb950" : "#30363d"} opacity="0.2" />
+                   {techSavvy > 50 && <rect x="4" y="6" width="8" height="2" fill="#3fb950" className="animate-pulse" />}
+                   {techSavvy > 50 && <rect x="4" y="10" width="6" height="1.5" fill="#3fb950" />}
+                   <circle cx="8" cy="21.5" r="1.5" fill="#30363d" />
+                 </g>
+              ) : device === "Tablet" ? (
+                 <g transform="translate(60, 50)">
+                   <rect x="0" y="0" width="30" height="22" rx="2" fill="#161b22" stroke="#8b949e" strokeWidth="1" />
+                   <rect x="1.5" y="1.5" width="27" height="19" rx="1" fill="#0d1117" />
+                   <rect x="5" y="4" width="20" height="14" fill={techSavvy > 50 ? "#3fb950" : "#30363d"} opacity="0.2" />
+                 </g>
+              ) : (
+                 <g transform="translate(30, 75)">
+                   {/* Floating Keyboard for Desktop */}
+                   <rect x="0" y="0" width="40" height="12" rx="2" fill="#161b22" stroke="#30363d" strokeWidth="1" transform="skewX(-15)" style={{ filter: "drop-shadow(0px 10px 10px rgba(0,0,0,0.5))" }} />
+                   <g transform="skewX(-15)" fill="#30363d">
+                     <rect x="4" y="2" width="4" height="3" rx="0.5" /><rect x="10" y="2" width="4" height="3" rx="0.5" /><rect x="16" y="2" width="4" height="3" rx="0.5" /><rect x="22" y="2" width="4" height="3" rx="0.5" /><rect x="28" y="2" width="4" height="3" rx="0.5" />
+                     <rect x="6" y="7" width="24" height="3" rx="0.5" fill={chaosMode ? "#ea580c" : "#8b949e"} className={chaosMode ? "animate-pulse" : ""} />
+                   </g>
+                 </g>
+              )}
+
+              {/* Status / Modifiers */}
+              {network === "Slow (3G)" && (
+                 <g transform="translate(50, 12)">
+                   <circle cx="0" cy="0" r="6" fill="none" stroke="#ff7b72" strokeWidth="2" strokeDasharray="6 4" className="animate-spin" style={{ transformOrigin: "center" }} />
+                   <text x="0" y="1" textAnchor="middle" dominantBaseline="middle" fill="#ff7b72" fontSize="5" fontWeight="bold">!</text>
+                 </g>
+              )}
             </svg>
           </div>
           <div className="text-center w-full relative z-10">
@@ -342,7 +426,7 @@ function ToggleRow({ label, description, active, onToggle }: { label: string; de
   return (
     <div className="flex items-center justify-between border border-[#30363d] p-3 rounded-md bg-[#0d1117] hover:border-[#484f58] transition-colors duration-300">
       <div><div className="text-sm font-semibold text-[#c9d1d9]">{label}</div><div className="text-xs text-[#8b949e]">{description}</div></div>
-      <button onClick={onToggle} className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full focus:outline-none transition-all duration-300 ${active ? "bg-primary shadow-[0_0_10px_rgba(234,88,12,0.4)]" : "bg-[#30363d]"}`}><span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-300 ${active ? "translate-x-4" : "translate-x-1"}`} /></button>
+      <motion.button whileTap={{ scale: 0.8 }} onClick={onToggle} className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full focus:outline-none transition-all duration-300 ${active ? "bg-primary shadow-[0_0_10px_rgba(234,88,12,0.4)]" : "bg-[#30363d]"}`}><span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-300 ${active ? "translate-x-4" : "translate-x-1"}`} /></motion.button>
     </div>
   );
 }
@@ -414,64 +498,9 @@ export default function Home() {
 
   const playJumpscareSound = () => {
     try {
-      // @ts-expect-error - webkitAudioContext is a vendor prefix
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      const audioCtx = new AudioContextClass();
-      
-      const gainNode = audioCtx.createGain();
-      gainNode.gain.setValueAtTime(2.5, audioCtx.currentTime); // Extra loud
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.2);
-      gainNode.connect(audioCtx.destination);
-
-      // Distortion for horrific crunch
-      const distortion = audioCtx.createWaveShaper();
-      function makeDistortionCurve(amount = 400) {
-        const n_samples = 44100, curve = new Float32Array(n_samples), deg = Math.PI / 180;
-        for (let i = 0; i < n_samples; ++i) {
-          const x = i * 2 / n_samples - 1;
-          curve[i] = (3 + amount) * x * 20 * deg / (Math.PI + amount * Math.abs(x));
-        } return curve;
-      }
-      distortion.curve = makeDistortionCurve(400);
-      distortion.oversample = '4x';
-      distortion.connect(gainNode);
-
-      // Terrifying frequency sweep scream
-      const screamOsc = audioCtx.createOscillator();
-      screamOsc.type = "sawtooth";
-      screamOsc.frequency.setValueAtTime(800, audioCtx.currentTime);
-      screamOsc.frequency.exponentialRampToValueAtTime(3500, audioCtx.currentTime + 0.2); // Shriek up
-      screamOsc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.9);   // Fall down
-      screamOsc.connect(distortion);
-
-      const screechOsc = audioCtx.createOscillator();
-      screechOsc.type = "square";
-      screechOsc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-      screechOsc.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 0.2);
-      screechOsc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.9);
-      screechOsc.connect(distortion);
-
-      // Sub-bass rumble
-      const subOsc = audioCtx.createOscillator();
-      subOsc.type = "sine";
-      subOsc.frequency.setValueAtTime(150, audioCtx.currentTime);
-      subOsc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 1.2);
-      subOsc.connect(gainNode);
-
-      // White noise blast
-      const bufferSize = audioCtx.sampleRate * 1.5;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = buffer;
-      noise.connect(distortion);
-
-      screamOsc.start(); screechOsc.start(); subOsc.start(); noise.start();
-      screamOsc.stop(audioCtx.currentTime + 1.2);
-      screechOsc.stop(audioCtx.currentTime + 1.2);
-      subOsc.stop(audioCtx.currentTime + 1.2);
-      noise.stop(audioCtx.currentTime + 1.2);
+      const scream = new Audio("/fnaf.mp3");
+      scream.volume = 1.0;
+      scream.play().catch(e => console.error("Audio playback locked", e));
     } catch (e) { console.error("Audio playback locked", e); }
   };
 
@@ -551,7 +580,7 @@ export default function Home() {
             </Reveal>
             <Reveal delay={0.3}>
               <p className="text-xl md:text-2xl text-[#8b949e] max-w-2xl font-normal leading-relaxed mb-10">
-                Stop begging strangers on Reddit to test your app. Deploy 500 AI agents that find every broken flow and rage-quit moment — in 30 minutes.
+                Stop begging strangers on Reddit to test your app. Deploy an army of 500 <strong className="text-white font-semibold">agentic beta testers</strong> that find every broken flow and rage-quit moment — in 30 minutes.
               </p>
             </Reveal>
             <Reveal delay={0.4}>
@@ -564,9 +593,9 @@ export default function Home() {
                 <div className="mt-6">
                   <p className="text-[12px] text-[#484f58] mb-3">Trusted by startups at</p>
                   <div className="flex items-center gap-6 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                    <div className="flex items-center gap-1"><svg className="w-6 h-6" viewBox="0 0 24 24" fill="#F26522"><rect width="24" height="24" rx="2" /><path fill="white" d="M12 13.5l3.5-5.5h-2L12 11l-1.5-3h-2l3.5 5.5v4.5h2v-4.5z" /></svg><span className="font-bold tracking-tight text-white text-[15px]">Y Combinator</span></div>
-                    <div className="flex items-center gap-1"><span className="font-bold tracking-tighter text-white text-[18px]">a16z</span></div>
-                    <div className="flex items-center gap-0.5"><span className="font-extrabold tracking-tighter text-white text-[16px]">info</span><span className="font-light tracking-tight text-white text-[16px]">edge</span></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Y_Combinator_logo.svg" alt="Y Combinator" className="h-5 w-auto" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Andreessen_Horowitz_logo_stacked.svg" alt="a16z" className="h-7 w-auto invert brightness-0 saturate-100" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Infoedgelogo.png" alt="InfoEdge" className="h-5 w-auto invert brightness-0 saturate-100" />
                   </div>
                 </div>
               </div>
