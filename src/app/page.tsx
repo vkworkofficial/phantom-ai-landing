@@ -54,8 +54,8 @@ function Badge({ children, className = "", showDot = false }: { children: React.
 
 function HeroTerminalAnimation() {
   const lines = [
-    { type: "sys", text: "[core] Bootstrapping Phantom Engine v4.2.0 (Chromium 128.0.6613.85)" },
-    { type: "sys", text: "[core] Loading behavioral heuristic model (weights: 847MB, params: 312M)" },
+    { type: "sys", text: "[core] Bootstrapping Phantom Engine v4.2.0 (Chromium 131)" },
+    { type: "sys", text: "[core] Loading behavioral heuristic model..." },
     { type: "sys", text: "[orchestrator] Spawning 500 headless browser instances across 12 geos..." },
     { type: "success", text: "[orchestrator] Agent pool ready — 500/500 browsers instrumented" },
     { type: "sys", text: "[dom-observer] Attaching MutationObserver + IntersectionObserver to 2,847 DOM nodes" },
@@ -162,8 +162,8 @@ function AnimatedCodeSnippet() {
 
 function ArchitectureStack() {
   const layers = [
-    { name: "Phantom Core Engine", desc: "Behavioral heuristic model (312M params) trained on 2.4M real user sessions", color: "border-primary/60 bg-primary/5", icon: <Cpu className="w-4 h-4 text-primary" /> },
-    { name: "Headless Browser Orchestrator", desc: "Chromium pool w/ MutationObserver, IntersectionObserver, PerformanceObserver instrumentation", color: "border-[#3fb950]/40 bg-[#3fb950]/5", icon: <Layers className="w-4 h-4 text-[#3fb950]" /> },
+    { name: "Phantom Core Engine", desc: "Proprietary behavioral model trained on anonymized real user sessions across SaaS, e-commerce, and fintech", color: "border-primary/60 bg-primary/5", icon: <Cpu className="w-4 h-4 text-primary" /> },
+    { name: "Headless Browser Orchestrator", desc: "Chromium pool with MutationObserver, IntersectionObserver, and PerformanceObserver instrumentation per agent", color: "border-[#3fb950]/40 bg-[#3fb950]/5", icon: <Layers className="w-4 h-4 text-[#3fb950]" /> },
     { name: "Multi-Agent Consensus Layer", desc: "49-agent verification swarm — no bug ships unless consensus threshold ≥ 0.85", color: "border-[#a5d6ff]/40 bg-[#a5d6ff]/5", icon: <GitBranch className="w-4 h-4 text-[#a5d6ff]" /> },
     { name: "DOM Graph Analyzer", desc: "Real-time subtree diffing, accessibility tree validation, CLS/INP/LCP telemetry", color: "border-[#d2a8ff]/40 bg-[#d2a8ff]/5", icon: <Search className="w-4 h-4 text-[#d2a8ff]" /> },
     { name: "Session Replay & Reporter", desc: "Lossless DOM-level recordings with annotated friction heatmaps, auto-filed to GitHub/Linear", color: "border-[#8b949e]/40 bg-[#8b949e]/10", icon: <Activity className="w-4 h-4 text-[#8b949e]" /> },
@@ -461,19 +461,18 @@ export default function Home() {
             <Reveal delay={0.3}>
               <div className="h-full rounded-md border border-[#30363d] bg-[#0d1117] p-5 hover:border-[#484f58] hover:shadow-[0_0_40px_-10px_rgba(234,88,12,0.08)] transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-3"><Shield className="w-5 h-5 text-[#8b949e] group-hover:text-primary transition-colors duration-300" /><h3 className="font-semibold text-white text-[16px]">Zero-Trust Session Injection</h3></div>
-                <p className="text-sm text-[#8b949e]">Agents authenticate via ephemeral session tokens scoped to isolated browser contexts. No customer PII ever leaves your infra. SOC 2 Type II audit in progress.</p>
+                <p className="text-sm text-[#8b949e]">Agents authenticate via ephemeral session tokens scoped to isolated browser contexts. No customer PII ever leaves your infra. SOC 2 Type II compliance on our roadmap.</p>
               </div>
             </Reveal>
             <Reveal delay={0.4}>
               <div className="h-full col-span-1 lg:col-span-2 rounded-md border border-[#30363d] bg-[#0d1117] p-5 hover:border-[#484f58] hover:shadow-[0_0_40px_-10px_rgba(234,88,12,0.08)] transition-all duration-300 group">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3"><Search className="w-5 h-5 text-[#8b949e] group-hover:text-primary transition-colors duration-300" /><h3 className="font-semibold text-white text-[16px]">Proprietary Behavioral Model</h3></div>
-                  <Badge>312M params</Badge>
                 </div>
-                <p className="text-sm text-[#8b949e] mb-4">Phantom Core is trained on 2.4M anonymized user sessions across SaaS, e-commerce, and fintech. It doesn&apos;t follow a script — it makes decisions the way humans do, with all the impatience, confusion, and edge-case creativity.</p>
+                <p className="text-sm text-[#8b949e] mb-4">Phantom Core is trained on anonymized user sessions across SaaS, e-commerce, and fintech verticals. It doesn&apos;t follow a script — it makes decisions the way humans do, with all the impatience, confusion, and edge-case creativity.</p>
                 <div className="bg-[#161b22] border border-[#30363d] p-3 rounded text-[13px] font-mono text-[#8b949e]">
-                  <span className="text-[#79c0ff]">model</span>: <span className="text-[#a5d6ff]">phantom-core-v4</span> <span className="text-[#484f58]">{"// 312M params, 2.4M sessions"}</span><br />
-                  <span className="text-[#79c0ff]">inference</span>: <span className="text-[#a5d6ff]">real-time heuristic graph traversal</span>
+                  <span className="text-[#79c0ff]">model</span>: <span className="text-[#a5d6ff]">phantom-core-v4</span><br />
+                  <span className="text-[#79c0ff]">inference</span>: <span className="text-[#a5d6ff]">behavioral heuristic engine</span>
                 </div>
               </div>
             </Reveal>
@@ -482,9 +481,9 @@ export default function Home() {
 
         {/* CI/CD */}
         <section className="w-full border-t border-[#30363d] bg-[#161b22] py-24">
-          <div className="max-w-[1280px] mx-auto px-4 flex flex-col lg:flex-row gap-16 items-center">
+          <div className="max-w-[1280px] mx-auto px-4 flex flex-col lg:flex-row gap-12 items-center">
             <Reveal>
-              <div className="flex-1">
+              <div className="flex-1 lg:max-w-[420px] shrink-0">
                 <h2 className="text-3xl font-semibold tracking-tight text-white mb-4">Ships as a CI/CD gate.<br /><span className="text-[#8b949e]">Not a dashboard you forget about.</span></h2>
                 <p className="text-sm text-[#8b949e] max-w-lg mb-8 leading-relaxed">Phantom runs inside your existing pipeline. If a PR introduces UX friction above your threshold, the build fails. Behavioral QA becomes as non-negotiable as unit tests.</p>
                 <ul className="space-y-3 mb-8">
@@ -496,7 +495,7 @@ export default function Home() {
                 <Button primary onClick={() => { document.getElementById("waitlist-input")?.focus(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Summon your ghosts</Button>
               </div>
             </Reveal>
-            <Reveal delay={0.2}><div className="flex-1 w-full relative"><div className="absolute -inset-4 bg-primary/5 blur-3xl -z-10 rounded-full" /><AnimatedCodeSnippet /></div></Reveal>
+            <Reveal delay={0.2}><div className="flex-1 w-full min-w-0 relative"><div className="absolute -inset-4 bg-primary/5 blur-3xl -z-10 rounded-full" /><AnimatedCodeSnippet /></div></Reveal>
           </div>
         </section>
       </main>
