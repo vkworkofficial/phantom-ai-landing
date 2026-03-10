@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Terminal, Activity, Zap, CheckCircle2, Shield, Search, Loader2, Cpu, GitBranch, Layers } from "lucide-react";
-import { motion, useInView } from "framer-motion";
+import { Terminal, Activity, Zap, CheckCircle2, Shield, Search, Loader2, Cpu, GitBranch, Layers, Check, Copy } from "lucide-react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 
 /* ═══════════════════════════════════════════════════ */
 /*  REVEAL                                             */
@@ -210,6 +210,7 @@ function CustomizeGhost() {
   const [device, setDevice] = useState("Desktop");
   const [network, setNetwork] = useState("Fast (5G)");
   const [language, setLanguage] = useState("English");
+  const [copied, setCopied] = useState(false);
   const [blinking, setBlinking] = useState(false);
 
   useEffect(() => {
@@ -276,8 +277,16 @@ function CustomizeGhost() {
         </div>
 
         {/* JSON */}
-        <div className="lg:col-span-4 bg-[#0d1117] h-full p-6 md:p-8">
-          <div className="flex items-center gap-2 mb-4"><Terminal className="w-4 h-4 text-[#8b949e]" /><div className="text-xs text-[#8b949e] font-mono uppercase tracking-wider">agent.config.json</div></div>
+        <div className="lg:col-span-4 bg-[#0d1117] h-full p-6 md:p-8 relative group">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2"><Terminal className="w-4 h-4 text-[#8b949e]" /><div className="text-xs text-[#8b949e] font-mono uppercase tracking-wider">agent.config.json</div></div>
+            <button onClick={() => { 
+                navigator.clipboard.writeText(JSON.stringify({ engine: "phantom-core-v4", persona: personaName, runtime: { browser: "chromium-131", device, network, locale: language, geo: location, accessibility_audit: screenReader }, heuristics: { tech_savviness: techSavvy/100, patience_threshold: patience/100, adversarial_fuzzing: chaosMode }, consensus: { verification_agents: 49, threshold: 0.85, auto_file_issues: true } }, null, 2));
+                setCopied(true); setTimeout(() => setCopied(false), 2000);
+            }} className="p-1.5 rounded bg-[#161b22] border border-[#30363d] text-[#8b949e] hover:text-white hover:border-[#8b949e] transition-colors" title="Copy to clipboard">
+              {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+            </button>
+          </div>
           <pre className="text-[11px] font-mono leading-relaxed overflow-x-auto text-[#c9d1d9] bg-[#161b22] border border-[#30363d] p-4 rounded-md">
 {`{
   "engine": "phantom-core-v4",
@@ -360,10 +369,27 @@ function IssueSlider() {
 
 export default function Home() {
   const [email, setEmail] = useState("");
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [showJumpscare, setShowJumpscare] = useState(false);
+  const [toast, setToast] = useState<{msg: string, type: "success" | "error" | "info"} | null>(null);
+  const [showCmdk, setShowCmdk] = useState(false);
+
+  const showToast = (msg: string, type: "success" | "error" | "info" = "info") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setShowCmdk(prev => !prev);
+      }
+      if (e.key === "Escape") setShowCmdk(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const playJumpscareSound = () => {
     try {
@@ -409,18 +435,28 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setLoading(true); setError("");
+
+    // Client-side regex check
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      showToast("Please enter a valid email address.", "error");
+      return;
+    }
+
+    const honeypot = (document.getElementById("company_url") as HTMLInputElement)?.value;
+
+    setLoading(true);
 
     try {
-      const res = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+      const res = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, company_url: honeypot }) });
       const data = await res.json();
       if (res.ok) {
         setShowJumpscare(true);
         playJumpscareSound();
         setTimeout(() => setShowJumpscare(false), 900);
-        setSuccess(true);
-      } else setError(data.error || "Something went wrong.");
-    } catch { setError("Network error. Please try again."); } finally { setLoading(false); }
+        showToast("You're in. We'll haunt your inbox soon. 👻", "success");
+        setEmail("");
+      } else showToast(data.error || "Something went wrong.", "error");
+    } catch { showToast("Network error. Please try again.", "error"); } finally { setLoading(false); }
   };
 
   return (
@@ -443,11 +479,20 @@ export default function Home() {
 
       <header className="sticky top-0 z-40 bg-[#010409]/95 backdrop-blur-sm border-b border-[#30363d]">
         <div className="max-w-[1280px] mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <svg width="28" height="28" viewBox="0 0 100 100" fill="none" className="mb-0.5"><path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="hsl(var(--primary))" /><circle cx="39" cy="45" r="5" fill="hsl(var(--background))" /><circle cx="61" cy="45" r="5" fill="hsl(var(--background))" /></svg>
-            <span className="font-bold text-white tracking-tighter text-[22px]">Phantom AI</span>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2.5">
+              <svg width="28" height="28" viewBox="0 0 100 100" fill="none" className="mb-0.5"><path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="hsl(var(--primary))" /><circle cx="39" cy="45" r="5" fill="hsl(var(--background))" /><circle cx="61" cy="45" r="5" fill="hsl(var(--background))" /></svg>
+              <span className="font-bold text-white tracking-tighter text-[22px]">Phantom AI</span>
+            </div>
+            <div className="hidden md:flex items-center gap-2 border border-[#3fb950]/30 bg-[#3fb950]/5 px-2.5 py-1 rounded-full text-[11px] font-mono text-[#3fb950] tracking-wide">
+                <span className="relative flex h-1.5 w-1.5 shadow-[0_0_8px_#3fb950]"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3fb950] opacity-75" /><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#3fb950]" /></span>
+                Systems Operational
+            </div>
           </div>
-          <Button primary onClick={() => document.getElementById("waitlist-input")?.focus()}>Summon your ghosts</Button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setShowCmdk(true)} className="hidden md:flex items-center gap-3 text-[13px] text-[#8b949e] border border-[#30363d] bg-[#161b22] px-3 py-1.5 rounded-md hover:border-[#484f58] transition-colors"><Search className="w-3.5 h-3.5" /> <span>Search...</span> <kbd className="font-mono bg-[#0d1117] px-1.5 py-0.5 rounded border border-[#30363d] text-[10px]">⌘K</kbd></button>
+            <Button primary onClick={() => document.getElementById("waitlist-input")?.focus()}>Summon your ghosts</Button>
+          </div>
         </div>
       </header>
 
@@ -468,15 +513,11 @@ export default function Home() {
             </Reveal>
             <Reveal delay={0.4}>
               <div className="w-full max-w-md">
-                {!success ? (
-                  <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
-                    <Input id="waitlist-input" type="email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} placeholder="you@company.com" required className="h-10 text-[15px] px-3 w-full" disabled={loading} />
-                    <Button primary type="submit" className="h-10 px-6 shrink-0 text-[15px]" disabled={loading}>{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Join waitlist"}</Button>
-                  </form>
-                ) : (
-                  <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="inline-flex items-center gap-2 px-4 py-2 border border-[#3fb950]/30 bg-[#3fb950]/10 rounded-md text-[#3fb950] font-medium text-sm w-full"><CheckCircle2 className="w-4 h-4" />You&apos;re in. We&apos;ll haunt your inbox soon. 👻</motion.div>
-                )}
-                {error && <p className="text-xs text-[#ff7b72] mt-2">{error}</p>}
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 relative">
+                  <input type="text" name="company_url" id="company_url" className="hidden" tabIndex={-1} autoComplete="off" />
+                  <Input id="waitlist-input" type="email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} placeholder="you@company.com" required className="h-10 text-[15px] px-3 w-full" disabled={loading} />
+                  <Button primary type="submit" className="h-10 px-6 shrink-0 text-[15px] group" disabled={loading}>{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Join waitlist"}</Button>
+                </form>
                 <div className="mt-6">
                   <p className="text-[12px] text-[#484f58] mb-3">Backed by</p>
                   <div className="flex items-center gap-6 opacity-50 hover:opacity-70 transition-opacity duration-300">
@@ -578,6 +619,41 @@ export default function Home() {
           <p className="text-[11px] text-[#30363d] italic">Made with insomnia and an unreasonable amount of espresso.</p>
         </div>
       </footer>
+
+      {/* GLOBAL TOAST */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.9 }} className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-md border shadow-2xl ${toast.type === "success" ? "bg-[#161b22] border-[#3fb950]/40 text-[#3fb950]" : toast.type === "error" ? "bg-[#161b22] border-[#ff7b72]/40 text-[#ff7b72]" : "bg-[#161b22] border-[#30363d] text-[#c9d1d9]"}`}>
+            {toast.type === "success" ? <CheckCircle2 className="w-5 h-5" /> : toast.type === "error" ? <Zap className="w-5 h-5" /> : <Activity className="w-5 h-5" />}
+            <span className="text-sm font-medium">{toast.msg}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* COMMAND PALETTE (CMD+K) */}
+      <AnimatePresence>
+        {showCmdk && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowCmdk(false)} className="fixed inset-0 z-[110] bg-[#010409]/80 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98, y: -10 }} transition={{ duration: 0.15, ease: "easeOut" }} className="fixed top-[20%] left-1/2 -translate-x-1/2 z-[120] w-full max-w-xl bg-[#0d1117] border border-[#30363d] rounded-xl shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden">
+              <div className="flex items-center px-4 border-b border-[#30363d] bg-[#161b22]">
+                <Search className="w-5 h-5 text-[#8b949e]" />
+                <input autoFocus placeholder="Type a command or search..." className="w-full bg-transparent border-none text-[#c9d1d9] px-4 py-4 text-[15px] focus:outline-none focus:ring-0 placeholder:text-[#484f58]" />
+                <kbd className="font-mono text-[10px] text-[#c9d1d9] bg-[#0d1117] px-2 py-1 rounded border border-[#30363d] shadow-sm">ESC</kbd>
+              </div>
+              <div className="max-h-[350px] overflow-y-auto p-2">
+                <div className="px-4 py-2 mt-1 text-[11px] font-semibold text-[#8b949e] uppercase tracking-wider font-mono">Quick Actions</div>
+                <button onClick={() => { setShowCmdk(false); document.getElementById("waitlist-input")?.focus(); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="w-full text-left flex items-center justify-between px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors group"><div className="flex items-center gap-3"><Zap className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" /> Join Private Beta Waitlist</div><kbd className="hidden group-hover:block font-mono text-[10px] text-[#8b949e]">↵ Enter</kbd></button>
+                <button onClick={() => { setShowCmdk(false); navigator.clipboard.writeText("https://phantom.ai"); showToast("URL copied to clipboard", "success"); }} className="w-full text-left flex items-center justify-between px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors group"><div className="flex items-center gap-3"><Layers className="w-4 h-4 text-[#a5d6ff] group-hover:scale-110 transition-transform" /> Copy Share Link</div><kbd className="hidden group-hover:block font-mono text-[10px] text-[#8b949e]">↵ Enter</kbd></button>
+                
+                <div className="px-4 py-2 mt-2 text-[11px] font-semibold text-[#8b949e] uppercase tracking-wider font-mono">Navigation</div>
+                <button onClick={() => { setShowCmdk(false); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }} className="w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors"><div className="flex items-center gap-3"><Terminal className="w-4 h-4 text-[#d2a8ff]" /> View CI/CD Integration</div></button>
+                <button onClick={() => { setShowCmdk(false); window.scrollTo({ top: document.body.scrollHeight/2, behavior: "smooth" }); }} className="w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors"><div className="flex items-center gap-3"><Cpu className="w-4 h-4 text-[#3fb950]" /> Configure Agent Persona</div></button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-33.333%)); } }
