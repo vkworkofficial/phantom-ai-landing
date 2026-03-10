@@ -481,9 +481,9 @@ export default function Home() {
 
         {/* CI/CD */}
         <section className="w-full border-t border-[#30363d] bg-[#161b22] py-24">
-          <div className="max-w-[1280px] mx-auto px-4 flex flex-col lg:flex-row gap-12 items-center">
+          <div className="max-w-[1280px] mx-auto px-4 flex flex-col lg:flex-row gap-12 items-start">
             <Reveal>
-              <div className="flex-1 lg:max-w-[420px] shrink-0">
+              <div className="w-full lg:w-[380px] shrink-0">
                 <h2 className="text-3xl font-semibold tracking-tight text-white mb-4">Ships as a CI/CD gate.<br /><span className="text-[#8b949e]">Not a dashboard you forget about.</span></h2>
                 <p className="text-sm text-[#8b949e] max-w-lg mb-8 leading-relaxed">Phantom runs inside your existing pipeline. If a PR introduces UX friction above your threshold, the build fails. Behavioral QA becomes as non-negotiable as unit tests.</p>
                 <ul className="space-y-3 mb-8">
