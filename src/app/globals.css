@@ -93,8 +93,17 @@
   --radius-sm: 0.25rem;
 }
 
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 5px; border: 2px solid hsl(var(--background)); }
 ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+
+/* Keyframe Animations */
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-33.333%)); } }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-6px) rotate(1deg); } 75% { transform: translateY(-3px) rotate(-1deg); } }
+@keyframes glitch { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
+@keyframes glow-pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); } }

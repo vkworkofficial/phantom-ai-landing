@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Terminal, Activity, Zap, CheckCircle2, Shield, Search, Loader2, Cpu, GitBranch, Layers, Check, Copy } from "lucide-react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Terminal, Activity, Zap, CheckCircle2, Shield, Search, Loader2, Cpu, GitBranch, Layers, Check, Copy, ArrowUp, ExternalLink } from "lucide-react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 
 /* ═══════════════════════════════════════════════════ */
@@ -223,7 +223,7 @@ function CustomizeGhost() {
   const sel = "w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-sm text-[#c9d1d9] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner appearance-none cursor-pointer";
 
   return (
-    <section className="w-full max-w-[1280px] mx-auto px-4 py-24 border-t border-[#30363d]">
+    <section id="customizer" className="w-full max-w-[1280px] mx-auto px-4 py-24 border-t border-[#30363d]">
       <div className="mb-8 flex flex-col items-center text-center">
         <h2 className="text-3xl font-semibold text-white mb-3">Define your agent persona</h2>
         <p className="text-[#8b949e] max-w-xl">Each agent runs an independent headless Chromium instance with its own behavioral profile. Configure the heuristic weights and environment constraints below.</p>
@@ -338,41 +338,179 @@ function CustomizeGhost() {
                  <path d="M 47 60 Q 50 62 53 60" stroke="#0d1117" strokeWidth="2" fill="none" strokeLinecap="round" /> /* Default small smile */
               )}
 
-              {/* Props / Devices */}
-              {device === "Mobile" ? (
-                 <g transform="translate(68, 55)">
-                   <rect x="0" y="0" width="16" height="26" rx="3" fill="#161b22" stroke="#8b949e" strokeWidth="1" />
-                   <rect x="1.5" y="1.5" width="13" height="23" rx="1.5" fill="#0d1117" />
-                   {/* Phone Screen glowing if tech savvy */}
-                   <rect x="3" y="4" width="10" height="15" fill={techSavvy > 50 ? "#3fb950" : "#30363d"} opacity="0.2" />
-                   {techSavvy > 50 && <rect x="4" y="6" width="8" height="2" fill="#3fb950" className="animate-pulse" />}
-                   {techSavvy > 50 && <rect x="4" y="10" width="6" height="1.5" fill="#3fb950" />}
-                   <circle cx="8" cy="21.5" r="1.5" fill="#30363d" />
-                 </g>
-              ) : device === "Tablet" ? (
-                 <g transform="translate(60, 50)">
-                   <rect x="0" y="0" width="30" height="22" rx="2" fill="#161b22" stroke="#8b949e" strokeWidth="1" />
-                   <rect x="1.5" y="1.5" width="27" height="19" rx="1" fill="#0d1117" />
-                   <rect x="5" y="4" width="20" height="14" fill={techSavvy > 50 ? "#3fb950" : "#30363d"} opacity="0.2" />
-                 </g>
-              ) : (
-                 <g transform="translate(30, 75)">
-                   {/* Floating Keyboard for Desktop */}
-                   <rect x="0" y="0" width="40" height="12" rx="2" fill="#161b22" stroke="#30363d" strokeWidth="1" transform="skewX(-15)" style={{ filter: "drop-shadow(0px 10px 10px rgba(0,0,0,0.5))" }} />
-                   <g transform="skewX(-15)" fill="#30363d">
-                     <rect x="4" y="2" width="4" height="3" rx="0.5" /><rect x="10" y="2" width="4" height="3" rx="0.5" /><rect x="16" y="2" width="4" height="3" rx="0.5" /><rect x="22" y="2" width="4" height="3" rx="0.5" /><rect x="28" y="2" width="4" height="3" rx="0.5" />
-                     <rect x="6" y="7" width="24" height="3" rx="0.5" fill={chaosMode ? "#ea580c" : "#8b949e"} className={chaosMode ? "animate-pulse" : ""} />
+              {/* Device Props */}
+              <motion.g key={"device-"+device} initial={{ scale: 0, y: 10 }} animate={{ scale: 1, y: 0 }} transition={{ type: "spring", bounce: 0.6 }}>
+                {device === "Mobile" ? (
+                   <g transform="translate(68, 55)">
+                     <rect x="0" y="0" width="16" height="26" rx="3" fill="#161b22" stroke="#8b949e" strokeWidth="1" />
+                     <rect x="1.5" y="1.5" width="13" height="23" rx="1.5" fill="#0d1117" />
+                     {/* Phone Screen glowing if tech savvy */}
+                     <rect x="3" y="4" width="10" height="15" fill={techSavvy > 50 ? "#3fb950" : "#30363d"} opacity="0.2" />
+                     {techSavvy > 50 && <rect x="4" y="6" width="8" height="2" fill="#3fb950" className="animate-pulse" />}
+                     {techSavvy > 50 && <rect x="4" y="10" width="6" height="1.5" fill="#3fb950" />}
+                     <circle cx="8" cy="21.5" r="1.5" fill="#30363d" />
                    </g>
-                 </g>
-              )}
+                ) : device === "Tablet" ? (
+                   <g transform="translate(60, 50)">
+                     <rect x="0" y="0" width="30" height="22" rx="2" fill="#161b22" stroke="#8b949e" strokeWidth="1" />
+                     <rect x="1.5" y="1.5" width="27" height="19" rx="1" fill="#0d1117" />
+                     <rect x="5" y="4" width="20" height="14" fill={techSavvy > 50 ? "#3fb950" : "#30363d"} opacity="0.2" />
+                   </g>
+                ) : (
+                   <g transform="translate(30, 75)">
+                     {/* Floating Keyboard for Desktop */}
+                     <rect x="0" y="0" width="40" height="12" rx="2" fill="#161b22" stroke="#30363d" strokeWidth="1" transform="skewX(-15)" style={{ filter: "drop-shadow(0px 10px 10px rgba(0,0,0,0.5))" }} />
+                     <g transform="skewX(-15)" fill="#30363d">
+                       <rect x="4" y="2" width="4" height="3" rx="0.5" /><rect x="10" y="2" width="4" height="3" rx="0.5" /><rect x="16" y="2" width="4" height="3" rx="0.5" /><rect x="22" y="2" width="4" height="3" rx="0.5" /><rect x="28" y="2" width="4" height="3" rx="0.5" />
+                       <rect x="6" y="7" width="24" height="3" rx="0.5" fill={chaosMode ? "#ea580c" : "#8b949e"} className={chaosMode ? "animate-pulse" : ""} />
+                     </g>
+                   </g>
+                )}
+              </motion.g>
 
-              {/* Status / Modifiers */}
-              {network === "Slow (3G)" && (
-                 <g transform="translate(50, 12)">
-                   <circle cx="0" cy="0" r="6" fill="none" stroke="#ff7b72" strokeWidth="2" strokeDasharray="6 4" className="animate-spin" style={{ transformOrigin: "center" }} />
-                   <text x="0" y="1" textAnchor="middle" dominantBaseline="middle" fill="#ff7b72" fontSize="5" fontWeight="bold">!</text>
-                 </g>
-              )}
+              {/* Gender Props */}
+              <motion.g key={"gender-"+gender} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.6 }}>
+                {gender === "Female" && (
+                   <g>
+                     <ellipse cx="32" cy="48" rx="3" ry="1.5" fill="#ff7b72" opacity="0.6" />
+                     <ellipse cx="68" cy="48" rx="3" ry="1.5" fill="#ff7b72" opacity="0.6" />
+                   </g>
+                )}
+                {gender === "Male" && !chaosMode && (
+                   <g>
+                     <path d="M 45 66 L 40 61 L 40 71 Z" fill="#0d1117" />
+                     <path d="M 55 66 L 60 61 L 60 71 Z" fill="#0d1117" />
+                     <circle cx="50" cy="66" r="2.5" fill="#0d1117" />
+                   </g>
+                )}
+                {gender === "Non-binary" && (
+                   <path d="M 50 63 L 52 68 L 57 68 L 53 71 L 54 76 L 50 73 L 46 76 L 47 71 L 43 68 L 48 68 Z" fill="#d2a8ff" opacity="0.5" />
+                )}
+              </motion.g>
+
+              {/* Age Props */}
+              <motion.g key={"age-"+age} initial={{ scale: 0, y: -10 }} animate={{ scale: 1, y: 0 }} transition={{ type: "spring", bounce: 0.5 }}>
+                {age === "18-24" && (
+                   <g>
+                     <path d="M 22 45 C 22 10, 78 10, 78 45" stroke="#30363d" strokeWidth="3" fill="none" />
+                     <rect x="18" y="38" width="6" height="14" rx="3" fill="#8b949e" />
+                     <rect x="76" y="38" width="6" height="14" rx="3" fill="#8b949e" />
+                   </g>
+                )}
+                {age === "25-34" && (
+                   <g transform="translate(13, 55)">
+                     <rect x="0" y="0" width="10" height="14" rx="1" fill="#c9d1d9" stroke="#0d1117" strokeWidth="1" />
+                     <path d="M 10 3 C 14 3, 14 9, 10 9" fill="none" stroke="#c9d1d9" strokeWidth="1.5" />
+                     <path d="M 3 0 Q 5 -4 3 -8" stroke="white" strokeWidth="1" fill="none" className="animate-pulse" />
+                     <path d="M 7 0 Q 9 -4 7 -8" stroke="white" strokeWidth="1" fill="none" className="animate-pulse" style={{ animationDelay: "0.2s" }} />
+                     <rect x="0" y="5" width="10" height="4" fill="#3fb950" />
+                   </g>
+                )}
+                {age === "35-44" && techSavvy <= 70 && !chaosMode && !screenReader && (
+                   <g>
+                     <path d="M 32 45 L 46 45 M 54 45 L 68 45 M 46 45 C 48 42, 52 42, 54 45" stroke="#0d1117" strokeWidth="1.5" fill="none" />
+                     <rect x="30" y="42" width="16" height="7" rx="1" fill="none" stroke="#0d1117" strokeWidth="1.5" />
+                     <rect x="54" y="42" width="16" height="7" rx="1" fill="none" stroke="#0d1117" strokeWidth="1.5" />
+                   </g>
+                )}
+                {age === "45-54" && (
+                   <g>
+                     <path d="M 47 64 L 53 64 L 51 77 L 50 80 L 49 77 Z" fill="#30363d" />
+                     <path d="M 47 64 L 50 67 L 53 64 Z" fill="#161b22" />
+                   </g>
+                )}
+                {age === "55+" && !chaosMode && (
+                   <g>
+                     <path d="M 30 58 Q 40 55 46 62 Q 50 55 60 58" fill="none" stroke="#8b949e" strokeWidth="2" strokeLinecap="round" />
+                     <circle cx="61" cy="45" r="7" fill="none" stroke="#0d1117" strokeWidth="1.5" />
+                     <path d="M 68 45 C 75 45, 75 55, 70 60" fill="none" stroke="#e3b341" strokeWidth="1.5" />
+                   </g>
+                )}
+              </motion.g>
+
+              {/* Geo Region */}
+              <motion.g key={"loc-"+location} initial={{ scale: 0, x: -10 }} animate={{ scale: 1, x: 0 }} transition={{ type: "spring", bounce: 0.6 }}>
+                {location === "Global" && (
+                   <g transform="translate(10, 15)">
+                     <circle cx="5" cy="5" r="5" fill="#1f6feb" />
+                     <path d="M 1 3 Q 5 0 9 3 M 1 7 Q 5 10 9 7 M 5 0 L 5 10 M 0 5 L 10 5" stroke="#a5d6ff" strokeWidth="0.5" fill="none" />
+                   </g>
+                )}
+                {location === "US / Canada" && (
+                   <g transform="translate(8, 15)">
+                     <path d="M 0 5 Q 5 0 10 5" fill="#d29922"/>
+                     <rect x="0" y="6" width="10" height="2" fill="#3fb950" />
+                     <rect x="0" y="9" width="10" height="3" fill="#a42e2b" />
+                     <path d="M 0 13 Q 5 18 10 13" fill="#d29922"/>
+                   </g>
+                )}
+                {location === "EU / UK" && (
+                   <g transform="translate(8, 15)">
+                     <path d="M 0 7 A 4 4 0 0 1 8 7 A 4 4 0 0 1 16 7" fill="#8b949e" />
+                     <circle cx="4" cy="7" r="4" fill="#8b949e" />
+                     <circle cx="12" cy="7" r="4" fill="#8b949e" />
+                     <path d="M 4 12 L 2 16 M 8 12 L 6 16 M 12 12 L 10 16" stroke="#a5d6ff" strokeWidth="1" className="animate-pulse" />
+                   </g>
+                )}
+                {location === "APAC" && (
+                   <g transform="translate(8, 15)">
+                     <path d="M 0 8 Q 6 16 12 8 Z" fill="#c9d1d9" stroke="#0d1117" />
+                     <path d="M -2 0 L 4 8 M 2 0 L 6 8" stroke="#d29922" strokeWidth="1" />
+                   </g>
+                )}
+                {location === "LATAM" && (
+                   <g transform="translate(15, 18)">
+                     <circle cx="0" cy="0" r="4" fill="#e3b341" />
+                     <path d="M 0 -6 L 0 -8 M 0 6 L 0 8 M -6 0 L -8 0 M 6 0 L 8 0 M -4 -4 L -6 -6 M 4 4 L 6 6 M 4 -4 L 6 -6 M -4 4 L -6 6" stroke="#e3b341" strokeWidth="1.5" className="animate-spin" style={{transformOrigin: "0 0", animationDuration: "10s"}} />
+                   </g>
+                )}
+                {location === "MEA" && (
+                   <g transform="translate(8, 15)">
+                     <path d="M 6 14 A 6 6 0 1 0 10 2 A 4.5 4.5 0 1 1 6 14" fill="#d2a8ff" className="animate-pulse" />
+                   </g>
+                )}
+              </motion.g>
+
+              {/* Locale / Language */}
+              <motion.g key={"lang-"+language} initial={{ scale: 0, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", bounce: 0.6 }}>
+                <g transform="translate(70, 7)">
+                  <path d="M 0 10 C 0 0, 25 0, 25 10 C 25 20, 15 20, 10 25 L 5 30 L 5 20 C 2 18, 0 15, 0 10 Z" fill="#161b22" stroke="#30363d" strokeWidth="1" />
+                  <text x="12.5" y="13" textAnchor="middle" fill="#c9d1d9" fontSize="6" fontWeight="bold">
+                    {language === "English" ? "Hi" : language === "Spanish" ? "Hola" : language === "Japanese" ? "やあ" : language === "Arabic (RTL)" ? "أهلا" : language === "Hindi" ? "नमस्ते" : "Olá"}
+                  </text>
+                </g>
+              </motion.g>
+
+              {/* Network / Status */}
+              <motion.g key={"net-"+network} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.6 }}>
+                {network === "Offline-first" && (
+                   <g transform="translate(80, 45)">
+                     <path d="M 0 10 Q 6 4 12 10" fill="none" stroke="#f85149" strokeWidth="1.5" />
+                     <path d="M 3 13 Q 6 10 9 13" fill="none" stroke="#f85149" strokeWidth="1.5" />
+                     <circle cx="6" cy="16" r="1.5" fill="#f85149" />
+                     <path d="M -2 -2 L 14 18" stroke="#f85149" strokeWidth="1.5" />
+                   </g>
+                )}
+                {network === "Slow (3G)" && (
+                   <g transform="translate(80, 45)">
+                     <circle cx="0" cy="0" r="6" fill="none" stroke="#ff7b72" strokeWidth="2" strokeDasharray="6 4" className="animate-spin" style={{ transformOrigin: "center" }} />
+                     <text x="0" y="1" textAnchor="middle" dominantBaseline="middle" fill="#ff7b72" fontSize="5" fontWeight="bold">!</text>
+                   </g>
+                )}
+                {network === "Moderate (4G)" && (
+                   <g transform="translate(80, 45)">
+                     <rect x="0" y="8" width="2" height="4" fill="#3fb950" />
+                     <rect x="3" y="5" width="2" height="7" fill="#3fb950" />
+                     <rect x="6" y="2" width="2" height="10" fill="#3fb950" />
+                     <rect x="9" y="0" width="2" height="12" fill="#30363d" />
+                   </g>
+                )}
+                {network === "Fast (5G)" && (
+                   <g transform="translate(80, 45)">
+                     <path d="M 6 0 L 0 7 L 5 7 L 3 14 L 10 6 L 5 6 Z" fill="#e3b341" className="animate-pulse" style={{ filter: "drop-shadow(0px 0px 4px #e3b341)" }} />
+                   </g>
+                )}
+              </motion.g>
             </svg>
           </div>
           <div className="text-center w-full relative z-10">
@@ -478,11 +616,14 @@ export default function Home() {
   const [showJumpscare, setShowJumpscare] = useState(false);
   const [toast, setToast] = useState<{msg: string, type: "success" | "error" | "info"} | null>(null);
   const [showCmdk, setShowCmdk] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const showToast = (msg: string, type: "success" | "error" | "info" = "info") => {
+  const showToast = useCallback((msg: string, type: "success" | "error" | "info" = "info") => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ msg, type });
-    setTimeout(() => setToast(null), 4000);
-  };
+    toastTimerRef.current = setTimeout(() => setToast(null), 4000);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -496,11 +637,23 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Back to top scroll detection
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 600);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const playJumpscareSound = () => {
     try {
       const scream = new Audio("/fnaf.mp3");
       scream.volume = 1.0;
-      scream.play().catch(e => console.error("Audio playback locked", e));
+      scream.play().then(() => {
+        setTimeout(() => {
+          scream.pause();
+          scream.currentTime = 0;
+        }, 900);
+      }).catch(e => console.error("Audio playback locked", e));
     } catch (e) { console.error("Audio playback locked", e); }
   };
 
@@ -570,7 +723,7 @@ export default function Home() {
 
       <main className="flex flex-col items-center w-full">
         {/* HERO */}
-        <section className="w-full max-w-[1280px] mx-auto px-4 pt-24 pb-20 flex flex-col md:flex-row items-center gap-12 relative">
+        <section id="hero" className="w-full max-w-[1280px] mx-auto px-4 pt-24 pb-20 flex flex-col md:flex-row items-center gap-12 relative">
           <div className="flex-1 text-left z-10 w-full">
             <Reveal delay={0.1}><Badge className="mb-6 border-primary/30 text-primary" showDot>Private Beta — we&apos;re still slightly haunted ourselves</Badge></Reveal>
             <Reveal delay={0.2}>
@@ -662,7 +815,7 @@ export default function Home() {
         </section>
 
         {/* CI/CD */}
-        <section className="w-full border-t border-[#30363d] bg-[#161b22] py-24">
+        <section id="cicd" className="w-full border-t border-[#30363d] bg-[#161b22] py-24">
           <div className="max-w-[1280px] mx-auto px-4 flex flex-col lg:flex-row gap-12 items-start">
             <Reveal>
               <div className="w-full lg:w-[380px] shrink-0">
@@ -683,12 +836,21 @@ export default function Home() {
       </main>
 
       <footer className="w-full border-t border-[#30363d] bg-[#010409] py-12">
-        <div className="max-w-[1280px] mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-[#484f58]">
-            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" className="opacity-50"><path d="M16 2C10.477 2 6 6.477 6 12v14l3-3 3 3 3-3 3 3 3-3 3 3V12c0-5.523-4.477-10-10-10z" fill="currentColor" /><circle cx="12" cy="13" r="2" fill="hsl(var(--background))" /><circle cx="20" cy="13" r="2" fill="hsl(var(--background))" /></svg>
-            <span className="text-[12px]">© 2026 Phantom AI — Built by ghosts, for ghosts. ☠️</span>
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
+            <div className="flex items-center gap-2 text-[#484f58]">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none" className="opacity-50"><path d="M16 2C10.477 2 6 6.477 6 12v14l3-3 3 3 3-3 3 3 3-3 3 3V12c0-5.523-4.477-10-10-10z" fill="currentColor" /><circle cx="12" cy="13" r="2" fill="hsl(var(--background))" /><circle cx="20" cy="13" r="2" fill="hsl(var(--background))" /></svg>
+              <span className="text-[12px]">© 2026 Phantom AI — Built by ghosts, for ghosts. ☠️</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="https://twitter.com/tryphantom" target="_blank" rel="noopener noreferrer" className="text-[#484f58] hover:text-[#c9d1d9] transition-colors text-xs flex items-center gap-1">Twitter/X <ExternalLink className="w-3 h-3" /></a>
+              <a href="https://github.com/phantom-ai" target="_blank" rel="noopener noreferrer" className="text-[#484f58] hover:text-[#c9d1d9] transition-colors text-xs flex items-center gap-1">GitHub <ExternalLink className="w-3 h-3" /></a>
+              <span className="text-[#30363d]">|</span>
+              <a href="#" className="text-[#484f58] hover:text-[#c9d1d9] transition-colors text-xs">Privacy</a>
+              <a href="#" className="text-[#484f58] hover:text-[#c9d1d9] transition-colors text-xs">Terms</a>
+            </div>
           </div>
-          <p className="text-[11px] text-[#30363d] italic">Made with insomnia and an unreasonable amount of espresso.</p>
+          <p className="text-[11px] text-[#30363d] italic text-center md:text-left">Made with insomnia and an unreasonable amount of espresso.</p>
         </div>
       </footer>
 
@@ -715,24 +877,34 @@ export default function Home() {
               </div>
               <div className="max-h-[350px] overflow-y-auto p-2">
                 <div className="px-4 py-2 mt-1 text-[11px] font-semibold text-[#8b949e] uppercase tracking-wider font-mono">Quick Actions</div>
-                <button onClick={() => { setShowCmdk(false); document.getElementById("waitlist-input")?.focus(); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="w-full text-left flex items-center justify-between px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors group"><div className="flex items-center gap-3"><Zap className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" /> Join Private Beta Waitlist</div><kbd className="hidden group-hover:block font-mono text-[10px] text-[#8b949e]">↵ Enter</kbd></button>
-                <button onClick={() => { setShowCmdk(false); navigator.clipboard.writeText("https://phantom.ai"); showToast("URL copied to clipboard", "success"); }} className="w-full text-left flex items-center justify-between px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors group"><div className="flex items-center gap-3"><Layers className="w-4 h-4 text-[#a5d6ff] group-hover:scale-110 transition-transform" /> Copy Share Link</div><kbd className="hidden group-hover:block font-mono text-[10px] text-[#8b949e]">↵ Enter</kbd></button>
+                <button onClick={() => { setShowCmdk(false); document.getElementById("waitlist-input")?.focus(); document.getElementById("hero")?.scrollIntoView({ behavior: "smooth" }); }} className="w-full text-left flex items-center justify-between px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors group"><div className="flex items-center gap-3"><Zap className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" /> Join Private Beta Waitlist</div><kbd className="hidden group-hover:block font-mono text-[10px] text-[#8b949e]">↵ Enter</kbd></button>
+                <button onClick={() => { setShowCmdk(false); navigator.clipboard.writeText("https://tryphantom.dev"); showToast("URL copied to clipboard", "success"); }} className="w-full text-left flex items-center justify-between px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors group"><div className="flex items-center gap-3"><Layers className="w-4 h-4 text-[#a5d6ff] group-hover:scale-110 transition-transform" /> Copy Share Link</div><kbd className="hidden group-hover:block font-mono text-[10px] text-[#8b949e]">↵ Enter</kbd></button>
                 
                 <div className="px-4 py-2 mt-2 text-[11px] font-semibold text-[#8b949e] uppercase tracking-wider font-mono">Navigation</div>
-                <button onClick={() => { setShowCmdk(false); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }} className="w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors"><div className="flex items-center gap-3"><Terminal className="w-4 h-4 text-[#d2a8ff]" /> View CI/CD Integration</div></button>
-                <button onClick={() => { setShowCmdk(false); window.scrollTo({ top: document.body.scrollHeight/2, behavior: "smooth" }); }} className="w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors"><div className="flex items-center gap-3"><Cpu className="w-4 h-4 text-[#3fb950]" /> Configure Agent Persona</div></button>
+                <button onClick={() => { setShowCmdk(false); document.getElementById("cicd")?.scrollIntoView({ behavior: "smooth" }); }} className="w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors"><div className="flex items-center gap-3"><Terminal className="w-4 h-4 text-[#d2a8ff]" /> View CI/CD Integration</div></button>
+                <button onClick={() => { setShowCmdk(false); document.getElementById("customizer")?.scrollIntoView({ behavior: "smooth" }); }} className="w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-[#21262d] text-[#c9d1d9] hover:text-white transition-colors"><div className="flex items-center gap-3"><Cpu className="w-4 h-4 text-[#3fb950]" /> Configure Agent Persona</div></button>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-33.333%)); } }
-        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-6px) rotate(1deg); } 75% { transform: translateY(-3px) rotate(-1deg); } }
-        @keyframes glitch { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
-        @keyframes glow-pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); } }
-      ` }} />
+      {/* BACK TO TOP BUTTON */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0, y: 20 }}
+            transition={{ type: "spring", bounce: 0.5 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 left-6 z-50 w-12 h-12 rounded-full bg-[#161b22] border border-[#30363d] flex items-center justify-center text-[#8b949e] hover:text-primary hover:border-primary/40 hover:shadow-[0_0_20px_-5px_rgba(234,88,12,0.3)] transition-all duration-300 group"
+            aria-label="Back to top"
+          >
+            <ArrowUp className="w-5 h-5 group-hover:animate-bounce" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

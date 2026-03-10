@@ -6,6 +6,16 @@ const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60_000;
 
+// Cleanup expired rate limit entries every 60s to prevent memory leaks
+if (typeof globalThis !== "undefined") {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of rateLimitMap.entries()) {
+      if (now > entry.resetAt) rateLimitMap.delete(key);
+    }
+  }, RATE_WINDOW_MS);
+}
+
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
@@ -47,16 +57,36 @@ function sanitizeEmail(raw: unknown): string | null {
   return trimmed;
 }
 
+/* ─── Allowed Origins ─── */
+const ALLOWED_ORIGINS = new Set([
+  "https://tryphantom.dev",
+  "https://www.tryphantom.dev",
+  "http://localhost:3000",
+]);
+
 /* ─── Security Headers ─── */
 const SECURE_HEADERS = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Content-Security-Policy": "default-src 'self'; img-src 'self' https://upload.wikimedia.org; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
 };
+
+/* ─── Cache CREATE TABLE (once per cold start) ─── */
+let tableCreated = false;
 
 /* ─── POST handler ─── */
 export async function POST(request: NextRequest) {
   try {
+    // Origin validation
+    const origin = request.headers.get("origin");
+    if (origin && !ALLOWED_ORIGINS.has(origin)) {
+      return NextResponse.json(
+        { error: "Forbidden" },
+        { status: 403, headers: SECURE_HEADERS }
+      );
+    }
+
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       request.headers.get("x-real-ip") ??
@@ -103,14 +133,17 @@ export async function POST(request: NextRequest) {
 
     const sql = neon(dbUrl);
 
-    // Auto-create table + insert in sequence
-    await sql`
-      CREATE TABLE IF NOT EXISTS waitlist (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(254) UNIQUE NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW()
-      )
-    `;
+    // Auto-create table only on first cold-start request
+    if (!tableCreated) {
+      await sql`
+        CREATE TABLE IF NOT EXISTS waitlist (
+          id SERIAL PRIMARY KEY,
+          email VARCHAR(254) UNIQUE NOT NULL,
+          created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+      `;
+      tableCreated = true;
+    }
 
     await sql`
       INSERT INTO waitlist (email) VALUES (${email})
