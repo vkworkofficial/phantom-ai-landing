@@ -41,3 +41,17 @@ npm-debug.log*
 # Misc
 *.tgz
 .vercel
+
+# Project Specific (Internal)
+research_vault/
+backups/
+branding/
+docs/
+scripts/
+yc.svg
+board_meeting_notes.md
+audit_report.md
+walkthrough.md
+task.md
+implementation_plan.md
+production_requirements.md
