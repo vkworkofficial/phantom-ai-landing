@@ -1,0 +1,15 @@
+{
+  "name": "simulax",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered UX simulation infrastructure — Load testing for human behavior",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && uvicorn main:app --reload",
+    "build": "cd frontend && npm run build",
+    "test": "cd frontend && npm test && cd ../backend && python -m pytest",
+    "lint": "cd frontend && npm run lint"
+  },
+  "author": "Vedant Kumar",
+  "license": "UNLICENSED"
+}
