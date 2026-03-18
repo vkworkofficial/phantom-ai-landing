@@ -41,14 +41,16 @@ npm-debug.log*
 # Misc
 *.tgz
 .vercel
+venv_new/
 
 # Project Specific (Internal)
 research_vault/
 backups/
-branding/
-docs/
-scripts/
+# essential monorepo docs and scripts are now tracked
+# docs/
+# scripts/
 yc.svg
+a16z.svg
 board_meeting_notes.md
 audit_report.md
 walkthrough.md

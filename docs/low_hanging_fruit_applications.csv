@@ -1,0 +1,10 @@
+Priority,Category,Program Name,Description,Link,Status,Notes
+Critical,Infrastructure,Microsoft Founders Hub,"Up to $150k Azure credits, OpenAI credits, fast approval",https://startups.microsoft.com/,Not Started,CTO: Essential for fallback LLM scaling. Open to unbacked startups.
+Critical,Infrastructure,AWS Activate (Founders Tier),"$1000 in credits, immediate approval for self-funded",https://aws.amazon.com/activate/,Not Started,CTO: Need this for container orchestration if GCP limits us.
+High,Accelerator,Alchemist Accelerator,"B2B focused, remote-friendly, strong enterprise intro network",https://alchemistaccelerator.com/,Not Started,Rolling applications. Perfect fit for devtools.
+High,Accelerator,Techstars,"Multiple specialized programs (e.g., Web3, Enterprise), massive network",https://www.techstars.com/,Not Started,Check rolling deadlines for specific cities/verticals.
+High,Directory,Product Hunt,"The premier launchpad for devtools and SaaS",https://www.producthunt.com/,Not Started,CMO: Needs a highly coordinated launch week.
+Medium,Directory,BetaList,"Directory for startups in beta, good for early early adopters",https://betalist.com/,Not Started,CMO: Low effort, decent backlink and early trickle traffic.
+Medium,Directory,There's An AI For That,"Largest AI directory, high domain authority",https://theresanaiforthat.com/,Not Started,CMO: Must apply to capture search intent for AI UX testing.
+Medium,Grant,AWS Imagine Grant,"Non-dilutive funding, often open to innovative tech applications",https://aws.amazon.com/stateandlocal/imagine-grant/,Not Started,Check current cycle. Lower probability but zero equity.
+Low,Accelerator,TinySeed,"B2B SaaS focused, year-long remote program",https://tinyseed.com/,Closed,Reopens Sept 2026. Join mailing list.

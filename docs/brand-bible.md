@@ -10,8 +10,18 @@ However, the reality of both B2B SaaS and B2C consumer tech in 2026 is that **tr
 
 Founders are stuck. They sprint to launch, but then waste hours manually clicking through their own staging environments, terrified of a broken checkout flow, or worse, they launch and burn their early adopters.
 
-## The Phantom Solution: Simulating The Human Target Group
-**Phantom is not a basic bot-driven load tester. It is the missing cognitive data layer between staging and reality.**
+## The Phantom Brand Bible (S26 Edition)
+
+Phantom is an industrial-grade engineering tool. Branding should reflect reliability, forensic detail, and "synthetic reality."
+
+## Core Assets
+Official high-fidelity assets are located in [/branding/assets/](file:///e:/Data/Projects/Y%20Combinator/1/branding/assets/).
+- **The Mark**: The original Phantom Ghost Mark (Ethereal Purple Gradient).
+- **Typography**: Geist Sans & Mono.
+- **Color Palette**: 
+  - Substrate Black: `#0d1117`
+  - Phantom Orange: `#ea580c`
+  - Ethereal Purple: `#8a2be2`
 
 We provide a god-mode simulation of your actual Target Group (TG's) behaviors. Instead of a "swarm" of unstructured bots running headless scripts, Phantom deploys fully realized "Ghosts"—autonomous synthetic user profiles that mimic the precise demographic, behavioral, and psychological patterns of your B2C teenagers, B2B enterprise buyers, or power users.
 

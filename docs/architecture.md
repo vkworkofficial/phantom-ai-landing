@@ -18,6 +18,10 @@ The brain of the operation. Built in Python using FastAPI.
   1. A primary agent encounters friction (e.g., rage click, layout shift).
   2. The orchestrator dispatches $N$ verification agents with slightly jittered heuristics.
   3. If $\ge 85\%$ of verifiers reproduce the fault, it counts as a Confirmed Bug.
+- **Cognitive Narrative Engine**: Agents translate raw DOM metrics into persona-driven intent streams, flagging "Aha! Moments" (Value Discovery) via semantic keyword analysis.
+
+### 2.1 The Immortal Substrate
+To ensure zero data loss during high-stakes board reviews, we've implemented a local JSON-based persistence layer. Séances are no longer transient; they are archived as immutable records.
 
 ### 3. Chromium Headless Pool (`infra/Browserless`)
 Phantom executes interactions using Playwright connected to a remote Browserless/Chromium grid. 
@@ -43,5 +47,6 @@ sequenceDiagram
     PlaywrightPool-->>FastAPI: Friction Detected (Rage Click)
     FastAPI->>PlaywrightPool: Dispatch Consensus Verifiers
     PlaywrightPool-->>FastAPI: 0.91 Consistency Reached
-    FastAPI->>FastAPI: Save to DB & Auto-file Bug
+    FastAPI->>FastAPI: Save to Immortal Substrate (JSON)
+    FastAPI->>FastAPI: Tag Aha! Moments & PMF Score
 ```

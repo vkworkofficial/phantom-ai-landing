@@ -50,13 +50,10 @@ async def websocket_endpoint(websocket: WebSocket, sim_id: str, token: str = Que
 
     await manager.connect(websocket, sim_id)
     
-    # Trigger the simulation loop for this newly connected client
-    from app.engine.orchestrator import HauntOrchestrator
-    orchestrator = HauntOrchestrator("https://staging.your-app.com", 50, ["B2B Executive", "Gen-Z Consumer"])
-    orchestrator.sim_id = sim_id
+    await manager.connect(websocket, sim_id)
     
-    import asyncio
-    asyncio.create_task(orchestrator.run_simulation())
+    # Simulation is triggered via BackgroundTasks in simulations.py route
+    # WebSocket now serves as a live telemetry pipe for the simulation room
     
     try:
         # Keep connection alive

@@ -27,7 +27,11 @@ async def start_simulation(request: SimulationRequest, background_tasks: Backgro
         friction_points=[],
         conversion_blockers=[],
         confusion_score=0.0,
-        created_at=datetime.now(timezone.utc)
+        created_at=datetime.now(timezone.utc),
+        # Persist metadata for websocket recovery
+        personas=request.personas,
+        industry=request.industry,
+        primary_goal=request.primary_goal
     )
     simulation_storage.save_report(report)
     

@@ -67,10 +67,18 @@ function SimulationContent({ params }: { params: { id: string } }) {
   }, [thoughts]);
 
   useEffect(() => {
-    // Correctly construct the WebSocket URL by ensuring we don't duplicate /api/v1
-    const baseApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
-    const wsBase = baseApiUrl.replace(/^http/, 'ws');
-    const wsUrl = `${wsBase}/ws/simulations/${params.id}${seanceToken ? `?token=${seanceToken}` : ''}`;
+    // Construct the WebSocket URL. If NEXT_PUBLIC_API_URL is missing, default to relative API (Vercel proxy)
+    const baseApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    let wsUrl: string;
+
+    if (baseApiUrl) {
+        const wsBase = baseApiUrl.replace(/^http/, 'ws');
+        wsUrl = `${wsBase}/ws/simulations/${params.id}${seanceToken ? `?token=${seanceToken}` : ''}`;
+    } else {
+        // Fallback for Vercel production deployment
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        wsUrl = `${protocol}//${window.location.host}/api/v1/ws/simulations/${params.id}${seanceToken ? `?token=${seanceToken}` : ''}`;
+    }
         
     const ws = new WebSocket(wsUrl);
 

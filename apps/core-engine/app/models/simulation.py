@@ -68,4 +68,8 @@ class SeanceReport(BaseModel):
     heatmap_data: List[HeatmapPoint] = []
     created_at: datetime
     seance_token: Optional[str] = None
+    # Persisted metadata for session recovery
+    personas: Optional[List[Union[str, PersonaRazor]]] = None
+    industry: Optional[str] = None
+    primary_goal: Optional[str] = None
 

@@ -22,6 +22,10 @@ class DBSeanceReport(Base):
     telemetry = Column(JSON, nullable=True)
     heatmap_data = Column(JSON, default=[])
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    # Metadata for websocket orchestration
+    personas = Column(JSON, nullable=True)
+    industry = Column(String, nullable=True)
+    primary_goal = Column(String, nullable=True)
 
 class PostgresStorage:
     def __init__(self, db_url: str):

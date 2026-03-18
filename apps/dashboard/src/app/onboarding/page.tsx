@@ -31,10 +31,49 @@ export default function OnboardingPage() {
 
   const [loading, setLoading] = useState(false);
   const [deployStatus, setDeployStatus] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleNext = () => setStep(prev => prev + 1);
+  const validateUrl = (testUrl: string) => {
+    try {
+      const parsed = new URL(testUrl);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+  const handleNext = () => {
+    setError(null);
+    if (step === 2 && (!url || !validateUrl(url))) {
+      setError('Please enter a valid URL (e.g., https://example.com)');
+      return;
+    }
+    if (step === 3 && (!industry || !primaryGoal)) {
+      setError('Both Industry and Primary Goal are required.');
+      return;
+    }
+    setStep(prev => prev + 1);
+  };
 
   const handleLaunch = async () => {
+    setError(null);
+    
+    // Final validation sweep
+    if (!url || !validateUrl(url)) {
+      setError('Invalid Target URL.');
+      return;
+    }
+    
+    // Numeric Razor Validation
+    if (razor.baseLatency < 0 || razor.baseLatency > 2000) {
+      setError('Base Latency must be between 0 and 2000ms.');
+      return;
+    }
+    if (razor.wpm < 5 || razor.wpm > 200) {
+      setError('WPM must be between 5 and 200.');
+      return;
+    }
+
     setLoading(true);
     setDeployStatus('Initializing Substrate...');
     
@@ -149,11 +188,15 @@ export default function OnboardingPage() {
                   <input 
                      type="url" 
                      value={url}
-                     onChange={(e) => setUrl(e.target.value)}
+                     onChange={(e) => {
+                       setUrl(e.target.value);
+                       setError(null);
+                     }}
                      placeholder="https://staging.your-app.com/signup"
-                     className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-4 text-lg text-white placeholder:text-[#484f58] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner transition-all font-mono"
+                     className={`w-full bg-[#0d1117] border ${error ? 'border-red-500' : 'border-[#30363d]'} rounded-xl px-4 py-4 text-lg text-white placeholder:text-[#484f58] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner transition-all font-mono`}
                      autoFocus
                   />
+                  {error && <p className="text-red-500 text-xs font-mono">{error}</p>}
                 </div>
                 <button 
                   onClick={handleNext} 
@@ -186,8 +229,11 @@ export default function OnboardingPage() {
                   <label className="text-xs font-bold text-[#8b949e] uppercase tracking-widest">Industry Vertical</label>
                   <select 
                     value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
-                    className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[#8a2be2] transition-all appearance-none text-sm font-mono"
+                    onChange={(e) => {
+                      setIndustry(e.target.value);
+                      setError(null);
+                    }}
+                    className={`w-full bg-[#0d1117] border ${error && !industry ? 'border-red-500' : 'border-[#30363d]'} rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[#8a2be2] transition-all appearance-none text-sm font-mono`}
                   >
                     <option value="">Select Domain...</option>
                     <option value="SaaS / B2B">SaaS / B2B</option>
@@ -203,10 +249,14 @@ export default function OnboardingPage() {
                   <input 
                     type="text" 
                     value={primaryGoal}
-                    onChange={(e) => setPrimaryGoal(e.target.value)}
+                    onChange={(e) => {
+                      setPrimaryGoal(e.target.value);
+                      setError(null);
+                    }}
                     placeholder="e.g. Complete Sign Up Flow"
-                    className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-4 text-white placeholder:text-[#484f58] focus:outline-none focus:border-[#8a2be2] transition-all text-sm font-mono"
+                    className={`w-full bg-[#0d1117] border ${error && !primaryGoal ? 'border-red-500' : 'border-[#30363d]'} rounded-xl px-4 py-4 text-white placeholder:text-[#484f58] focus:outline-none focus:border-[#8a2be2] transition-all text-sm font-mono`}
                   />
+                  {error && <p className="text-red-500 text-xs font-mono">{error}</p>}
                 </div>
 
                 <button 
