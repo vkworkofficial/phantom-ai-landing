@@ -73,11 +73,11 @@ function SimulationContent({ params }: { params: { id: string } }) {
 
     if (baseApiUrl) {
         const wsBase = baseApiUrl.replace(/^http/, 'ws');
-        wsUrl = `${wsBase}/ws/simulations/${params.id}${seanceToken ? `?token=${seanceToken}` : ''}`;
+        wsUrl = `${wsBase}/ws/${params.id}${seanceToken ? `?token=${seanceToken}` : ''}`;
     } else {
         // Fallback for Vercel production deployment
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        wsUrl = `${protocol}//${window.location.host}/api/v1/ws/simulations/${params.id}${seanceToken ? `?token=${seanceToken}` : ''}`;
+        wsUrl = `${protocol}//${window.location.host}/api/v1/ws/${params.id}${seanceToken ? `?token=${seanceToken}` : ''}`;
     }
         
     const ws = new WebSocket(wsUrl);
