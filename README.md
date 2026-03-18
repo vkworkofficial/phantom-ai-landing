@@ -1,58 +1,62 @@
-# Phantom AI: Load Testing for Human Behavior
+# Phantom AI: Infrastructure for Human Behavior Simulation
 
-> **Achieve PMF Velocity before your first user signup. The first Synthetic Reality substrate for high-growth consumer and B2B founders.**
+Phantom provides the technical substrate for simulating autonomous, high-fidelity AI personas within a controlled environment. By injecting cognitive "Ghosts" into a target application, founders and engineers can identify UX friction, retention blockers, and conversion anomalies before the first real user signup.
 
-Phantom is the world's first **Synthetic Reality Engine**. We inject fully autonomous, high-fidelity AI "Ghosts" into your application to identify exactly where users lose intent, encounter cognitive friction, or rage-click—generating a mathematical **Sean Ellis PMF Score** *before* you launch.
+## The Problem: The Beta Testing Death Spiral
+Traditional feedback loops—focus groups, beta tests, and manual QA—are too slow, biased, and cost-prohibitive for high-velocity startups. Launching without behavior-driven validation leads to high churn and wasted engineering cycles.
 
----
+## The Solution: Synthetic Reality
+Phantom creates a deterministic simulation environment where multi-agent consensus models predict user behavior with high statistical accuracy.
 
-## 🦾 The Vision: Empathy at Scale
-Phantom allows founders to bypass the "Beta Testing Death Spiral." Instead of waiting weeks for biased feedback from focus groups, Phantom generates thousands of hours of user behavior in seconds.
-
-- **Cognitive Heatmapping**: Visualize exactly where agents "lose the scent" of your value proposition.
-- **PMF Readiness Matrix**: A proprietary consensus model that predicts retention vs. friction with 94% accuracy.
-- **A/B Strain Analysis**: Compare variants based on *synthetic user frustration* rather than just vanity click-through rates.
-
----
-
-## 🏛 The Substrate (Monorepo Architecture)
-
-Phantom is built as a hardened, production-grade monorepo:
-
-- **`apps/dashboard`**: The Command Center. Built with Next.js 14, TailwindCSS (V4), and Framer Motion. Handles live telemetry visualization and séance orchestration.
-- **`apps/core-engine`**: The Orchestration Substrate. Built with FastAPI and Python. Manages asynchronous LLM cognitive inference loops and Ghost deployment.
-- **`docs/`**: Technical whitepapers on multi-agent consensus, cognitive behavioral heuristics, and YC S26 strategy.
-- **`infra/`**: IaC for zero-downtime Vercel and Cloud Run/Docker deployments.
+- **Cognitive Event Capture**: Real-time telemetry monitoring of synthetic agent interactions.
+- **PMF Readiness Scoring**: Heuristic-based evaluation of product-market fit velocity.
+- **A/B Behavior Analysis**: Side-by-side comparison of product variants based on synthetic friction.
 
 ---
 
-## 🚀 Speed-to-Séance (Local Development)
+## Technical Architecture
 
-### 1. The Core Engine (Backend)
+Phantom is organized as a scalable monorepo for maximum engineering discipline:
+
+### apps/dashboard
+The centralized command plane for simulation orchestration and telemetry visualization.
+- **Stack**: Next.js, Framer Motion, Tailwind (V4), Lucide.
+- **Core Logic**: Live WebSocket telemetry pipes and Séance lifecycle management.
+
+### apps/core-engine
+The orchestration engine responsible for cognitive agent inference and browser deployment.
+- **Stack**: FastAPI (Python), Playwright, Google Gemini Pro.
+- **Core Logic**: Heuristic analysis loops, multi-agent consensus, and session persistence.
+
+---
+
+## Getting Started
+
+### Local Engine Setup
 ```bash
 cd apps/core-engine
 python -m venv venv
-# On Windows: venv\Scripts\activate
+# Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python -m uvicorn app.main:app --port 8000
 ```
 
-### 2. The Dashboard (Frontend)
+### Local Dashboard Setup
 ```bash
 cd apps/dashboard
 npm install
 npm run dev
 ```
-*Access the control plane at http://localhost:3000*
 
 ---
 
-## 📖 The "Vibe-Killer" Manual
-- **[Brand Bible](./docs/brand-bible.md)**: Logic on "Synthetic Reality" and "Persona Razor" positioning.
-- **[Architecture](./docs/architecture.md)**: Deep dive into the Cognitive Event Substrate.
-- **[API Contract](./docs/api-reference.md)**: Node-to-Ghost telemetry specifications.
+## Technical Documentation
+Detailed specifications for the simulation protocols and multi-agent consensus can be found in the following locations:
+- **Architecture Overview**: `docs/architecture.md`
+- **Simulation Protocols**: `docs/api-reference.md`
+- **Cognitive Heuristics**: `docs/heuristics.md`
 
-## 📈 Roadmap: The Path to Series A
-1. **[Q3] Recursive UX**: Agents that automatically fix UI bugs via GitHub PR suggestions.
-2. **[Q4] The Global Latency Shadow**: Simulate geographically-aware cognitive delay in human behavior.
-3. **[Future] The Sovereign Substrate**: 1M+ agents behaving as a decentralized prediction market for UX and retention.
+## Engineering Roadmap
+- **Q3**: Automated UI remediation via agent-driven pull requests.
+- **Q4**: Geographically-distributed latency simulation for edge behavior analysis.
+- **Future**: Massive multi-cloud ghost deployment for 1M+ parallel behavior simulations.

@@ -43,12 +43,13 @@ npm-debug.log*
 .vercel
 venv_new/
 
-# Project Specific (Internal)
+# Project Specific (Internal) - Aggressively Exclude
 research_vault/
 backups/
-# essential monorepo docs and scripts are now tracked
-# docs/
-# scripts/
+docs/*
+!docs/architecture.md
+!docs/api-reference.md
+!docs/heuristics.md
 yc.svg
 a16z.svg
 board_meeting_notes.md
@@ -57,3 +58,12 @@ walkthrough.md
 task.md
 implementation_plan.md
 production_requirements.md
+pullpush.json
+*.db
+*.sqlite
+*.log
+*.tmp
+test_results.txt
+.DS_Store
+.env*
+!.env.example
