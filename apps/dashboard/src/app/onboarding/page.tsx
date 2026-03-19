@@ -27,7 +27,7 @@ export default function OnboardingPage() {
   
   // Persona Razor State - Hardened Matrix
   const [razor, setRazor] = useState({
-    codename: 'ghost-beta-substrate',
+    codename: 'phantom-ghost-node-01',
     region: 'US-EAST-1 (VPC)',
     baseLatency: 150,
     jitter: 25,
@@ -88,7 +88,7 @@ export default function OnboardingPage() {
     setDeployStatus('Initializing Substrate...');
     
     try {
-      // Phase 17: Actual API Orchestration
+      // Internal Substrate Orchestration
       const response = await fetch('/api/v1/simulations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -203,7 +203,7 @@ export default function OnboardingPage() {
                        setUrl(e.target.value);
                        setError(null);
                      }}
-                     placeholder="https://staging.your-app.com/signup"
+                     placeholder="https://forensic.phantom.sh/signup"
                      className={`w-full bg-[#0d1117] border ${error ? 'border-red-500' : 'border-[#30363d]'} rounded-xl px-4 py-4 text-lg text-white placeholder:text-[#484f58] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner transition-all font-mono`}
                      autoFocus
                   />

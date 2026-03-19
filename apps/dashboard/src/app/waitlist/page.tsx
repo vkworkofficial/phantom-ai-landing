@@ -26,7 +26,7 @@ export default function WaitlistPage() {
         body: JSON.stringify({ email, website: domain }) // honeypot checks are on 'website' in API
       });
     } catch (err) {
-      console.warn("[Forensic] Handshake failure, but simulation complete.", err);
+      console.error("[Phantom Substrate] Handshake failure during forensic sync.", err);
     }
   };
 
@@ -63,7 +63,7 @@ export default function WaitlistPage() {
                     <input 
                       type="email" 
                       required
-                      placeholder="founder@company.com"
+                      placeholder="founder@tryphantom.dev"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all text-white placeholder-[#30363d]"
@@ -74,7 +74,7 @@ export default function WaitlistPage() {
                     <input 
                       type="text" 
                       required
-                      placeholder="app.company.com"
+                      placeholder="forensic.phantom.sh"
                       value={domain}
                       onChange={(e) => setDomain(e.target.value)}
                       className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all text-white placeholder-[#30363d]"

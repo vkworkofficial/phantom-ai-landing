@@ -16,44 +16,10 @@ from app.core.logging import substrate_logger
 from app.api.deps import get_current_ghost
 from app.api.errors import PhantomBaseException, phantom_exception_handler
 from app.services.database import simulation_storage
+from app.middleware.security import StrictSecuritySubstrateMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
 
-class RateLimitMiddleware:
-    def __init__(self, app):
-        self.app = app
-        # Dynamic limit from settings with local/dev override support
-        self.default_limit = settings.RATE_LIMIT 
-        self.window = 60
-
-    async def __call__(self, scope, receive, send):
-        if scope["type"] != "http":
-            return await self.app(scope, receive, send)
-
-        request = Request(scope)
-        client_ip = request.client.host
-        current_time = time.time()
-
-        # Check for individual ghost key rate limit overrides (future-proofing)
-        # For now, we use a simple environment-controlled threshold
-        limit = int(os.getenv("PHANTOM_RATE_LIMIT_OVERRIDE", self.default_limit))
-
-        # Prune expired points for this IP from app state
-        points_map = scope["app"].state.rate_limit_points
-        points_map[client_ip] = [t for t in points_map[client_ip] if t > current_time - self.window]
-        
-        if len(points_map[client_ip]) >= limit:
-            substrate_logger.warning(f"Rate limit exceeded for IP: {client_ip} on Forensic Substrate (Threshold: {limit}).")
-            response = JSONResponse(
-                status_code=429,
-                content={
-                    "detail": "Rate limit exceeded on Forensic Substrate. Please decelerate.",
-                    "limit": limit,
-                    "window": self.window
-                }
-            )
-            return await response(scope, receive, send)
-
-        points_map[client_ip].append(current_time)
-        return await self.app(scope, receive, send)
+# Rate Limiting & Security logic has been moved to dedicated middleware files.
 
 from contextlib import asynccontextmanager
 
@@ -93,7 +59,6 @@ app.state.rate_limit_points = defaultdict(list)
 app.add_exception_handler(PhantomBaseException, phantom_exception_handler)
 
 # Rate Limiting & Security Substrate
-from app.middleware.security import StrictSecuritySubstrateMiddleware
 app.add_middleware(StrictSecuritySubstrateMiddleware)
 app.add_middleware(RateLimitMiddleware)
 

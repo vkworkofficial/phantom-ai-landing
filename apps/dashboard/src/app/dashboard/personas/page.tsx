@@ -220,7 +220,7 @@ export default function PersonasManagement() {
                    <div className="relative">
                      <textarea 
                         rows={3}
-                        placeholder="e.g. Low patience B2C teen, high bounce probability..."
+                        placeholder="e.g. High-intent B2B decision maker with low latency tolerance..."
                         className="w-full bg-[#111114] border border-[#2d2d30] rounded pl-4 pr-12 py-3 text-xs font-mono text-[#c9d1d9] focus:outline-none focus:border-[#ea580c] resize-none transition-colors placeholder:text-[#5c646c]"
                      />
                      <button className="absolute bottom-3 right-3 p-2 bg-[#ea580c] text-white rounded hover:bg-[#ff7a2d] transition-colors">
@@ -247,7 +247,7 @@ export default function PersonasManagement() {
                       <div className="grid grid-cols-2 gap-5">
                         <div className="space-y-2">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-[#c9d1d9]">Profile Codename</label>
-                          <input type="text" placeholder="tgt-vp-eng" className="w-full bg-[#0a0a0c] border border-[#2d2d30] rounded text-xs px-4 py-2.5 text-[#ea580c] font-mono focus:border-[#ea580c] focus:outline-none transition-colors placeholder:text-[#5c646c]" />
+                          <input type="text" placeholder="phantom-node-exec" className="w-full bg-[#0a0a0c] border border-[#2d2d30] rounded text-xs px-4 py-2.5 text-[#ea580c] font-mono focus:border-[#ea580c] focus:outline-none transition-colors placeholder:text-[#5c646c]" />
                         </div>
                         <div className="space-y-2">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-[#c9d1d9]">Endpoint Region</label>

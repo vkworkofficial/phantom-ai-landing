@@ -117,7 +117,7 @@ export function CustomizeGhost() {
                 {age === "45-54" && (<g><path d="M 47 64 L 53 64 L 51 77 L 50 80 L 49 77 Z" fill="#30363d" /><path d="M 47 64 L 50 67 L 53 64 Z" fill="#161b22" /></g>)}
                 {age === "55+" && !chaosMode && (<g><path d="M 30 58 Q 40 55 46 62 Q 50 55 60 58" fill="none" stroke="#8b949e" strokeWidth="2" strokeLinecap="round" /><circle cx="61" cy="45" r="7" fill="none" stroke="#0d1117" strokeWidth="1.5" /><path d="M 68 45 C 75 45, 75 55, 70 60" fill="none" stroke="#e3b341" strokeWidth="1.5" /></g>)}
               </motion.g>
-              <text x="5" y="10" fill="#484f58" fontSize="6" fontStyle="italic">simulax_v5</text>
+              <text x="5" y="10" fill="#484f58" fontSize="6" fontStyle="italic">phantom_substrate_v1</text>
             </svg>
           </div>
           <div className="text-center w-full relative z-10">

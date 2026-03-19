@@ -152,7 +152,7 @@ function SimulationContent({ params }: SimulationViewProps) {
     agentsActive: 0, 
     consensus: 0,
     pmfScore: 0,
-    pmfCategory: 'TBD',
+    pmfCategory: 'Readying...',
     pmfRating: 0,
     isAB: searchParams.get('is_ab') === 'true',
     variantComparison: null
@@ -316,7 +316,7 @@ function SimulationContent({ params }: SimulationViewProps) {
               </span>
             )}
           </div>
-          <p className="text-[10px] text-[#8b949e] font-mono tracking-widest uppercase mt-1">Target: https://staging.your-app.com | Seance: 50 Ghosts</p>
+          <p className="text-[10px] text-[#8b949e] font-mono tracking-widest uppercase mt-1">Target: forensic.phantom.sh | Seance: 50 Ghosts</p>
         </div>
         <div className="flex gap-4">
           <button 

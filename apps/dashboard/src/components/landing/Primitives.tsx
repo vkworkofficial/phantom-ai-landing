@@ -21,7 +21,7 @@ export function Reveal({ children, delay = 0 }: { children: React.ReactNode; del
 /*  LOGO                                               */
 /* ═══════════════════════════════════════════════════ */
 
-export function SimulaxLogo({ className = "w-7 h-7" }: { className?: string }) {
+export function PhantomLogo({ className = "w-7 h-7" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 100 100" fill="none">
       <path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="hsl(var(--primary))" />

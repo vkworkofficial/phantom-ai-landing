@@ -6,7 +6,7 @@ import { Search, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Modular Components
-import { Reveal, SimulaxLogo, Button, Input, Badge } from "@/components/landing/Primitives";
+import { Reveal, PhantomLogo, Button, Input, Badge } from "@/components/landing/Primitives";
 import { HeroTerminalAnimation } from "@/components/landing/Terminal";
 import { CustomizeGhost } from "@/components/landing/Customizer";
 import { ArchitectureStack, AnimatedCodeSnippet } from "@/components/landing/Features";
@@ -76,7 +76,7 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2.5">
-              <SimulaxLogo />
+              <PhantomLogo />
               <span className="font-bold text-white tracking-tighter text-[22px]">Phantom AI</span>
             </div>
             <div className="hidden md:flex items-center gap-2 border border-[#3fb950]/30 bg-[#3fb950]/5 px-2.5 py-1 rounded-full text-[11px] font-mono text-[#3fb950] tracking-wide">
@@ -164,10 +164,10 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-12">
           <div className="col-span-2">
             <div className="flex items-center gap-2.5 mb-6">
-              <SimulaxLogo className="w-5 h-5" />
+              <PhantomLogo className="w-5 h-5" />
               <span className="font-bold text-white tracking-tighter text-[20px]">Phantom AI</span>
             </div>
-            <p className="text-[#8b949e] text-sm max-w-sm mb-8 leading-relaxed">Achieving PMF Velocity via high-fidelity synthetic user simulation. Substrate Protocol v4.2 hardened for enterprise scaling.</p>
+            <p className="text-[#8b949e] text-sm max-w-sm mb-8 leading-relaxed">Achieving PMF Velocity via high-fidelity synthetic user simulation. Substrate Protocol v4.3 hardened for enterprise scaling.</p>
             <div className="text-[11px] font-mono text-[#484f58] uppercase tracking-widest">© 2026 Phantom Substrate Protocol | Silicon Valley</div>
           </div>
           <div>
