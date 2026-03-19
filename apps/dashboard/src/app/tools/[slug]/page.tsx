@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Cpu, Globe, Rocket, Terminal, ArrowRight, Zap, Code } from 'lucide-react';
 import { getPSEOData, generatePSEOMetadata } from '@/lib/pseo-engine';
-import { SEO } from '@/components/seo/SEO';
 import { SchemaOrg } from '@/components/seo/SchemaOrg';
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
@@ -26,7 +25,6 @@ export default async function ToolPage(props: { params: Promise<{ slug: string }
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans selection:bg-primary/30">
-      <SEO title={title} description={description} />
       <SchemaOrg 
         type="Article" 
         data={{

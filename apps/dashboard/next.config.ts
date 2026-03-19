@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
   async rewrites() {
     return [
       {
@@ -8,6 +9,15 @@ const nextConfig: NextConfig = {
         destination: 'http://localhost:8000/api/v1/:path*',
       },
     ];
+  },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'phantom-ai.com',
+      },
+    ],
   },
 };
 

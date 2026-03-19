@@ -5,9 +5,11 @@ import path from 'path';
 import { ArrowLeft, Calendar, User, Clock, Share2, BookOpen, ArrowRight } from 'lucide-react';
 import { SEO } from '@/components/seo/SEO';
 import { SchemaOrg } from '@/components/seo/SchemaOrg';
+import { Metadata } from 'next';
+import { cache } from 'react';
 
-// Server Component helper
-async function getPost(slug: string) {
+// Memoized getter for metadata and rendering
+const getPost = cache(async (slug: string) => {
   const blogDir = path.join(process.cwd(), "src/content/blog");
   const filePath = path.join(blogDir, `${slug}.md`);
   
@@ -33,6 +35,29 @@ async function getPost(slug: string) {
     excerpt: excerptMatch ? excerptMatch[1] : '',
     category: categoryMatch ? categoryMatch[1] : 'Engineering',
     body
+  };
+});
+
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await props.params;
+  const post = await getPost(slug);
+  if (!post) return {};
+  
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: 'article',
+      publishedTime: post.date,
+      authors: [post.author],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+    }
   };
 }
 
@@ -69,13 +94,6 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans selection:bg-primary/30">
-      <SEO 
-        title={post.title} 
-        description={post.excerpt} 
-        author={post.author} 
-        date={post.date} 
-        article={true} 
-      />
       <SchemaOrg 
         type="Article" 
         data={{
@@ -162,7 +180,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
         <div className="mt-32 pt-16 border-t border-[#30363d]">
           <h3 className="text-[11px] font-bold text-[#484f58] uppercase tracking-[0.25em] mb-8">Continue the Forensic Trace</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {recentPosts.map(p => (
+            {recentPosts.map((p: { slug: string; title: string }) => (
               <Link key={p.slug} href={`/blog/${p.slug}`} className="group p-6 rounded-xl bg-[#161b22] border border-[#30363d] hover:border-primary/50 transition-all flex items-center justify-between">
                 <span className="text-white font-bold text-sm group-hover:text-primary transition-colors">{p.title}</span>
                 <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />

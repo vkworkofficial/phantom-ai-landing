@@ -5,8 +5,7 @@ from datetime import datetime, timezone
 from typing import List, Union, Optional
 from app.models.simulation import SimulationRequest, SeanceReport, HeatmapPoint
 from app.models.persona import PersonaRazor
-from app.engine.personas.b2b_exec import B2BExecutivePersona
-from app.engine.personas.gen_z_consumer import GenZConsumerPersona
+from app.engine.personas import get_persona_profile
 from app.services.database import simulation_storage
 
 class HauntOrchestrator:
@@ -103,17 +102,24 @@ class HauntOrchestrator:
                     soup = BeautifulSoup(content, "html.parser")
                     target_html_summary = f"Title: {soup.title.string if soup.title else 'Unknown'}\nContent: {soup.get_text()[:2000]}"
                     
-                    client = genai.Client(api_key=api_key)
-                    persona_context = f"Identity: User ({calibration_persona.age_range}, {calibration_persona.country}). Tech Savvy: {calibration_persona.tech_savviness}/100. Context: {self.industry}. Goal: {self.primary_goal}."
+                    # Forensic Persona Mapping
+                    if isinstance(calibration_persona, str):
+                        profile = get_persona_profile(calibration_persona)
+                    else:
+                        profile = calibration_persona # Fallback to raw object
+
+                    persona_context = f"Identity: {profile.name}. Description: {profile.description}. Technical Literacy: {profile.technical_literacy}/1.0. Patience Score: {profile.patience_score}/1.0. Context: {self.industry}. Goal: {self.primary_goal}."
                     
                     prompt = f"""
-                    Analyze this site: {self.target_url}. 
+                    Perform a high-fidelity forensic audit on this site: {self.target_url}. 
+                    You are simulating the persona below. Scrutinize the interface for cognitive friction, layout shifts, or 'Intent Fractures'.
+                    
                     Persona: {persona_context}.
-                    HTML Summary: {target_html_summary}.
+                    HTML Summary of current state: {target_html_summary}.
                     
                     Respond with a JSON object containing:
-                    1. 'thoughts': a list of 3 strings.
-                    2. 'disappointment_rating': an integer 1-10 (10 = absolute must-have).
+                    1. 'thoughts': a list of 3 strings representing the user's internal monologue while navigating.
+                    2. 'disappointment_rating': an integer 1-10 (10 = absolute must-have product; 1 = zero perceived value).
                     """
                     
                     response = await asyncio.to_thread(client.models.generate_content, model='gemini-1.5-flash', contents=prompt)
