@@ -7,21 +7,30 @@ excerpt: "Rage-clicking is a symptom, not a diagnosis. We dive into the heuristi
 
 # The Science of Rage-Click Detection
 
-A "Rage Click" is defined as a user clicking the same element 3+ times in under 300ms. It's the ultimate signal of user frustration.
+A "Rage Click" is the digital pulse of user frustration. Technically, it's defined as a user clicking the same element 3+ times in under 300ms. But while standard tools (Hotjar, Posthog) tell you *that* a rage click happened, they leave you guessing as to *why*.
 
-## The Forensic Ghost Advantage
-Standard analytics tools (Hotjar, FullStory) tell you *that* a rage click happened. Phantom tells you *why*.
+## The Forensic Advantage
 
-### Heuristic Tracing:
-Our **Forensic Ghost Engine** captures the entire state-tree leading up to the frustration event:
-- **Console Errors**: Was there a JavaScript exception blocking the handler?
-- **Network Latency**: Was the API response taking >2s?
-- **Layout Shift**: Did the button move 2px just as the ghost clicked?
+Phantom AI treats every rage click as a forensic event. Our **Forensic Ghost Engine** captures the entire application state-tree leading up to the trigger.
+
+### Heuristic Tracing
+
+When a Ghost encounters friction, we trace the interaction across three dimensions:
+
+- **State Desynchronization**: Did the UI state change after the click, but the DOM failed to reflect it?
+- **Network Latency Spikes**: Was the click handler waiting on an API call that timed out or returned a 500 error?
+- **Layout Instability**: Did a dynamic CSS selector move the button 5px to the left just as the cursor arrived?
 
 ### Spectral Heatmapping
-We don't just show dots on a screen. We show **Cognitive Drift**. Our heatmaps visualize the gap between where the user *wanted* to go and where the UI *forced* them to go.
+
+Traditional heatmaps show you where people click. Phantom's **Spectral Heatmaps** show you where people *wanted* to click but couldn't. By visualizing **Cognitive Drift**, we highlight the gap between user intent and interface response.
+
+> "Rage clicking is a symptom. Layout instability is the disease. Phantom is the cure." — *Phantom Engineering Lead*
 
 ### Automated Remediation
-Because our ghosts are programmatic, we can automatically test 5 variations of the button layout in parallel to find the one that kills the rage-click loop.
 
-[Harden Your UI](/solutions/rage-click-detection-sim)
+Because our ghosts are programmatic and deterministic, we can run "Ghost-in-the-Middle" experiments. We automatically test 5 variations of the button layout in parallel to find the one that kills the rage-click loop.
+
+Stop debugging symptoms. Start fixing the source.
+
+[See My Spectral Heatmap](/solutions/rage-click-detection-sim)

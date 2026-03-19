@@ -9,20 +9,33 @@ excerpt: "How our AI Ghosts simulate the Sean Ellis 'Very Disappointed' metric t
 
 The "Sean Ellis Test" is the gold standard for early-stage startups. It asks one simple question: *"How would you feel if you could no longer use this product?"*
 
-If more than 40% of your users say **"Very Disappointed"**, you have PMF.
+If more than 40% of your users say **"Very Disappointed"**, you have Product-Market Fit.
 
-## The Problem: Response Lag
-Getting 100 real users to answer this takes weeks. In a YC-paced environment, weeks are lifetimes.
+## The Problem: Feedback Lag
 
-## The Solution: Synthetic Sentiment Analysis
-Our **PMF Matrix Expansion** allows us to simulate this survey loop entirely within the substrate.
+In a high-velocity environment like Y Combinator, waiting 14 days for a cohort to answer a survey is an eternity. By the time you get the data, your codebase has diverged. This creates a **Validation Gap**.
 
-### How it works:
-1. **Ghost Infiltration**: We spawn ghosts with diverse "Problem Statements" (e.g., "I need a fast way to track inventory").
-2. **Friction Logging**: As ghosts interact with your UI, we measure "Cognitive Load" and "Success Probability".
-3. **Sentiment Projection**: Our LLM-driven persona models calculate the "Disappointment Score" based on how successfully the ghost achieved its goal relative to the friction encountered.
+## The Solution: Synthetic Persona Scoring
 
-### The Result:
-A real-time **PMF Score (1-10)** that updates with every commit. Stop guessing. Start simulating.
+Phantom AI closes this gap by simulating the Sean Ellis loop entirely within the **Substrate**. We don't just guess; we model.
 
-[Initiate Séance](/)
+### 1. Persona Infiltration
+
+We deploy ghosts with diverse "Goal Clusters" (e.g., "I need a fast way to track inventory"). Each Ghost is assigned a specific level of technical expertise and emotional tolerance.
+
+### 2. High-Fidelity Friction Logging
+
+As ghosts interact with your UI, our engine logs three primary metrics:
+- **Cognitive Load**: The time spent scanning the DOM before an interaction.
+- **Path Divergence**: When a ghost's action deviates from the optimal path to their goal.
+- **Rage/Friction Triggers**: Heuristic signals like rapid hovering or repeated clicks.
+
+### 3. The PMF Disappointment Projection
+
+Our LLM-driven models calculate a **Disappointment Score** based on the success/friction ratio. If a Ghost successfully completes its goal but has to overcome 5 layout shifts and 2 console errors, the projection for that persona is "Somewhat Disappointed." If it fails because of a broken flow, the result is "Very Disappointed."
+
+### Real-Time Validation
+
+With every commit, Phantom runs a **Séance**. You get a PMF readiness score (0-10) before your real users ever see the code. Stop guessing. Start simulating.
+
+[Calculate My PMF Velocity](/)

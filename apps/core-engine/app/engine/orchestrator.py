@@ -18,8 +18,9 @@ class HauntOrchestrator:
     def __init__(self, target_url: str, num_ghosts: int, personas: List[Union[str, PersonaRazor]], 
                  organization_id: Optional[str] = None,
                  industry: Optional[str] = None, primary_goal: Optional[str] = None,
-                 variant_url: Optional[str] = None, is_ab_test: bool = False):
-        self.sim_id = str(uuid.uuid4())
+                 variant_url: Optional[str] = None, is_ab_test: bool = False,
+                 sim_id: Optional[str] = None):
+        self.sim_id = sim_id or str(uuid.uuid4())
         self.target_url = target_url
         self.variant_url = variant_url
         self.is_ab_test = is_ab_test

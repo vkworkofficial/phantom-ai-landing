@@ -67,19 +67,51 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
           <div className="w-full h-[1px] bg-gradient-to-r from-primary to-transparent mb-12" />
         </div>
 
-        <article className="prose prose-invert prose-lg max-w-none">
-          {/* Very basic MD rendering via mapping (could use a real lib like react-markdown) */}
-          {post.body.split('\n\n').map((para, i) => {
-            if (para.startsWith('# ')) return <h1 key={i} className="text-4xl font-bold text-white mb-6 mt-12">{para.replace('# ', '')}</h1>;
-            if (para.startsWith('## ')) return <h2 key={i} className="text-3xl font-bold text-white mb-4 mt-10">{para.replace('## ', '')}</h2>;
-            if (para.startsWith('### ')) return <h3 key={i} className="text-2xl font-bold text-white mb-4 mt-8">{para.replace('### ', '')}</h3>;
-            if (para.startsWith('- ')) return (
-              <ul key={i} className="list-disc pl-6 mb-6 space-y-2">
-                {para.split('\n').map((li, liIdx) => <li key={liIdx} className="text-[#8b949e]">{li.replace('- ', '')}</li>)}
-              </ul>
+        <article className="prose prose-invert prose-lg max-w-none px-2">
+          {post.body.split(/\n\n+/).map((block, i) => {
+            const trimmedBlock = block.trim();
+            if (!trimmedBlock) return null;
+
+            // Headers
+            if (trimmedBlock.startsWith('# ')) {
+              return <h1 key={i} className="text-4xl font-bold text-white mb-6 mt-12 tracking-tight">{renderInline(trimmedBlock.replace('# ', ''))}</h1>;
+            }
+            if (trimmedBlock.startsWith('## ')) {
+              return <h2 key={i} className="text-3xl font-bold text-white mb-4 mt-10 tracking-tight border-b border-[#30363d] pb-2">{renderInline(trimmedBlock.replace('## ', ''))}</h2>;
+            }
+            if (trimmedBlock.startsWith('### ')) {
+              return <h3 key={i} className="text-2xl font-bold text-white mb-4 mt-8 tracking-tight">{renderInline(trimmedBlock.replace('### ', ''))}</h3>;
+            }
+
+            // Lists
+            if (trimmedBlock.startsWith('- ') || trimmedBlock.startsWith('* ')) {
+              return (
+                <ul key={i} className="list-none pl-0 mb-8 space-y-3">
+                  {trimmedBlock.split('\n').filter(li => li.trim()).map((li, liIdx) => (
+                    <li key={liIdx} className="text-[#8b949e] flex items-start gap-3">
+                      <span className="text-primary mt-1.5 leading-none">/</span>
+                      <span className="flex-1">{renderInline(li.replace(/^[-*]\s+/, ''))}</span>
+                    </li>
+                  ))}
+                </ul>
+              );
+            }
+
+            // Blockquote
+            if (trimmedBlock.startsWith('> ')) {
+              return (
+                <blockquote key={i} className="border-l-2 border-primary pl-6 py-2 italic text-[#c9d1d9] bg-[#161b22]/50 my-8 rounded-r-lg">
+                  {renderInline(trimmedBlock.replace(/^>\s+/, ''))}
+                </blockquote>
+              );
+            }
+
+            // Paragraph
+            return (
+              <p key={i} className="text-[#8b949e] leading-relaxed mb-6 text-[18px]">
+                {renderInline(trimmedBlock)}
+              </p>
             );
-            if (para.startsWith('**')) return <p key={i} className="text-[#8b949e] leading-relaxed mb-6 font-bold">{para.replace(/\*\*/g, '')}</p>;
-            return <p key={i} className="text-[#8b949e] leading-relaxed mb-6 text-[18px]">{para}</p>;
           })}
         </article>
         
@@ -87,7 +119,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
           <div className="bg-[#161b22] p-8 rounded-xl border border-[#30363d] satin-border text-center">
             <h3 className="text-xl font-bold text-white mb-4 italic uppercase tracking-widest">The Phantom Engine Awaits</h3>
             <p className="text-[#8b949e] mb-8">Stop guessing how your users feel. Launch a Séance and see the truth with AI Forensic Traces.</p>
-            <Link href="/" className="bg-primary text-white px-8 py-3 rounded-md font-bold hover:shadow-[0_0_20px_rgba(234,88,12,0.4)] transition-all uppercase tracking-widest">Initiate Command</Link>
+            <Link href="/" className="bg-primary text-white px-8 py-3 rounded-md font-bold hover:shadow-[0_0_20px_rgba(234,88,12,0.4)] transition-all uppercase tracking-widest text-[13px]">Initiate Command</Link>
           </div>
         </div>
       </main>
@@ -100,4 +132,35 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
       </footer>
     </div>
   );
+}
+
+// Simple inline markdown parser
+function renderInline(text: string) {
+  // Bold: **text**
+  // Italic: *text*
+  // Code: `text`
+  // Links: [text](url)
+  
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|\[.*?\]\(.*?\))/g);
+  
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="text-white font-bold">{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('*') && part.endsWith('*')) {
+      return <em key={i} className="italic text-[#c9d1d9]">{part.slice(1, -1)}</em>;
+    }
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={i} className="bg-[#161b22] px-1.5 py-0.5 rounded text-primary text-[14px] font-mono">{part.slice(1, -1)}</code>;
+    }
+    const linkMatch = part.match(/\[(.*?)\]\((.*?)\)/);
+    if (linkMatch) {
+      return (
+        <a key={i} href={linkMatch[2]} className="text-primary hover:underline transition-all">
+          {linkMatch[1]}
+        </a>
+      );
+    }
+    return part;
+  });
 }

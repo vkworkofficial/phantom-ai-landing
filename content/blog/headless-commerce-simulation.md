@@ -7,24 +7,32 @@ excerpt: "Conversion rate optimization is hard. Synthetic user simulation makes 
 
 # Solving the Conversion Gap
 
-In headless commerce, every millisecond counts. A 100ms delay in 'Add to Cart' can cost $1M in ARR.
+In the world of headless commerce, the gap between a "visit" and a "purchase" is often measured in milliseconds and micro-interactions. A 100ms delay in an asynchronous "Add to Cart" action can lead to a 7% drop in conversion—costing high-scale brands millions in ARR.
 
 ## The E-commerce Simulation Substrate
-Phantom AI allows Shopify and Adobe Commerce teams to run **Perpetual Séances**.
+
+Phantom AI provides Shopify Plus and Adobe Commerce teams with a **High-Fidelity Simulation Substrate**. We don't just load test your servers; we behavior-test your frontend.
+
+### Perpetual Séances
+
+Unlike traditional QA, which is reactive, Phantom allows for **Perpetual Séances**. Our Ghosts are constantly haunting your staging and production environments, searching for conversion blockers that automated unit tests miss.
 
 ### Use Case: The 'Phantom Shopper'
-We deploy 1,000 ghosts that:
-1. Search for a specific product.
-2. Filter by price.
-3. Attempt to apply a discount code.
-4. Navigate the checkout funnel.
 
-### What We Find:
-- **Coupon Friction**: Discovering that 15% of users fail the checkout because of a case-sensitive promo code.
-- **Micro-Regression**: Catching that a new CSS update obscured the 'PayPal' button on iPhone 13 mini.
-- **Conversion Prediction**: Predicting the lift of a new UI change before it hits 1% of your traffic.
+We deploy 1,000+ specialized Ghosts that execute complex, multi-step flows:
+1. **Semantic Search**: Searching for fuzzy terms like "dark denim" and validating the relevance of results.
+2. **Dynamic Filtering**: Testing the combinatorics of price, size, and availability filters.
+3. **Discount Logic**: Attempting to apply localized, case-sensitive, or scheduled promo codes.
+4. **Funnel Persistence**: Navigating the edge cases of the checkout funnel, including guest checkout vs. account-based flows.
+
+## What We Find: The Invisible Friction
+
+- **Coupon Desynchronization**: Discovering that 12% of mobile users abandon the cart because the "Apply" button is obscured by the keyboard.
+- **Hydration Mismatches**: Identifying cases where a Next.js component is visible but not yet interactive, leading to "Dead Clicks."
+- **Localized Regressions**: Catching that a new currency converter script broke the "Checkout" button for users in the EU.
 
 ## The Future of CRO
-Stop A/B testing on your users. A/B test on your ghosts.
 
-[Optimize My Funnel](/solutions/ai-user-testing)
+Stop A/B testing on your valuable users. A/B test on your Ghosts. Optimize your funnel with the precision of a forensic scientist.
+
+[Optimize My Shopify Funnel](/solutions/ai-user-testing)

@@ -6,6 +6,77 @@ import { Terminal, Activity, Zap, ShieldAlert, Cpu, MonitorPlay, MousePointer2, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSeanceRecovery } from '@/hooks/useSeanceRecovery';
 
+function HeatmapCanvasRenderer({ points }: { points: any[] }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = document.getElementById('seance-heatmap') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Handle resizing
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const render = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw Cognitive Drift (Paths)
+      if (points.length > 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(138, 43, 226, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        for (let i = 0; i < points.length - 1; i++) {
+          const p1 = points[i];
+          const p2 = points[i+1];
+          ctx.moveTo((p1.x / 1000) * canvas.width, (p1.y / 1000) * canvas.height);
+          ctx.lineTo((p2.x / 1000) * canvas.width, (p2.y / 1000) * canvas.height);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Draw Heatmap Points
+      points.forEach(point => {
+        const x = (point.x / 1000) * canvas.width;
+        const y = (point.y / 1000) * canvas.height;
+        const radius = 20;
+        
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        if (point.label === 'FRICTION_LOCK') {
+          gradient.addColorStop(0, 'rgba(255, 123, 114, 0.6)');
+          gradient.addColorStop(1, 'rgba(255, 123, 114, 0)');
+        } else {
+          gradient.addColorStop(0, 'rgba(138, 43, 226, 0.4)');
+          gradient.addColorStop(1, 'rgba(138, 43, 226, 0)');
+        }
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // High-fidelity focal point
+        ctx.fillStyle = point.label === 'FRICTION_LOCK' ? '#ff7b72' : '#8a2be2';
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+
+    render();
+    return () => window.removeEventListener('resize', resize);
+  }, [points]);
+
+  return null;
+}
+
 export default function LiveSimulationView(props: { params: Promise<{ id: string }> }) {
   const params = React.use(props.params);
   return (
@@ -301,25 +372,13 @@ function SimulationContent({ params }: { params: { id: string } }) {
                             />
                             )}
 
-                            {/* Cognitive Heatmap Overlay */}
-                            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                                <AnimatePresence>
-                                    {heatmapPoints.map((point, i) => (
-                                        <motion.div
-                                            key={`${i}-${point.x}-${point.y}`}
-                                            initial={{ opacity: 0, scale: 0 }}
-                                            animate={{ opacity: 0.6, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 2 }}
-                                            className="absolute w-8 h-8 -ml-4 -mt-4 rounded-full"
-                                            style={{
-                                                left: `${point.x / 10}%`,
-                                                top: `${point.y / 10}%`,
-                                                background: `radial-gradient(circle, ${point.label === 'FRICTION_LOCK' ? '#ff7b72' : '#8a2be2'} 0%, transparent 70%)`,
-                                                boxShadow: `0 0 15px ${point.label === 'FRICTION_LOCK' ? '#ff7b7255' : '#8a2be233'}`
-                                            }}
-                                        />
-                                    ))}
-                                </AnimatePresence>
+                            {/* Cognitive Heatmap Overlay (Canvas-driven for visceral performance) */}
+                            <canvas 
+                                id="seance-heatmap"
+                                className="absolute inset-0 pointer-events-none w-full h-full opacity-60 mix-blend-screen"
+                            />
+                            <div className="hidden">
+                                {heatmapPoints.length > 0 && <HeatmapCanvasRenderer points={heatmapPoints} />}
                             </div>
                         </div>
                         )}
