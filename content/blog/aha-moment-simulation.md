@@ -2,6 +2,7 @@
 title: "Simulating the 'Aha!' Moment: Engineering Emotional Resonance in AI Agents"
 date: "2026-03-23"
 author: "Phantom CTO"
+category: "Product Strategy"
 excerpt: "How we move beyond binary 'success/fail' tests to measure the psychological impact of your UI on synthetic personas."
 ---
 

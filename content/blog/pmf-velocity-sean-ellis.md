@@ -2,6 +2,7 @@
 title: "Quantifying Early Product-Market Fit with Sean Ellis Simulations"
 date: "2026-03-20"
 author: "Phantom CTO"
+category: "Growth"
 excerpt: "How our AI Ghosts simulate the Sean Ellis 'Very Disappointed' metric to predict your PMF trajectory with 94% accuracy."
 ---
 

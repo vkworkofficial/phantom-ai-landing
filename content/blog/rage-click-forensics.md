@@ -2,6 +2,7 @@
 title: "Beyond the Click: The Forensic Science of Rage-Click Detection"
 date: "2026-03-21"
 author: "Forensic Lead"
+category: "Analytics"
 excerpt: "Rage-clicking is a symptom, not a diagnosis. We dive into the heuristics of our Forensic Ghost Engine."
 ---
 

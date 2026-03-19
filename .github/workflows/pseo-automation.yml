@@ -1,0 +1,36 @@
+name: Autonomous pSEO Generator
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs at midnight UTC every day
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: |
+          cd apps/dashboard
+          npm install
+          cd ../..
+          npm install -D tsx typescript @types/node
+
+      - name: Run AI Keyword Researcher
+        run: npx tsx scripts/generate-keywords.ts
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "Phantom AI Bot"
+          git config --global user.email "bot@phantom-ai.com"
+          git add apps/dashboard/src/data/keywords.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(pseo): autonomous keyword update [skip ci]" && git push)

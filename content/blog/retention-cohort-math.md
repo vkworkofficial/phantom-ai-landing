@@ -2,6 +2,7 @@
 title: "The Math of Disappointment: Sean Ellis vs. Retention Cohorts"
 date: "2026-03-24"
 author: "Lead Data Scientist"
+category: "Data Science"
 excerpt: "A deep dive into the correlation between synthetic disappointment scores and real-world retention coefficients."
 ---
 

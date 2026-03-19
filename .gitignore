@@ -50,6 +50,12 @@ docs/*
 !docs/architecture.md
 !docs/api-reference.md
 !docs/heuristics.md
+!docs/marketing_ideas.md
+!docs/marketing_ideas_repo.md
+!docs/startup_program_applications.md
+!docs/internal_ai_personas.md
+!docs/yc_s26_application_draft.md
+!docs/ph_launch_strategy.md
 yc.svg
 a16z.svg
 board_meeting_notes.md

@@ -1,62 +1,54 @@
-# Phantom AI: Infrastructure for Human Behavior Simulation
+# Phantom AI: The Forensic Substrate for Human Behavior
 
-Phantom provides the technical substrate for simulating autonomous, high-fidelity AI personas within a controlled environment. By injecting cognitive "Ghosts" into a target application, founders and engineers can identify UX friction, retention blockers, and conversion anomalies before the first real user signup.
+> **Achieve 100x PMF Velocity with high-fidelity behavioral simulation.**
 
-## The Problem: The Beta Testing Death Spiral
-Traditional feedback loops—focus groups, beta tests, and manual QA—are too slow, biased, and cost-prohibitive for high-velocity startups. Launching without behavior-driven validation leads to high churn and wasted engineering cycles.
-
-## The Solution: Synthetic Reality
-Phantom creates a deterministic simulation environment where multi-agent consensus models predict user behavior with high statistical accuracy.
-
-- **Cognitive Event Capture**: Real-time telemetry monitoring of synthetic agent interactions.
-- **PMF Readiness Scoring**: Heuristic-based evaluation of product-market fit velocity.
-- **A/B Behavior Analysis**: Side-by-side comparison of product variants based on synthetic friction.
+Phantom AI is a forensic-grade user simulation engine designed for rapid PMF validation and e-commerce conversion forensics. We move beyond binary "success/fail" testing to measure the psychological resonance of your interface.
 
 ---
 
-## Technical Architecture
+## 👻 The Substrate Protocol
 
-Phantom is organized as a scalable monorepo for maximum engineering discipline:
+Traditional QA is reactive. Phantom is proactive. By deploying **Cognitive Ghost Swarms**, we identify the behavioral fingerprints of frustration *before* you ship.
 
-### apps/dashboard
-The centralized command plane for simulation orchestration and telemetry visualization.
-- **Stack**: Next.js, Framer Motion, Tailwind (V4), Lucide.
-- **Core Logic**: Live WebSocket telemetry pipes and Séance lifecycle management.
+- **Forensic Tracing**: Capture DOM mutation state-trees and network desynchronization in sub-millisecond fidelity.
+- **Cognitive Scoring**: LLM-driven heuristics to measure cognitive load, path divergence, and the Sean Ellis "Aha!" moment.
+- **Shadow Séances**: Automated user behavior benchmarking across thousands of parallel personas.
 
-### apps/core-engine
-The orchestration engine responsible for cognitive agent inference and browser deployment.
-- **Stack**: FastAPI (Python), Playwright, Google Gemini Pro.
-- **Core Logic**: Heuristic analysis loops, multi-agent consensus, and session persistence.
+## 🛠 Features
 
----
+### 1. Forensic Toolkit (Open Source)
+A collection of lightweight, high-fidelity utilities for detecting behavioral bottlenecks:
+- `RageClickForensics.ts`: Capture the root cause of digital frustration.
+- `HydrationTracer.ts`: Measure the "Uncanny Valley" in React/Next.js hydration.
 
-## Getting Started
+### 2. Programmatic SEO Engine
+Scalable, automated landing page generation for long-tail DevOps and performance keywords.
+- Dynamic Routes: `/compare/[competitor]`, `/tools/[framework]`
+- Autonomous Researcher: 24/7 keyword discovery via Github Actions.
 
-### Local Engine Setup
+### 3. Forensic Blog & Insights
+Engineering-led research on PMF velocity, conversion forensics, and the math of user disappointment.
+
+## 🚀 Getting Started
+
 ```bash
-cd apps/core-engine
-python -m venv venv
-# Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python -m uvicorn app.main:app --port 8000
+# Initialize a Forensic Séance
+npx phantom-ai init
+
+# Run the Autonomous Researcher
+npx tsx scripts/generate-keywords.ts
 ```
 
-### Local Dashboard Setup
-```bash
-cd apps/dashboard
-npm install
-npm run dev
-```
+## 🏗 Architecture
+
+Phantom is built with a focus on high-fidelity signal capture:
+- **Core Engine**: Python/Node.js orchestration for synthetic persona execution.
+- **Dashboard**: Next.js App Router for forensic data visualization.
+- **pSEO**: Automated ISR-driven growth engine.
 
 ---
 
-## Technical Documentation
-Detailed specifications for the simulation protocols and multi-agent consensus can be found in the following locations:
-- **Architecture Overview**: `docs/architecture.md`
-- **Simulation Protocols**: `docs/api-reference.md`
-- **Cognitive Heuristics**: `docs/heuristics.md`
+## ⚖️ License
+Distributed under the Forensic Engineering License. See `LICENSE` for more information.
 
-## Engineering Roadmap
-- **Q3**: Automated UI remediation via agent-driven pull requests.
-- **Q4**: Geographically-distributed latency simulation for edge behavior analysis.
-- **Future**: Massive multi-cloud ghost deployment for 1M+ parallel behavior simulations.
+*Built for the next generation of YC Founders by Phantom Labs.*

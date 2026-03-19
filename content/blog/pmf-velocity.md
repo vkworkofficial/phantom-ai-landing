@@ -2,6 +2,7 @@
 title: "The Death of Traditional QA: Achieving PMF Velocity with AI Ghosts"
 date: "2026-03-19"
 author: "Phantom CTO"
+category: "Engineering"
 excerpt: "Why manual QA is a relic of the past and how synthetic user simulation is the secret to 100x PMF velocity."
 ---
 

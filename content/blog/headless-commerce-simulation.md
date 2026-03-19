@@ -2,6 +2,7 @@
 title: "The Case for Automated Human Behavior: Solving the E-commerce Conversion Gap"
 date: "2026-03-22"
 author: "Growth Engineer"
+category: "E-commerce"
 excerpt: "Conversion rate optimization is hard. Synthetic user simulation makes it a science."
 ---
 
