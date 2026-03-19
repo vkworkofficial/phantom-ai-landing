@@ -29,6 +29,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link href="/dashboard/new" className="flex items-center gap-3 px-3 py-2 rounded text-sm font-medium hover:bg-[#ea580c]/10 hover:text-[#ff7a2d] text-[#c9d1d9] transition-colors group">
               <Activity className="w-4 h-4 text-[#8b949e] group-hover:text-[#ea580c]" /> Initiate Séance
             </Link>
+            <Link href="/dashboard/forensics" className="flex items-center gap-3 px-3 py-2 rounded text-sm font-medium hover:bg-primary/10 hover:text-primary text-[#c9d1d9] transition-colors group">
+              <Layers className="w-4 h-4 text-[#8b949e] group-hover:text-primary" /> Forensic Diagnostics
+            </Link>
           </div>
           
           <div className="mb-6">

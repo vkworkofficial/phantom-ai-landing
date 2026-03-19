@@ -8,7 +8,7 @@ import { SchemaOrg } from '@/components/seo/SchemaOrg';
 
 // Server Component helper
 async function getPost(slug: string) {
-  const blogDir = path.join(process.cwd(), "../../content/blog");
+  const blogDir = path.join(process.cwd(), "src/content/blog");
   const filePath = path.join(blogDir, `${slug}.md`);
   
   if (!fs.existsSync(filePath)) return null;
@@ -37,7 +37,7 @@ async function getPost(slug: string) {
 }
 
 async function getRecentPosts(currentSlug: string) {
-  const blogDir = path.join(process.cwd(), "../../content/blog");
+  const blogDir = path.join(process.cwd(), "src/content/blog");
   if (!fs.existsSync(blogDir)) return [];
   const files = fs.readdirSync(blogDir);
   const posts = files.map(filename => {

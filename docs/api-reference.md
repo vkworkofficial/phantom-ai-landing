@@ -5,9 +5,15 @@ The Phantom Core Engine exposes a high-performance orchestration API for synthet
 ## 1. Simulation Orchestration
 
 ### `POST /api/simulations/`
-Triggers a new Séance.
+Triggers a new Séance via authenticated user session.
 - **Request Body**: `SimulationRequest` (Target URL, Personas, Ghosts, A/B Parameters)
 - **Response**: `SeanceReport` (Initial tracking state)
+
+### `POST /api/simulations/ensemble`
+Headless M2M endpoint for CI/CD integration. Requires `X-Phantom-Key`.
+- **Headers**: `X-Phantom-Key: <api_key>`
+- **Request Body**: `SimulationRequest`
+- **Response**: `SeanceReport`
 
 ### `GET /api/simulations/{id}`
 Retrieves the real-time or historical state of a Séance.

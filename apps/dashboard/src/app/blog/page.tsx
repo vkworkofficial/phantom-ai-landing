@@ -6,7 +6,7 @@ import { BookOpen, Calendar, User, ArrowRight, Tag, Search, Trophy } from 'lucid
 
 // Server Component helper
 async function getPosts() {
-  const blogDir = path.join(process.cwd(), "../../content/blog");
+  const blogDir = path.join(process.cwd(), "src/content/blog");
   if (!fs.existsSync(blogDir)) return [];
   
   const files = fs.readdirSync(blogDir);

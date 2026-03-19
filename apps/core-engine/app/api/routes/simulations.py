@@ -1,14 +1,60 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
-from app.models.simulation import SimulationRequest, SeanceReport
-from app.engine.orchestrator import HauntOrchestrator
-
+import uuid
+import jwt
+import logging
 from typing import List, Optional
 from datetime import datetime, timezone
-import uuid
 
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
+from app.models.simulation import SimulationRequest, SeanceReport
+from app.engine.orchestrator import HauntOrchestrator
+from app.services.database import simulation_storage
+from app.core.config import settings
+from app.api.deps import get_api_key
+
+# Structured Forensic Logging
+logger = logging.getLogger("phantom.forensics")
 router = APIRouter()
 
-from app.services.database import simulation_storage
+@router.post("/ensemble", response_model=SeanceReport)
+async def start_ensemble(
+    request: SimulationRequest, 
+    background_tasks: BackgroundTasks,
+    api_key: str = Depends(get_api_key)
+):
+    """
+    Headless M2M endpoint for CI/CD integration.
+    """
+    sim_id = f"ens-{uuid.uuid4().hex[:10]}"
+    logger.info(f"Initiating Headless Ensemble {sim_id} for target: {request.target_url}")
+    
+    report = SeanceReport(
+        id=sim_id,
+        organization_id=request.organization_id or "org-headless",
+        target_url=request.target_url,
+        status="running",
+        ghosts_deployed=request.num_ghosts,
+        friction_points=[],
+        conversion_blockers=[],
+        confusion_score=0.0,
+        created_at=datetime.now(timezone.utc),
+        personas=request.personas,
+        industry=request.industry,
+        primary_goal=request.primary_goal
+    )
+    simulation_storage.save_report(report)
+    
+    orchestrator = HauntOrchestrator(
+        target_url=str(request.target_url), 
+        num_ghosts=request.num_ghosts, 
+        personas=request.personas,
+        organization_id=report.organization_id,
+        industry=request.industry,
+        primary_goal=request.primary_goal
+    )
+    orchestrator.sim_id = sim_id
+    background_tasks.add_task(orchestrator.run_simulation)
+    
+    return report
 
 @router.get("/", response_model=List[SeanceReport])
 async def list_simulations():
