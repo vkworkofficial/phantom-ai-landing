@@ -1,91 +1,98 @@
-"use client";
-
 import React from "react";
-import { ArrowLeft, Book, Code, Shield, Zap, Terminal } from "lucide-react";
+import { ArrowLeft, Book, Code, Shield, Zap, Terminal, Search } from "lucide-react";
 import Link from "next/link";
+import fs from 'fs';
+import path from 'path';
 
-export default function DocsPage() {
+// Server Component helper
+async function getDocs() {
+  const docsDir = path.join(process.cwd(), "../../content/docs");
+  if (!fs.existsSync(docsDir)) return [];
+  
+  const files = fs.readdirSync(docsDir);
+  return files.map(filename => {
+    const slug = filename.replace('.md', '');
+    const content = fs.readFileSync(path.join(docsDir, filename), 'utf8');
+    const titleMatch = content.match(/title: "(.*)"/);
+    return {
+      slug,
+      title: titleMatch ? titleMatch[1] : slug,
+      body: content.replace(/^---[\s\S]*?---/, '').trim()
+    };
+  });
+}
+
+export default async function DocsPage() {
+  const docs = await getDocs();
+  const activeDoc = docs[0] || { title: "Documentation", body: "No content available." };
+
   return (
-    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans">
+    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans selection:bg-primary/30">
       <header className="sticky top-0 z-40 bg-[#010409]/95 backdrop-blur-sm border-b border-[#30363d]">
-        <div className="max-w-[1000px] mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-[1280px] mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/" className="hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <span className="font-bold text-white tracking-tighter text-[20px]">Substrate Protocol v4.2</span>
           </div>
-          <div className="text-[11px] font-mono text-[#484f58] uppercase tracking-widest">Documentation</div>
+          <div className="flex items-center gap-4">
+             <div className="hidden md:flex items-center gap-2 border border-[#30363d] bg-[#161b22] px-3 py-1.5 rounded-md text-[13px] text-[#8b949e]">
+                <Search className="w-3.5 h-3.5" /> <span>Search docs...</span>
+             </div>
+             <div className="text-[11px] font-mono text-[#484f58] uppercase tracking-widest">Documentation</div>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
+      <main className="max-w-[1280px] mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
         {/* Sidebar Nav */}
         <aside className="md:col-span-1 space-y-8">
           <div>
             <h3 className="text-[11px] font-bold text-[#484f58] uppercase tracking-widest mb-4">Core Concepts</h3>
             <ul className="space-y-3 text-[13px]">
-              <li className="text-primary font-medium">Synthetic Reality Engine</li>
-              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">Ghost Cognition Model</li>
-              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">Seance Consensus Layer</li>
+              {docs.map(doc => (
+                <li key={doc.slug} className={`${doc.slug === activeDoc.slug ? 'text-primary font-bold' : 'text-[#8b949e] hover:text-[#c9d1d9]'} cursor-pointer transition-colors flex items-center gap-2`}>
+                   <div className={`w-1 h-1 rounded-full ${doc.slug === activeDoc.slug ? 'bg-primary animate-pulse' : 'bg-transparent'}`} />
+                   {doc.title}
+                </li>
+              ))}
             </ul>
           </div>
           <div>
-            <h3 className="text-[11px] font-bold text-[#484f58] uppercase tracking-widest mb-4">Integration</h3>
+            <h3 className="text-[11px] font-bold text-[#484f58] uppercase tracking-widest mb-4">Reference</h3>
             <ul className="space-y-3 text-[13px]">
-              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">CI/CD Orchestration</li>
-              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">API Reference</li>
-              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">Webhook Triggers</li>
+              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">API Specification</li>
+              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">Ghost Heuristics v2</li>
+              <li className="text-[#8b949e] hover:text-[#c9d1d9] cursor-pointer">Compliance & Safety</li>
             </ul>
           </div>
         </aside>
 
-        {/* Content */}
+        {/* Content Area */}
         <div className="md:col-span-3 space-y-12 pb-24">
-          <section>
-            <h1 className="text-4xl font-bold text-white mb-6">Synthetic Reality Engine</h1>
-            <p className="text-[#8b949e] text-lg leading-relaxed mb-8">
-              Phantom AI differs from traditional QA automation by using <strong>Ghost Instances</strong>—independent headless Chromium actors driven by our proprietary behavioral heuristic models. 
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-[#161b22] border border-[#30363d] p-5 rounded-lg">
-                <Zap className="w-5 h-5 text-primary mb-3" />
-                <h4 className="text-white font-semibold mb-2">Cognitive Latency</h4>
-                <p className="text-xs text-[#8b949e]">Ghosts simulate real human decision-making delays based on technical savviness and UI complexity.</p>
-              </div>
-              <div className="bg-[#161b22] border border-[#30363d] p-5 rounded-lg">
-                <Terminal className="w-5 h-5 text-primary mb-3" />
-                <h4 className="text-white font-semibold mb-2">Subtree Analysis</h4>
-                <p className="text-xs text-[#8b949e]">Real-time DOMSubtreeModified surveillance to detect subtle visual regressions that standard tests miss.</p>
-              </div>
-            </div>
+          <section className="prose prose-invert prose-lg max-w-none">
+             {activeDoc.body.split('\n\n').map((para, i) => {
+                if (para.startsWith('# ')) return <h1 key={i} className="text-5xl font-bold text-white mb-8 tracking-tight">{para.replace('# ', '')}</h1>;
+                if (para.startsWith('## ')) return <h2 key={i} className="text-3xl font-bold text-white mb-6 mt-12 border-b border-[#30363d] pb-4">{para.replace('## ', '')}</h2>;
+                if (para.startsWith('### ')) return <h3 key={i} className="text-2xl font-bold text-white mb-4 mt-8">{para.replace('### ', '')}</h3>;
+                if (para.startsWith('```')) return (
+                   <div key={i} className="bg-[#010409] p-6 rounded-xl border border-[#30363d] font-mono text-[14px] overflow-hidden my-8">
+                      <pre className="text-primary">{para.replace(/```[a-z]*/g, '').trim()}</pre>
+                   </div>
+                );
+                return <p key={i} className="text-[#8b949e] leading-relaxed mb-6 text-[18px]">{para}</p>;
+             })}
           </section>
-
-          <section className="pt-8 border-t border-[#30363d]">
-            <h2 className="text-2xl font-bold text-white mb-4">Orchestration API</h2>
-            <p className="text-[#8b949e] mb-6">Deploy a Séance across your entire infrastructure substrate with a single POST request.</p>
-            <div className="bg-[#010409] rounded-lg p-6 font-mono text-[13px] border border-[#30363d] overflow-x-auto">
-              <div className="text-[#7ee787]">POST /api/v1/simulations</div>
-              <div className="text-[#8b949e] mt-4">{`{`}</div>
-              <div className="pl-4">
-                <span className="text-[#a5d6ff]">&quot;target_url&quot;</span>: <span className="text-[#7ee787]">&quot;https://app.example.com&quot;</span>, <br />
-                <span className="text-[#a5d6ff]">&quot;ghosts&quot;</span>: <span className="text-[#d2a8ff]">500</span>, <br />
-                <span className="text-[#a5d6ff]">&quot;consensus_threshold&quot;</span>: <span className="text-[#d2a8ff]">0.85</span> <br />
-              </div>
-              <div className="text-[#8b949e]">{`}`}</div>
-            </div>
-          </section>
-
-          <section className="pt-8 border-t border-[#30363d]">
-              <h2 className="text-2xl font-bold text-white mb-4">Vibe-Killer: Forensic Logging</h2>
-              <p className="text-[#8b949e] mb-6">Every Séance generates a high-fidelity trace of interaction events, frustration markers, and cognitive load heatmaps.</p>
-              <div className="bg-primary/5 border border-primary/20 p-6 rounded-lg">
-                  <h4 className="text-primary font-semibold mb-2 flex items-center gap-2">
-                      <Shield className="w-4 h-4" /> Hardened Compliance
-                  </h4>
-                  <p className="text-sm text-[#8b949e]">All logs are cryptographically signed and stored in our immutable Postgres substrate for forensic auditing during board reviews or YC due diligence.</p>
-              </div>
-          </section>
+          
+          <div className="pt-12 border-t border-[#30363d] flex justify-between items-center text-sm">
+             <div className="flex items-center gap-2 text-[#484f58]">
+                <span>Last updated: March 19, 2026</span>
+             </div>
+             <Link href="https://github.com/vkworkofficial/phantom-ai-landing" className="text-[#8b949e] hover:text-white transition-colors flex items-center gap-2">
+                <Code className="w-4 h-4" /> Edit this page on GitHub
+             </Link>
+          </div>
         </div>
       </main>
     </div>

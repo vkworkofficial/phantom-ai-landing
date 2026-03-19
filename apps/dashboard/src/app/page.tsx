@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from 'next/link';
 import { Search, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -175,14 +176,31 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-[#30363d] py-12 bg-[#010409]">
-        <div className="max-w-[1280px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2.5">
-            <SimulaxLogo className="w-5 h-5" />
-            <span className="font-bold text-white tracking-tighter">Phantom AI</span>
+      <footer className="border-t border-[#30363d] py-20 bg-[#010409]">
+        <div className="max-w-[1280px] mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-12">
+          <div className="col-span-2">
+            <div className="flex items-center gap-2.5 mb-6">
+              <SimulaxLogo className="w-5 h-5" />
+              <span className="font-bold text-white tracking-tighter text-[20px]">Phantom AI</span>
+            </div>
+            <p className="text-[#8b949e] text-sm max-w-sm mb-8 leading-relaxed">Achieving PMF Velocity via high-fidelity synthetic user simulation. Substrate Protocol v4.2 hardened for enterprise scaling.</p>
+            <div className="text-[11px] font-mono text-[#484f58] uppercase tracking-widest">© 2026 Phantom Substrate Protocol | Silicon Valley</div>
           </div>
-          <div className="text-[12px] text-[#484f58] font-mono">
-            &copy; 2026 Phantom Substrate Protocol. All rights reserved.
+          <div>
+            <h4 className="text-[11px] font-bold text-white uppercase tracking-widest mb-6 underline decoration-primary decoration-2 underline-offset-8">Intelligence</h4>
+            <ul className="space-y-4 text-[13px] text-[#8b949e] font-medium">
+              <li><Link href="/blog" className="hover:text-primary transition-colors">Transmission Log (Blog)</Link></li>
+              <li><Link href="/docs" className="hover:text-primary transition-colors">Substrate Protocol Docs</Link></li>
+              <li><Link href="/status" className="hover:text-primary transition-colors">Ghost Health Status</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-[11px] font-bold text-white uppercase tracking-widest mb-6 underline decoration-primary decoration-2 underline-offset-8">Solutions</h4>
+            <ul className="space-y-4 text-[13px] text-[#8b949e] font-medium">
+              <li><Link href="/solutions/ai-user-testing" className="hover:text-primary transition-colors italic">User Testing</Link></li>
+              <li><Link href="/solutions/synthetic-qa-agents" className="hover:text-primary transition-colors italic">QA Agents</Link></li>
+              <li><Link href="/solutions/pmf-velocity-tracking" className="hover:text-primary transition-colors italic">PMF Tracking</Link></li>
+            </ul>
           </div>
         </div>
       </footer>
