@@ -43,12 +43,9 @@ npm-debug.log*
 .vercel
 venv_new/
 
-# Project Specific (Internal)
+# Project Specific (Forensic Substrate)
 backups/
-docs/*
-!docs/architecture.md
-!docs/api-reference.md
-!docs/MASTER_STRATEGY.md
+docs/archive/*
 board_meeting_notes.md
 audit_report.md
 walkthrough.md
@@ -58,9 +55,7 @@ production_requirements.md
 pullpush.json
 *.db
 *.sqlite
-*.log
 *.tmp
 test_results.txt
-.DS_Store
 .env*
 !.env.example

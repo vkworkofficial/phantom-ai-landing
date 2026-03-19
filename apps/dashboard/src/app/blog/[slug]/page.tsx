@@ -8,6 +8,18 @@ import { SchemaOrg } from '@/components/seo/SchemaOrg';
 import { Metadata } from 'next';
 import { cache } from 'react';
 
+// Enable ISR (24-hour cycle)
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  const blogDir = path.join(process.cwd(), "src/content/blog");
+  if (!fs.existsSync(blogDir)) return [];
+  const files = fs.readdirSync(blogDir);
+  return files.map((file) => ({
+    slug: file.replace(".md", ""),
+  }));
+}
+
 // Memoized getter for metadata and rendering
 const getPost = cache(async (slug: string) => {
   const blogDir = path.join(process.cwd(), "src/content/blog");

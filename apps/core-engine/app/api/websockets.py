@@ -1,6 +1,8 @@
 import json
 import logging
 import jwt
+import asyncio
+from typing import Dict, List
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, Query
 from app.core.config import settings
 
@@ -26,12 +28,32 @@ class ConnectionManager:
                 del self.active_connections[sim_id]
 
     async def broadcast_to_sim(self, sim_id: str, message: dict):
-        if sim_id in self.active_connections:
-            for connection in self.active_connections[sim_id]:
-                try:
-                    await connection.send_json(message)
-                except Exception as e:
-                    logger.error(f"Error sending message to {sim_id}: {e}")
+        if sim_id not in self.active_connections:
+            return
+            
+        data = json.dumps(message)
+        # Use a list to store tasks for concurrent sending
+        send_tasks = []
+        
+        # Iterate over a copy to prevent "dict changed size during iteration" errors
+        for connection in list(self.active_connections[sim_id]):
+            # Optimization: Use wait_for to prevent slow clients from blocking the substrate
+            send_tasks.append(self._safe_send(connection, sim_id, data))
+        
+        if send_tasks:
+            await asyncio.gather(*send_tasks)
+
+    async def _safe_send(self, websocket: WebSocket, sim_id: str, data: str):
+        try:
+            # CTO Mandate: 50ms timeout for telemetry delivery to prioritize orchestrator health
+            await asyncio.wait_for(websocket.send_text(data), timeout=0.05)
+        except (asyncio.TimeoutError, Exception) as e:
+            logger.warning(f"Telemetry drop for {sim_id}: Client slow or socket congested. Terminating.")
+            self.disconnect(websocket, sim_id)
+            try:
+                await websocket.close()
+            except:
+                pass
 
 manager = ConnectionManager()
 
@@ -48,8 +70,6 @@ async def websocket_endpoint(websocket: WebSocket, sim_id: str, token: str = Que
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
-    await manager.connect(websocket, sim_id)
-    
     await manager.connect(websocket, sim_id)
     
     # Simulation is triggered via BackgroundTasks in simulations.py route

@@ -48,8 +48,7 @@ export default function NewRun() {
       
       router.push(`/dashboard/simulations/${data.id}?${queryParams.toString()}`);
     } catch (e) {
-      console.error("Simulation trigger failed", e);
-      alert("Failed to establish seance substrate connection.");
+      console.error("Simulation trigger failed substrate connection:", e);
       setLoading(false);
     }
   };

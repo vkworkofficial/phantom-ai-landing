@@ -16,7 +16,6 @@ import { SeanceTeaser } from "@/components/landing/SeanceTeaser";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showJumpscare, setShowJumpscare] = useState(false);
   const [toast, setToast] = useState<{msg: string, type: "success" | "error" | "info"} | null>(null);
   const [showCmdk, setShowCmdk] = useState(false);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -39,12 +38,9 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const playJumpscareSound = () => {
-    try {
-      const scream = new Audio("/fnaf.mp3");
-      scream.volume = 1.0;
-      scream.play().catch(e => console.error("Audio playback locked", e));
-    } catch (e) { console.error("Audio playback locked", e); }
+  // Removed unprofessional jumpscare logic to ensure S26 production standards.
+  const triggerWaitlistSuccess = () => {
+    showToast("You're in. We'll haunt your inbox soon. 👻", "success");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,10 +58,7 @@ export default function Home() {
     try {
       const res = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, company_url: honeypot }) });
       if (res.ok) {
-        setShowJumpscare(true);
-        playJumpscareSound();
-        setTimeout(() => setShowJumpscare(false), 900);
-        showToast("You're in. We'll haunt your inbox soon. 👻", "success");
+        triggerWaitlistSuccess();
         setEmail("");
       } else {
         const data = await res.json();
@@ -77,18 +70,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans selection:bg-primary/30 relative overflow-hidden">
       
-      {/* Jumpscare Overlay */}
-      {showJumpscare && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none mix-blend-lighten overflow-hidden bg-[#0d1117]">
-          <div className="absolute inset-0 bg-primary opacity-10 animate-[glitch_0.1s_ease-in-out_infinite]" />
-          <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 3, opacity: 0.8 }} exit={{ opacity: 0 }} transition={{ duration: 0.8, ease: "easeIn" }} className="w-[80vw] h-[80vh] flex items-center justify-center">
-            <svg viewBox="0 0 100 100" className="w-full h-full animate-[glitch_0.05s_ease-in-out_infinite]" style={{ filter: "drop-shadow(0 0 50px #ea580c)" }}>
-              <path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="#ea580c" />
-              <path d="M 35 42 L 45 48" stroke="#0d1117" strokeWidth="4" strokeLinecap="round" /><path d="M 45 42 L 35 48" stroke="#0d1117" strokeWidth="4" strokeLinecap="round" />
-            </svg>
-          </motion.div>
-        </div>
-      )}
+      {/* Jumpscare Purged for S26 Excellence */}
 
       <header className="sticky top-0 z-40 bg-[#010409]/95 backdrop-blur-sm border-b border-[#30363d]">
         <div className="max-w-[1280px] mx-auto px-4 h-16 flex items-center justify-between">

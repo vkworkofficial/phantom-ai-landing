@@ -9,7 +9,8 @@ from app.models.simulation import SimulationRequest, SeanceReport
 from app.engine.orchestrator import HauntOrchestrator
 from app.services.database import simulation_storage
 from app.core.config import settings
-from app.api.deps import get_api_key
+from app.api.deps import get_current_ghost
+from app.services.case_studies import case_story_generator
 
 # Structured Forensic Logging
 logger = logging.getLogger("phantom.forensics")
@@ -19,7 +20,7 @@ router = APIRouter()
 async def start_ensemble(
     request: SimulationRequest, 
     background_tasks: BackgroundTasks,
-    api_key: str = Depends(get_api_key)
+    auth: dict = Depends(get_current_ghost)
 ):
     """
     Headless M2M endpoint for CI/CD integration.
@@ -42,6 +43,14 @@ async def start_ensemble(
         primary_goal=request.primary_goal
     )
     simulation_storage.save_report(report)
+    
+    # Security Audit: Log the initiation of a headless ensemble
+    simulation_storage.log_action(
+        action="START_ENSEMBLE",
+        actor_id=auth["id"],
+        resource_id=sim_id,
+        status="success"
+    )
     
     orchestrator = HauntOrchestrator(
         target_url=str(request.target_url), 

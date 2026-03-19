@@ -9,6 +9,17 @@ class HeatmapPoint(BaseModel):
     intensity: float = 1.0
     label: Optional[str] = None
 
+class FrictionPoint(BaseModel):
+    element: str
+    issue: str
+    impact: float # 0.0 to 1.0
+    suggestion: Optional[str] = None
+
+class ConversionBlocker(BaseModel):
+    type: str # e.g., 'auth', 'payment', 'ux'
+    description: str
+    severity: str # 'critical', 'high', 'medium', 'low'
+
 class SimulationRequest(BaseModel):
     target_url: HttpUrl
     organization_id: Optional[str] = None
@@ -63,12 +74,12 @@ class SeanceReport(BaseModel):
     target_url: HttpUrl
     status: str
     ghosts_deployed: int
-    friction_points: List[dict]
-    conversion_blockers: List[dict]
-    confusion_score: float
+    friction_points: List[FrictionPoint] = []
+    conversion_blockers: List[ConversionBlocker] = []
+    confusion_score: float = 0.0
     pmf_score: Optional[float] = None
-    disappointment_breakdown: Optional[Dict[str, int]] = None # e.g., {"very_disappointed": 10, "somewhat_disappointed": 5, "not_disappointed": 2}
-    telemetry: Dict[str, Any]
+    disappointment_breakdown: Optional[Dict[str, int]] = None 
+    telemetry: Optional[SystemTelemetry] = None
     heatmap_data: List[HeatmapPoint] = []
     created_at: datetime
     seance_token: Optional[str] = None

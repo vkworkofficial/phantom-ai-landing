@@ -1,46 +1,62 @@
-"use client";
-
+// --- Standard & Third-party ---
 import React, { useState } from 'react';
-import { Key, Building2, UserCircle, CreditCard, Copy, Check, Info, Trash2, Plus, Shield, ShieldAlert, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// --- UI Components & Icons ---
+import { 
+  Key, Building2, UserCircle, CreditCard, 
+  Copy, Check, Info, Trash2, Plus, 
+  Shield, ShieldAlert, Mail 
+} from 'lucide-react';
+
+// --- Hooks & Logic ---
+import { useWorkspace } from '@/hooks/useWorkspace';
+
+// --- Types ---
+type SettingsTab = 'profile' | 'org' | 'api' | 'billing';
+
+interface OrgMember {
+  id: string;
+  name: string;
+  email: string;
+  role: 'Owner' | 'Admin' | 'Viewer' | 'Service Account';
+  mfa: boolean;
+  lastActive: string;
+}
+
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'org' | 'api' | 'billing'>('api');
+  const [activeTab, setActiveTab] = useState<SettingsTab>('api');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  
+  const { workspace, loading, generateKey, revokeKey } = useWorkspace();
 
-  const [apiKeys, setApiKeys] = useState([
-    { id: 'pk_1', name: 'Production CI/CD Runner', key: 'phantom_live_8f92bd8c7a104...', lastUsed: '2 mins ago', created: 'Oct 12, 2023' },
-    { id: 'pk_2', name: 'Local Dev (Vedant)', key: 'phantom_live_c142ba1890f5c...', lastUsed: '5 hours ago', created: 'Nov 01, 2023' },
-  ]);
-
-  const [orgMembers, setOrgMembers] = useState([
-    { id: 'u_1', name: 'Vedant Kumar', email: 'vedant@acmecorp.dev', role: 'Owner', mfa: true, lastActive: 'Online now' },
-    { id: 'u_2', name: 'Sarah Chen', email: 'sarah@acmecorp.dev', role: 'Admin', mfa: true, lastActive: '2 hrs ago' },
-    { id: 'u_3', name: 'DevOps Pipeline', email: 'github-actions@acmecorp.dev', role: 'Service Account', mfa: false, lastActive: '5 mins ago' }
+  const [orgMembers, setOrgMembers] = useState<OrgMember[]>([
+    { id: 'u_1', name: 'Vedant Kumar', email: 'vedant@phantom-labs.dev', role: 'Owner', mfa: true, lastActive: 'Online now' },
+    { id: 'u_2', name: 'Sarah Chen', email: 'sarah@phantom-labs.dev', role: 'Admin', mfa: true, lastActive: '2 hrs ago' },
+    { id: 'u_3', name: 'DevOps Pipeline', email: 'github-actions@phantom-labs.dev', role: 'Service Account', mfa: false, lastActive: '5 mins ago' }
   ]);
 
   const handleCopy = (id: string, fullKey: string) => {
-    navigator.clipboard.writeText(fullKey.replace('...', 'FULL_MOCK_KEY_STRING_HERE'));
+    navigator.clipboard.writeText(fullKey);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const generateKey = () => {
-    const newKey = {
-      id: `pk_${Date.now()}`,
-      name: 'New Custom Key',
-      key: `phantom_live_${Math.random().toString(36).substring(2, 15)}...`,
-      lastUsed: 'Never',
-      created: 'Just now'
-    };
-    setApiKeys([newKey, ...apiKeys]);
+  const handleGenerateKey = async () => {
+    const keyName = prompt("Enter a name for the new API key:");
+    if (!keyName) return;
+    const fullKey = await generateKey(keyName);
+    if (fullKey) {
+       // High-Fidelity Security Handover
+       console.info("Generated new API Key substrate:", fullKey);
+    }
   };
 
   return (
     <div className="max-w-5xl mx-auto animate-in fade-in duration-500">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-white tracking-tight mb-1">Workspace Settings</h1>
-        <p className="text-sm text-[#8b949e]">Manage your Acme Corp configuration, team access, and developer APIs.</p>
+        <p className="text-sm text-[#8b949e]">Manage your {workspace?.name || 'Phantom Labs'} configuration, team access, and developer APIs.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -72,7 +88,7 @@ export default function SettingsPage() {
                     <h2 className="text-lg font-semibold text-white">API Keys</h2>
                     <p className="text-sm text-[#8b949e] mt-1">Use these keys to authenticate your CI/CD pipelines with the Phantom Orchestration Engine.</p>
                   </div>
-                  <button onClick={generateKey} className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold rounded-md border border-[#30363d] bg-[#161b22] text-[#c9d1d9] hover:text-white hover:border-[#8b949e] transition-colors shadow-sm">
+                  <button onClick={handleGenerateKey} className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold rounded-md border border-[#30363d] bg-[#161b22] text-[#c9d1d9] hover:text-white hover:border-[#8b949e] transition-colors shadow-sm">
                     <Plus className="w-4 h-4" /> Generate New Key
                   </button>
                 </div>
@@ -96,31 +112,31 @@ export default function SettingsPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#30363d]">
-                        {apiKeys.map((key) => (
+                        {(workspace?.api_keys || []).map((key) => (
                           <tr key={key.id} className="hover:bg-[#161b22]/50 transition-colors">
                             <td className="px-5 py-4">
                               <div className="font-semibold text-[#c9d1d9] mb-1">{key.name}</div>
                               <div className="text-[11px] font-mono text-[#8b949e] bg-[#010409] border border-[#30363d] px-2 py-0.5 rounded inline-block">
-                                {key.key}
+                                {key.key_fragment}
                               </div>
                             </td>
                             <td className="px-5 py-4 text-[#8b949e]">{key.created}</td>
                             <td className="px-5 py-4 text-[#8b949e]">
                               <span className="flex items-center gap-1.5">
-                                <span className={`w-1.5 h-1.5 rounded-full ${key.lastUsed.includes('Never') ? 'bg-[#8b949e]' : 'bg-[#3fb950]'}`} /> {key.lastUsed}
+                                <span className={`w-1.5 h-1.5 rounded-full ${key.last_used.includes('Never') ? 'bg-[#8b949e]' : 'bg-[#3fb950]'}`} /> {key.last_used}
                               </span>
                             </td>
                             <td className="px-5 py-4 text-right">
                               <div className="flex items-center justify-end gap-2">
                                 <button 
-                                  onClick={() => handleCopy(key.id, key.key)}
+                                  onClick={() => handleCopy(key.id, key.key_fragment)}
                                   className="p-1.5 text-[#8b949e] hover:text-white rounded hover:bg-[#30363d] transition-colors" 
                                   title="Copy Key"
                                 >
                                   {copiedId === key.id ? <Check className="w-4 h-4 text-[#3fb950]" /> : <Copy className="w-4 h-4" />}
                                 </button>
                                 <button 
-                                  onClick={() => setApiKeys(apiKeys.filter(k => k.id !== key.id))}
+                                  onClick={() => revokeKey(key.id)}
                                   className="p-1.5 text-[#8b949e] hover:text-[#ff7b72] rounded hover:bg-[#ff7b72]/10 transition-colors" 
                                   title="Revoke Key"
                                 >
@@ -130,8 +146,8 @@ export default function SettingsPage() {
                             </td>
                           </tr>
                         ))}
-                        {apiKeys.length === 0 && (
-                          <tr><td colSpan={4} className="px-5 py-8 text-center text-[#8b949e]">No active API keys found.</td></tr>
+                        {(workspace?.api_keys?.length === 0 || loading) && (
+                          <tr><td colSpan={4} className="px-5 py-8 text-center text-[#8b949e]">{loading ? 'Calibrating Substrate...' : 'No active API keys found.'}</td></tr>
                         )}
                       </tbody>
                     </table>
@@ -149,7 +165,7 @@ export default function SettingsPage() {
                     <p className="text-sm text-[#8b949e] mt-1">Manage who has access to this workspace and their permission levels.</p>
                   </div>
                   <button onClick={() => {
-                     setOrgMembers([...orgMembers, { id: `u_${Date.now()}`, name: 'New User', email: 'pending@acmecorp.dev', role: 'Viewer', mfa: false, lastActive: 'Invited' }]);
+                     setOrgMembers([...orgMembers, { id: `u_${Date.now()}`, name: 'New User', email: 'pending@phantom-labs.dev', role: 'Viewer', mfa: false, lastActive: 'Invited' }]);
                   }} className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold rounded-md border border-primary bg-primary text-white hover:bg-primary/90 transition-colors shadow-[0_0_15px_-3px_rgba(234,88,12,0.4)]">
                     <Mail className="w-4 h-4" /> Invite Member
                   </button>

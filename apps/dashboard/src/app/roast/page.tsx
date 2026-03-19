@@ -10,19 +10,31 @@ export default function RoastMyUX() {
   const [url, setUrl] = useState('');
   const [isRoasting, setIsRoasting] = useState(false);
   const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(0);
+  const roastSteps = [
+    "Analyzing DOM structure...",
+    "Identifying rage-click clusters...",
+    "Measuring cognitive load...",
+    "Mapping frustration index...",
+    "Finalizing forensic teardown..."
+  ];
 
   const handleRoast = (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
     
     setIsRoasting(true);
+    setCurrentStep(0);
+
+    // Incremental telemetry steps for perceived value
+    const interval = setInterval(() => {
+        setCurrentStep(prev => prev + 1);
+    }, 600);
     
-    // Simulate initial scan then push to the app passing the url to create lead intent
     setTimeout(() => {
-        // We push them into the signup/onboarding funnel with their URL encoded so we can 
-        // immediately show them value upon account creation.
+        clearInterval(interval);
         router.push(`/onboarding?roast=${encodeURIComponent(url)}`);
-    }, 2500);
+    }, 3200);
   };
 
   return (
@@ -95,9 +107,9 @@ export default function RoastMyUX() {
                         className="bg-[#ea580c] hover:bg-[#ff7a2d] text-white px-8 py-4 rounded font-bold tracking-widest uppercase text-sm transition-all flex items-center justify-center gap-2 group disabled:opacity-50 relative overflow-hidden"
                     >
                         {isRoasting ? (
-                            <span className="animate-pulse flex items-center gap-2">
-                                <Code2 className="w-4 h-4 animate-spin" />
-                                Analyzing DOM...
+                            <span className="flex items-center gap-2">
+                                <Code2 className="w-4 h-4 animate-spin text-[#ea580c]" />
+                                <span className="animate-pulse">{roastSteps[currentStep] || "Deploying Ghosts..."}</span>
                             </span>
                         ) : (
                             <>

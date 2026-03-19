@@ -4,6 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { LayoutDashboard, Users, Settings, Activity, Cpu, Ghost, Layers } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { ForensicHUD } from '@/components/ForensicHUD';
+import { CognitiveHUDOverlay } from '@/components/hud/CognitiveHUDOverlay';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
@@ -74,7 +76,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </header>
         
-        <div className="flex-1 p-8 overflow-y-auto bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#111114] via-[#0a0a0c] to-[#0a0a0c]">
+        <ForensicHUD />
+
+        <div className="flex-1 p-8 overflow-y-auto bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#111114] via-[#0a0a0c] to-[#0a0a0c] relative">
+          <CognitiveHUDOverlay />
           {children}
         </div>
       </main>

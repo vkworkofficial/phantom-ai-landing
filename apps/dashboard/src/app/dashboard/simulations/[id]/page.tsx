@@ -1,12 +1,63 @@
 "use client";
 
+// --- Standard & Third-party ---
 import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Terminal, Activity, Zap, ShieldAlert, Cpu, MonitorPlay, MousePointer2, BrainCircuit, Share2, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// --- UI Components & Icons ---
+import { 
+  Terminal, Activity, Zap, ShieldAlert, Cpu, 
+  MonitorPlay, MousePointer2, BrainCircuit, 
+  Share2, CheckCircle2 
+} from 'lucide-react';
+
+// --- Hooks & Logic ---
 import { useSeanceRecovery } from '@/hooks/useSeanceRecovery';
 
-function HeatmapCanvasRenderer({ points }: { points: any[] }) {
+// --- Types ---
+interface LogEntry {
+  timestamp: string;
+  type: string;
+  message: string;
+}
+
+interface ThoughtEntry {
+  time: string;
+  text: string;
+  confidence: number;
+  aha?: boolean;
+}
+
+interface HeatmapPoint {
+  x: number;
+  y: number;
+  intensity: number;
+  label?: string;
+}
+
+interface VariantComparison {
+  vA_friction: number;
+  vB_friction: number;
+}
+
+interface SimulationMetrics {
+  friction: number;
+  rageClicks: number;
+  agentsActive: number;
+  consensus: number;
+  pmfScore: number;
+  pmfCategory: string;
+  pmfRating: number;
+  isAB: boolean;
+  variantComparison: VariantComparison | null;
+}
+
+interface SimulationViewProps {
+  params: { id: string };
+}
+
+function HeatmapCanvasRenderer({ points }: { points: HeatmapPoint[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -86,16 +137,16 @@ export default function LiveSimulationView(props: { params: Promise<{ id: string
   );
 }
 
-function SimulationContent({ params }: { params: { id: string } }) {
+function SimulationContent({ params }: SimulationViewProps) {
   const searchParams = useSearchParams();
   const observeMode = searchParams.get('observe') === 'true';
   const seanceToken = searchParams.get('token') || '';
 
-  const [logs, setLogs] = useState<{timestamp: string; type: string; message: string;}[]>([]);
-  const [thoughts, setThoughts] = useState<{time: string; text: string; confidence: number; aha?: boolean}[]>([]);
-  const [heatmapPoints, setHeatmapPoints] = useState<{x: number; y: number; intensity: number; label?: string}[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [thoughts, setThoughts] = useState<ThoughtEntry[]>([]);
+  const [heatmapPoints, setHeatmapPoints] = useState<HeatmapPoint[]>([]);
   const [status, setStatus] = useState<'initializing' | 'running' | 'analyzing' | 'completed' | 'failed'>('initializing');
-  const [metrics, setMetrics] = useState({ 
+  const [metrics, setMetrics] = useState<SimulationMetrics>({ 
     friction: 0, 
     rageClicks: 0, 
     agentsActive: 0, 
@@ -104,7 +155,7 @@ function SimulationContent({ params }: { params: { id: string } }) {
     pmfCategory: 'TBD',
     pmfRating: 0,
     isAB: searchParams.get('is_ab') === 'true',
-    variantComparison: null as any
+    variantComparison: null
   });
   
   const [showTechnicalLogs, setShowTechnicalLogs] = useState(false);
@@ -197,7 +248,7 @@ function SimulationContent({ params }: { params: { id: string } }) {
     };
 
     ws.onclose = () => {
-        console.log("WebSocket connection closed for simulation:", params.id);
+        // Internal substrate heartbeat logging only
     };
 
     return () => {
@@ -270,8 +321,7 @@ function SimulationContent({ params }: { params: { id: string } }) {
         <div className="flex gap-4">
           <button 
             onClick={() => {
-                // High-Fidelity Vibe Audit Export (Simulated screenshot capture)
-                alert("Synthesizing High-Fidelity Vibe Audit Overlay... (Exporting as SVG/PNG)");
+                // High-Fidelity Vibe Audit Export (Forensic Overlay)
                 const heatmapContent = JSON.stringify(heatmapPoints, null, 2);
                 const blob = new Blob([heatmapContent], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -294,7 +344,6 @@ function SimulationContent({ params }: { params: { id: string } }) {
             onClick={() => {
                 const url = `${window.location.origin}/dashboard/simulations/${params.id}?is_ab=${metrics.isAB}`;
                 navigator.clipboard.writeText(url);
-                alert("Share link copied to clipboard (Public Substrate Node)");
             }}
             className="flex items-center gap-2 px-4 py-2 rounded border border-[#8a2be2]/30 bg-[#8a2be2]/10 text-[10px] font-bold text-[#8a2be2] uppercase tracking-widest hover:bg-[#8a2be2] hover:text-white transition-all shadow-[0_0_15px_rgba(138,43,226,0.1)]"
           >

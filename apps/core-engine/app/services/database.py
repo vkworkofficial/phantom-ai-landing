@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timezone
 import os
 from typing import Optional, Dict
+from app.core.config import settings
 from app.models.simulation import SeanceReport
 from pydantic import TypeAdapter
 
@@ -24,6 +25,16 @@ class DBUser(Base):
     organization_id = Column(String, index=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+class DBAuditLog(Base):
+    __tablename__ = "audit_logs"
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    action = Column(String, nullable=False) # e.g., 'START_SIMULATION', 'DOWNLOAD_REPORT'
+    actor_id = Column(String, index=True) # Ghost Key or User ID
+    resource_id = Column(String, index=True) # simulation_id
+    status = Column(String) # 'success', 'failure'
+    ip_address = Column(String)
+
 class DBSeanceReport(Base):
     __tablename__ = "seance_reports"
     
@@ -40,6 +51,7 @@ class DBSeanceReport(Base):
     telemetry = Column(JSON)
     heatmap_data = Column(JSON)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    seance_token = Column(String, nullable=True)
     # Metadata for websocket orchestration
     personas = Column(JSON, nullable=True)
     industry = Column(String, nullable=True)
@@ -47,7 +59,22 @@ class DBSeanceReport(Base):
 
 class PostgresStorage:
     def __init__(self, db_url: str):
-        self.engine = create_engine(db_url)
+        # CTO Mandate: Ensure production URLs use the correct prefix and SSL
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+        
+        connect_args = {}
+        if settings.DATABASE_SSL and not db_url.startswith("sqlite"):
+            connect_args["sslmode"] = "require"
+
+        # Initialize engine with robust connection pooling (Phantom High-Performance Substrate)
+        self.engine = create_engine(
+            db_url,
+            connect_args=connect_args,
+            pool_size=10,
+            max_overflow=20,
+            pool_pre_ping=True
+        )
         Base.metadata.create_all(bind=self.engine)
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 
@@ -98,6 +125,23 @@ class PostgresStorage:
         try:
             org = DBOrganization(id=org_id, name=name)
             db.merge(org)
+            db.commit()
+        finally:
+            db.close()
+
+    def log_action(self, action: str, actor_id: str, resource_id: str = None, status: str = "success", ip: str = None):
+        if not settings.SECURITY_AUDIT_LOGS_ENABLED:
+            return
+        db = self.SessionLocal()
+        try:
+            log_entry = DBAuditLog(
+                action=action,
+                actor_id=actor_id,
+                resource_id=resource_id,
+                status=status,
+                ip_address=ip
+            )
+            db.add(log_entry)
             db.commit()
         finally:
             db.close()

@@ -2,10 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
-const APPROVED_EMAILS = [
-  "founder@tryphantom.dev",
-  "vedant@tryphantom.dev", // User's name from filesystem metadata
-];
+const APPROVED_EMAILS = (process.env.PHANTOM_APPROVED_EMAILS || "founder@tryphantom.dev").split(",");
 
 const handler = NextAuth({
   providers: [
@@ -20,8 +17,10 @@ const handler = NextAuth({
         password: { label: "Security Key", type: "password" }
       },
       async authorize(credentials) {
-        if (credentials?.email === "founder@tryphantom.dev" && credentials?.password === "haunt-the-void") {
-          return { id: "1", name: "Phantom Founder", email: "founder@tryphantom.dev" };
+        // Hardened Admin Gate
+        const adminKey = process.env.PHANTOM_ADMIN_KEY || "haunt-the-void"; // Fallback only for local dev if unset
+        if (credentials?.email && APPROVED_EMAILS.includes(credentials.email) && credentials?.password === adminKey) {
+          return { id: "1", name: "Phantom Founder", email: credentials.email };
         }
         return null;
       }

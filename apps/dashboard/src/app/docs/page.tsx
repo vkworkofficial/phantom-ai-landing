@@ -6,7 +6,7 @@ import path from 'path';
 
 // Server Component helper
 async function getDocs() {
-  const docsDir = path.join(process.cwd(), "../../content/docs");
+  const docsDir = path.join(process.cwd(), "../../docs");
   if (!fs.existsSync(docsDir)) return [];
   
   const files = fs.readdirSync(docsDir);

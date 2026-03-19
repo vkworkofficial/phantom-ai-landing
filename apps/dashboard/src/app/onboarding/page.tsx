@@ -9,8 +9,16 @@ import {
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
+interface ExtendedUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  organization_id?: string;
+}
+
 export default function OnboardingPage() {
   const { data: session } = useSession();
+  const user = session?.user as ExtendedUser;
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [url, setUrl] = useState('');
@@ -86,7 +94,7 @@ export default function OnboardingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           target_url: url,
-          organization_id: (session?.user as any)?.organization_id,
+          organization_id: user?.organization_id,
           industry,
           goal: primaryGoal,
           persona: razor

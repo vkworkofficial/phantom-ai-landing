@@ -1,15 +1,19 @@
 {
-  "name": "simulax",
-  "version": "0.1.0",
+  "name": "phantom-labs-substrate",
+  "version": "1.0.0",
   "private": true,
-  "description": "AI-powered UX simulation infrastructure — Load testing for human behavior",
+  "description": "AI-powered UX simulation and forensic analysis infrastructure — Load testing for human behavior.",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && uvicorn main:app --reload",
-    "build": "cd frontend && npm run build",
-    "test": "cd frontend && npm test && cd ../backend && python -m pytest",
-    "lint": "cd frontend && npm run lint"
+    "dev:dashboard": "npm run dev --workspace=@phantom-labs/dashboard",
+    "dev:engine": "cd apps/core-engine && venv_new/Scripts/uvicorn app.main:app --reload --port 8000",
+    "build:dashboard": "npm run build --workspace=@phantom-labs/dashboard",
+    "test:engine": "cd apps/core-engine && venv_new/Scripts/python -m pytest apps/core-engine/tests",
+    "test:dashboard": "npm run test --workspace=@phantom-labs/dashboard",
+    "lint:dashboard": "npm run lint --workspace=@phantom-labs/dashboard"
   },
   "author": "Vedant Kumar",
-  "license": "UNLICENSED"
+  "license": "MIT"
 }
