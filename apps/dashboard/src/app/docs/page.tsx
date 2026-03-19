@@ -44,7 +44,7 @@ export default async function DocsPage() {
             <Link href="/" className="hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <span className="font-bold text-white tracking-tighter text-[20px]">Substrate Protocol v4.2</span>
+            <span className="font-bold text-white tracking-tighter text-[20px]">Substrate Protocol v4.3</span>
           </div>
           <div className="flex items-center gap-4">
              <div className="hidden md:flex items-center gap-2 border border-[#30363d] bg-[#161b22] px-3 py-1.5 rounded-md text-[13px] text-[#8b949e]">
