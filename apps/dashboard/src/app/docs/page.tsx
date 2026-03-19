@@ -7,12 +7,11 @@ import path from 'path';
 // Server Component helper
 async function getDocs() {
   const rootDir = process.cwd();
-  let docsDir = path.join(rootDir, "../../docs");
+  let docsDir = path.join(rootDir, "src/content/docs");
   
-  // Monorepo support: if running from apps/dashboard, ../../docs is correct.
-  // If running from root, it would be ./docs.
   if (!fs.existsSync(docsDir)) {
-    docsDir = path.join(rootDir, "docs");
+    // Fallback for cases where cwd is different
+    docsDir = path.join(rootDir, "apps/dashboard/src/content/docs");
   }
 
   if (!fs.existsSync(docsDir)) return [];
