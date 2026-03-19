@@ -11,6 +11,7 @@ import { HeroTerminalAnimation } from "@/components/landing/Terminal";
 import { CustomizeGhost } from "@/components/landing/Customizer";
 import { ArchitectureStack, AnimatedCodeSnippet } from "@/components/landing/Features";
 import { IssueSlider } from "@/components/landing/SocialProof";
+import { SeanceTeaser } from "@/components/landing/SeanceTeaser";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -142,6 +143,7 @@ export default function Home() {
 
         <Reveal><div className="w-full max-w-[1280px] mx-auto px-4 mb-4 mt-6"><h2 className="text-sm font-semibold text-[#484f58] uppercase tracking-wider mb-2">The problem is real. These founders lived it.</h2></div></Reveal>
         <IssueSlider />
+        <SeanceTeaser />
 
         <ArchitectureStack />
         <CustomizeGhost />

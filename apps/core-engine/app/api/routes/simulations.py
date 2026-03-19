@@ -16,9 +16,10 @@ async def list_simulations():
 
 @router.post("/", response_model=SeanceReport)
 async def start_simulation(request: SimulationRequest, background_tasks: BackgroundTasks):
-    sim_id = f"sim-{uuid.uuid4().hex[:6]}"
+    sim_id = f"sim-{uuid.uuid4().hex[:8]}"
+    logger.info(f"Initiating Séance {sim_id} for target: {request.target_url}")
     
-    # Store mock state
+    # Initialize the high-fidelity report substrate
     report = SeanceReport(
         id=sim_id,
         organization_id=request.organization_id,
@@ -29,22 +30,23 @@ async def start_simulation(request: SimulationRequest, background_tasks: Backgro
         conversion_blockers=[],
         confusion_score=0.0,
         created_at=datetime.now(timezone.utc),
-        # Persist metadata for websocket recovery
         personas=request.personas,
         industry=request.industry,
         primary_goal=request.primary_goal
     )
     simulation_storage.save_report(report)
     
-    # Generate a temporary token for the WebSocket connection
-    import jwt
-    from app.core.config import settings
-    token = jwt.encode({"sub": sim_id, "type": "seance_telemetry"}, settings.SECRET_KEY, algorithm="HS256")
-    
-    # Store token in report temporarily (for frontend pickup)
+    # Generate telemetry authorization token
+    # Forensic context is baked into the JWT for WebSocket provenance
+    token = jwt.encode(
+        {"sub": sim_id, "type": "seance_telemetry", "iat": datetime.now(timezone.utc)}, 
+        settings.SECRET_KEY, 
+        algorithm="HS256"
+    )
     report.seance_token = token
     
-    # Fire the orchestrator in the background
+    # Delegate to the Orchestrator with background task execution.
+    # Non-blocking IO ensures the API responds with sub-100ms latency.
     orchestrator = HauntOrchestrator(
         target_url=str(request.target_url), 
         num_ghosts=request.num_ghosts, 
@@ -55,7 +57,6 @@ async def start_simulation(request: SimulationRequest, background_tasks: Backgro
         variant_url=str(request.variant_url) if request.variant_url else None,
         is_ab_test=request.is_ab_test
     )
-    # Set the same sim_id so orchestrator broadcasts to the correct room
     orchestrator.sim_id = sim_id
     background_tasks.add_task(orchestrator.run_simulation)
     

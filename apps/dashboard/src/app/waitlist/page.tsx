@@ -1,42 +1,33 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Ghost, Mail, ArrowRight, ShieldCheck, Cpu, Zap, Search, CheckCircle2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+
+import { useSeanceSimulation } from '@/hooks/useSeanceSimulation';
 
 export default function WaitlistPage() {
   const [email, setEmail] = useState('');
   const [domain, setDomain] = useState('');
-  const [status, setStatus] = useState<'idle' | 'analyzing' | 'complete'>('idle');
-  const [progress, setProgress] = useState(0);
-  const [logs, setLogs] = useState<string[]>([]);
-
-  const analyzeProgress = [
-    "Initializing Substrate Connection...",
-    "Deploying Cognitive Ghost Ensemble...",
-    "Injecting Forensic Tracers into DOM...",
-    "Analyzing React Hydration Timings...",
-    "Measuring Client-Side State Desync...",
-    "Calculating Human Friction Score...",
-    "Compiling Forensic Report v1.0..."
-  ];
+  const { status, progress, logs, initiateSeance } = useSeanceSimulation();
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !domain) return;
 
-    setStatus('analyzing');
-    setProgress(0);
-    setLogs([]);
+    // Phase 1: Interactive Simulation (Cognitive Audit)
+    await initiateSeance(email, domain);
 
-    // Simulation Loop
-    for (let i = 0; i < analyzeProgress.length; i++) {
-      setLogs(prev => [...prev, analyzeProgress[i]]);
-      setProgress(((i + 1) / analyzeProgress.length) * 100);
-      await new Promise(r => setTimeout(r, 800 + Math.random() * 1000));
+    // Phase 2: Forensic Data Persistence (Database Handshake)
+    try {
+      await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, website: domain }) // honeypot checks are on 'website' in API
+      });
+    } catch (err) {
+      console.warn("[Forensic] Handshake failure, but simulation complete.", err);
     }
-
-    setStatus('complete');
   };
 
   return (

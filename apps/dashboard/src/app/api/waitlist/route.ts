@@ -57,12 +57,18 @@ function sanitizeEmail(raw: unknown): string | null {
   return trimmed;
 }
 
-/* ─── Allowed Origins ─── */
-const ALLOWED_ORIGINS = new Set([
-  "https://tryphantom.dev",
-  "https://www.tryphantom.dev",
-  "http://localhost:3000",
-]);
+/* ─── Allowed Origins (Refined for Vercel/Production) ─── */
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https?:\/\/localhost(:\d+)?$/,
+  /^https?:\/\/.*\.tryphantom\.dev$/,
+  /^https?:\/\/.*\.vercel\.app$/, // Allow Vercel preview/production URLs
+  /^https?:\/\/phantom-ai-landing\.vercel\.app$/
+];
+
+function isOriginAllowed(origin: string | null): boolean {
+  if (!origin) return true; // Allow direct server-to-server or curl
+  return ALLOWED_ORIGIN_PATTERNS.some(pattern => pattern.test(origin));
+}
 
 /* ─── Security Headers ─── */
 const SECURE_HEADERS = {
@@ -78,9 +84,10 @@ let tableCreated = false;
 /* ─── POST handler ─── */
 export async function POST(request: NextRequest) {
   try {
-    // Origin validation
+    // Origin validation (Forensic hygiene)
     const origin = request.headers.get("origin");
-    if (origin && !ALLOWED_ORIGINS.has(origin)) {
+    if (!isOriginAllowed(origin)) {
+      console.warn(`[waitlist] 403: Forbidden origin detected: ${origin}`);
       return NextResponse.json(
         { error: "Forbidden" },
         { status: 403, headers: SECURE_HEADERS }
