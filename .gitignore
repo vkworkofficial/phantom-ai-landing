@@ -43,21 +43,12 @@ npm-debug.log*
 .vercel
 venv_new/
 
-# Project Specific (Internal) - Aggressively Exclude
-research_vault/
+# Project Specific (Internal)
 backups/
 docs/*
 !docs/architecture.md
 !docs/api-reference.md
-!docs/heuristics.md
-!docs/marketing_ideas.md
-!docs/marketing_ideas_repo.md
-!docs/startup_program_applications.md
-!docs/internal_ai_personas.md
-!docs/yc_s26_application_draft.md
-!docs/ph_launch_strategy.md
-yc.svg
-a16z.svg
+!docs/MASTER_STRATEGY.md
 board_meeting_notes.md
 audit_report.md
 walkthrough.md

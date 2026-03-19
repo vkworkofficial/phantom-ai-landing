@@ -1,54 +1,61 @@
 # Phantom AI: The Forensic Substrate for Human Behavior
 
-> **Achieve 100x PMF Velocity with high-fidelity behavioral simulation.**
+> **Observe the Ethereal. Quantify the Unseen. Achieve 100x PMF Velocity.**
 
-Phantom AI is a forensic-grade user simulation engine designed for rapid PMF validation and e-commerce conversion forensics. We move beyond binary "success/fail" testing to measure the psychological resonance of your interface.
+Phantom AI is a high-fidelity behavioral simulation engine designed for rapid Product-Market Fit (PMF) validation and conversion forensics. We move beyond simplistic "success/fail" analytics to capture the **Cognitive Fingerprint** of digital frustration.
 
 ---
 
-## 👻 The Substrate Protocol
+## 🏛 The Substrate Protocol
 
-Traditional QA is reactive. Phantom is proactive. By deploying **Cognitive Ghost Swarms**, we identify the behavioral fingerprints of frustration *before* you ship.
+Traditional QA is reactive. Phantom is proactive. By deploying **Cognitive Ghost Swarms**, we identify the behavioral fingerprints of friction *before* you ship.
 
-- **Forensic Tracing**: Capture DOM mutation state-trees and network desynchronization in sub-millisecond fidelity.
-- **Cognitive Scoring**: LLM-driven heuristics to measure cognitive load, path divergence, and the Sean Ellis "Aha!" moment.
-- **Shadow Séances**: Automated user behavior benchmarking across thousands of parallel personas.
+- **Forensic Tracing**: Sub-millisecond state-capture that survives React hydration gaps.
+- **Ghost Ensemble API**: Headless M2M orchestration for CI/CD behavior validation.
+- **Human Friction Index (HFX)**: A standardized metric for quantifying cognitive load and intent fracture.
 
 ## 🛠 Features
 
-### 1. Forensic Toolkit (Open Source)
-A collection of lightweight, high-fidelity utilities for detecting behavioral bottlenecks:
-- `RageClickForensics.ts`: Capture the root cause of digital frustration.
-- `HydrationTracer.ts`: Measure the "Uncanny Valley" in React/Next.js hydration.
+### 1. Ghost Ensemble API (v1.0)
+Deploy swarm simulations via a single authenticated entry point.
+```bash
+curl -X POST https://api.tryphantom.dev/v1/simulations/ensemble \
+  -H "X-Phantom-Key: <forensic_key>" \
+  -d '{"target_url": "https://myapp.com/checkout", "num_ghosts": 50}'
+```
 
-### 2. Programmatic SEO Engine
-Scalable, automated landing page generation for long-tail DevOps and performance keywords.
-- Dynamic Routes: `/compare/[competitor]`, `/tools/[framework]`
-- Autonomous Researcher: 24/7 keyword discovery via Github Actions.
+### 2. Forensic Toolkit (Open Source)
+Lightweight utilities for real-time friction detection:
+- `ghost-inspector.js`: A console HUD for live behavioral telemetry.
+- `RageClickForensics.ts`: Captures the root cause of digital frustration.
 
-### 3. Forensic Blog & Insights
-Engineering-led research on PMF velocity, conversion forensics, and the math of user disappointment.
+### 3. Programmatic SEO Engine
+Autonomous 24/7 researcher and generator for long-tail growth.
+- **Routes**: `/compare/[competitor]`, `/tools/[framework]`
+- **Automation**: GitHub Actions + AI Keyword Discovery.
+
+## 🏗 Stack Duality
+
+Phantom is engineered for precision and performance:
+- **Core Engine (Python)**: Cognitive persona execution with structured forensic logging.
+- **Dashboard (Next.js)**: High-fidelity visualization using Server Components and Framer Motion.
+- **Persistence**: Hybrid SQLite/Mem-Cache for zero-latency telemetry indexing.
 
 ## 🚀 Getting Started
 
-```bash
-# Initialize a Forensic Séance
-npx phantom-ai init
-
-# Run the Autonomous Researcher
-npx tsx scripts/generate-keywords.ts
-```
-
-## 🏗 Architecture
-
-Phantom is built with a focus on high-fidelity signal capture:
-- **Core Engine**: Python/Node.js orchestration for synthetic persona execution.
-- **Dashboard**: Next.js App Router for forensic data visualization.
-- **pSEO**: Automated ISR-driven growth engine.
+1. **Initiate a Séance**:
+   ```bash
+   npm install @phantom-labs/substrate
+   npx phantom init
+   ```
+2. **Launch a Ghost Inspector**:
+   Inject the forensic HUD into your staging environment via console.
+3. **Capture Telemetry**:
+   View real-time HFS scores in your [Forensic Dashboard](https://tryphantom.dev/dashboard).
 
 ---
 
 ## ⚖️ License
-Distributed under the Forensic Engineering License. See `LICENSE` for more information.
+Distributed under the **Forensic Engineering License**.
 
-*Built for the next generation of YC Founders by Phantom Labs.*
+*Built for the next generation of YC Founders by Phantom Labs. S26 READY.*
