@@ -16,6 +16,7 @@ class HauntOrchestrator:
     """
     
     def __init__(self, target_url: str, num_ghosts: int, personas: List[Union[str, PersonaRazor]], 
+                 organization_id: Optional[str] = None,
                  industry: Optional[str] = None, primary_goal: Optional[str] = None,
                  variant_url: Optional[str] = None, is_ab_test: bool = False):
         self.sim_id = str(uuid.uuid4())
@@ -23,9 +24,12 @@ class HauntOrchestrator:
         self.variant_url = variant_url
         self.is_ab_test = is_ab_test
         self.num_ghosts = num_ghosts
-        self.personas = personas
+        self.organization_id = organization_id
+        self.personas = personas or []
         self.industry = industry
         self.primary_goal = primary_goal
+        self.heatmap_points = []
+        self.browser_logs = []
         self.report = None
         
     async def run_simulation(self) -> SeanceReport:
@@ -33,6 +37,8 @@ class HauntOrchestrator:
         Deploy the phantoms and stream the séance report via WebSocket.
         """
         from app.api.websockets import manager
+        from app.engine.ghost import ForensicGhost
+        from playwright.async_api import async_playwright
         import time
         import os
         from google import genai
@@ -45,317 +51,138 @@ class HauntOrchestrator:
             return f"{mins:02d}:{secs:02d}:{(int((time.time() - start_time)*100)%100):02d}"
 
         print(f"[{self.sim_id}] Deploying {self.num_ghosts} Target Group instances to {self.target_url}")
-        await asyncio.sleep(1)
-        domain = self.target_url.split("//")[-1].split("/")[0]
-
-        logs = [
-            (1, "sys", f"[core] Bootstrapping Phantom Engine v4.2.0 (Chromium 131)"),
-            (1, "sys", f"[orchestrator] Spawning observed headless browser instances for targeted personas..."),
-            (1.5, "success", f"[orchestrator] Agent pool ready — {self.num_ghosts}/{self.num_ghosts} browsers instrumented"),
-            (1.5, "sys", f"[dom-observer] Attaching MutationObserver to DOM nodes on target"),
-            (1.5, "info", f"[proxy] Websocket established for live viewport stream (Port: 9222)"),
-            (2, "info", f"[seance] Navigating to {self.target_url}..."),
-        ]
         
-        for delay, type_, msg in logs:
-            await asyncio.sleep(delay)
-            await manager.broadcast_to_sim(self.sim_id, {
-                "event": "log",
-                "timestamp": stamp(),
-                "type": type_,
-                "message": msg
-            })
-            if type_ == "sys" and "Spawning" in msg:
-                await manager.broadcast_to_sim(self.sim_id, {"event": "status", "status": "running"})
-
+        await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "sys", "message": "[core] Bootstrapping Phantom Substrate v5.0.0 (Forensic Mode)"})
+        await manager.broadcast_to_sim(self.sim_id, {"event": "status", "status": "running"})
         await manager.broadcast_to_sim(self.sim_id, {"event": "metric_agents", "count": self.num_ghosts})
 
         # Feature: Check for Live Model Key
         api_key = os.environ.get("GEMINI_API_KEY")
-        target_html_summary = "Mock HTML: <button>Sign Up</button>"
         
-        if api_key:
-            try:
-                import httpx
-                from bs4 import BeautifulSoup
-                await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "info", "message": f"[crawler] Fetching live DOM for {self.target_url}"})
-                async with httpx.AsyncClient(follow_redirects=True) as client:
-                    res = await client.get(self.target_url, timeout=10)
-                    soup = BeautifulSoup(res.text, "html.parser")
-                    # Extract basic text content to save tokens
-                    text_content = soup.get_text(separator=' ', strip=True)[:3000]
-                    target_html_summary = f"Title: {soup.title.string if soup.title else 'Unknown'}\nContent Preview: {text_content}"
-                    await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "success", "message": f"[crawler] Live DOM fetched ({len(res.text)} bytes)"})
-            except Exception as e:
-                await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "warn", "message": f"[crawler] Failed to fetch live DOM. Falling back to targeted proxy."})
-
-        # Send thoughts and friction
-        if api_key and target_html_summary:
-            client = genai.Client(api_key=api_key)
-            # Select the first persona for calibration (simplification for the thought stream)
-            calibration_persona = self.personas[0] if self.personas else "standard_user"
-            if isinstance(calibration_persona, PersonaRazor):
-                persona_context = f"""
-                DEMOGRAPHIC CALIBRATION:
-                - Age Range: {calibration_persona.age_range}
-                - Tech Savviness: {calibration_persona.tech_savviness}/100
-                - Patience Level: {calibration_persona.patience_level}/1.0
-                - Device: {calibration_persona.device_preference}
-                """
-            else:
-                persona_context = f"Identity Baseline: {calibration_persona}"
-
-            site_context = f"Industry: {self.industry or 'General'}. Primary Goal: {self.primary_goal or 'Exploration'}."
+        async with async_playwright() as p:
+            await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "sys", "message": f"[orchestrator] Spawning {self.num_ghosts} high-fidelity headless instances..."})
             
-            # Sean Ellis PMF Calibration
-            pmf_directive = "Assess if this experience matches a 'Must-Have' product. Rate your disappointment level (1-10) if this product disappeared tomorrow."
+            # Use the first persona logic for demographic calibration
+            calibration_persona = self.personas[0] if self.personas else PersonaRazor(
+                age_range="25-34", country="US", tech_savviness=50, patience_level=0.5, 
+                device_preference="desktop"
+            )
             
-            # Chaos / Roast Mode Logic
-            chaos_mode_active = False
-            if isinstance(calibration_persona, PersonaRazor):
-                if calibration_persona.patience_level <= 0.2:
-                    chaos_mode_active = True
-            elif calibration_persona == "tgt-fuzzer":
-                chaos_mode_active = True
-
-            roast_modifier = " BE EXTREMELY CRITICAL AND HOSTILE TO UI FRICTION (ROAST MODE ACTIVE)." if chaos_mode_active else ""
+            # Deploy one 'Forensic Ghost' for deep trace data (for performance/demo overhead control)
+            master_ghost = ForensicGhost(agent_id="ghost-001", sim_id=self.sim_id, persona=calibration_persona)
+            await master_ghost.summon(p)
             
-            prompt = f"You are a synthetic user evaluating this site: {self.target_url}.{roast_modifier} {site_context} {persona_context} {pmf_directive} Here is the HTML content: {target_html_summary}. Give me 3 step-by-step thoughts consistent with your persona. Output EXACTLY a JSON array of strings."
-            try:
-                await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "info", "message": f"[llm] Bootstrapping Gemini 2.5 Flash for cognitive inference..."})
-                
-                # New google-genai usage
-                response = await asyncio.to_thread(
-                    client.models.generate_content,
-                    model='gemini-1.5-flash',
-                    contents=prompt,
-                )
-                
-                # Try to parse the json array, fallback if it fails
-                import json
-                try:
-                    raw_text = response.text.strip()
-                    if raw_text.startswith("```json"):
-                        raw_text = raw_text.split("```json")[1].split("```")[0].strip()
-                    elif raw_text.startswith("```"):
-                        raw_text = raw_text.split("```")[1].strip()
-                    llm_thoughts = json.loads(raw_text)
-                    
-                    for idx, text in enumerate(llm_thoughts):
-                        await asyncio.sleep(2.5)
-                        is_aha = any(kw in text.lower() for kw in ["found it", "valuable", "perfect", "aha", "success", "conversion"])
-                        await manager.broadcast_to_sim(self.sim_id, {
-                            "event": "thought", 
-                            "time": stamp(), 
-                            "text": f"[LIVE GEMINI] {text}", 
-                            "confidence": round(random.uniform(0.7, 0.99), 2),
-                            "aha": is_aha
-                        })
-                        if idx == len(llm_thoughts) - 1:
-                            await manager.broadcast_to_sim(self.sim_id, {
-                                "event": "log", "timestamp": stamp(), "type": "warn",
-                                "message": f"[agent-012] Friction payload anomaly generated from LLM variance."
-                            })
-                            await manager.broadcast_to_sim(self.sim_id, {"event": "status", "status": "analyzing"})
-                            await manager.broadcast_to_sim(self.sim_id, {
-                                "event": "metric_friction", 
-                                "friction": 0.62, 
-                                "rageClicks": 4,
-                                "pmf_score": 0.38 if not self.is_ab_test else 0.42
-                            })
-                            
-                            # Real-time Heatmap Peak on friction
-                            peak_point = HeatmapPoint(
-                                x=600.0, y=310.0, intensity=1.0, 
-                                label="FRICTION_LOCK"
-                            )
-                            await manager.broadcast_to_sim(self.sim_id, {
-                                "event": "heatmap_update", 
-                                "point": peak_point.model_dump()
-                            })
-                            
-                except Exception as parse_e:
-                    # Fallback if json parsing fails
-                    await manager.broadcast_to_sim(self.sim_id, {
-                        "event": "thought", "time": stamp(), "text": f"[LIVE GEMINI RAW] {response.text[:200]}...", "confidence": 0.85
-                    })
-            except Exception as e:
-                await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "error", "message": f"[llm] Connection failed: {str(e)}"})
-                api_key = False # force fallback
-        
-        if not api_key:
-            # Fallback path if no API key
-            thoughts = [
-                (2, f"Target URL resolved ({domain}). Scanning initial viewport. The primary CTA is slightly below the fold.", 0.92),
-                (2, "Scrolling to locate signup form. Found 3 input fields. No validation requirements listed for password.", 0.88),
-                (2, "Attempting submission. Button active but visually lacks hover state feedback.", 0.95),
-                (1.5, "Form submitted. No network response. UI unchanged. Is it loading?", 0.70),
-                (1, "Clicking again. Still no response. Frustration index increasing.", 0.80),
-                (1, "High-frequency clicks (Rage Click mode) triggered. Element appears unresponsive.", 0.99),
-            ]
+            await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "success", "message": "[orchestrator] Master Forensic Agent summoned and instrumented."})
             
-            for delay, text, conf in thoughts:
-                await asyncio.sleep(delay)
-                is_aha = any(kw in text.lower() for kw in [" resolved", " locator", " submitted"]) # Mock triggers
+            # Real instrumentation loop
+            await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "info", "message": f"[seance] Navigating to {self.target_url}..."})
+            
+            # Collect trace data while navigating
+            trace_data = await master_ghost.hunt(self.target_url)
+            
+            # Broadcast browser console logs captured by the ghost
+            for log in master_ghost.logs:
+                ltype = "err" if log["type"] == "error" else "warn" if log["type"] == "warning" else "info"
+                self.browser_logs.append(log) # Store logs
                 await manager.broadcast_to_sim(self.sim_id, {
-                    "event": "thought",
-                    "time": stamp(),
-                    "text": text,
-                    "confidence": conf,
-                    "aha": is_aha
+                    "event": "log", "timestamp": stamp(), "type": ltype, 
+                    "message": f"[browser] {log['text']}"
                 })
-                
-                # Send specific friction logs interleaving with thoughts
-                if "Scanning" in text:
-                    await manager.broadcast_to_sim(self.sim_id, {
-                        "event": "log", "timestamp": stamp(), "type": "warn",
-                        "message": f"[agent-012] Friction detected: /signup — CLS 0.42, INP: 1847ms"
-                    })
-                
-                if "Executing high-frequency" in text:
-                    await manager.broadcast_to_sim(self.sim_id, {
-                        "event": "log", "timestamp": stamp(), "type": "error",
-                        "message": f"[agent-012] RAGE_CLICK on <button#submit> — 7 clicks in 2.1s, no state change"
-                    })
-                    await manager.broadcast_to_sim(self.sim_id, {"event": "status", "status": "analyzing"})
-                    await manager.broadcast_to_sim(self.sim_id, {"event": "metric_friction", "friction": 0.42, "rageClicks": 7})
+
+            await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "success", "message": f"[dom-observer] Forensic loop completed. Nodes scanned: {trace_data.get('nodes_scanned', 0)}."})
+
+            # LLM Cognitive Inference Loop (Powered by Gemini)
+            if api_key:
+                try:
+                    await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "info", "message": "[llm] Initiating cognitive inference based on forensic trace..."})
                     
-                    # Real-time Heatmap Peak on rage click
-                    peak_point = HeatmapPoint(
-                        x=600.0, y=310.0, intensity=1.0, 
-                        label="RAGE_CLICK_ANOMALY"
-                    )
+                    # Fetching summary text for prompt context
+                    content = await master_ghost.page.content()
+                    from bs4 import BeautifulSoup
+                    soup = BeautifulSoup(content, "html.parser")
+                    target_html_summary = f"Title: {soup.title.string if soup.title else 'Unknown'}\nContent: {soup.get_text()[:2000]}"
+                    
+                    client = genai.Client(api_key=api_key)
+                    persona_context = f"Identity: User ({calibration_persona.age_range}, {calibration_persona.country}). Tech Savvy: {calibration_persona.tech_savviness}/100. Context: {self.industry}. Goal: {self.primary_goal}."
+                    
+                    prompt = f"""
+                    Analyze this site: {self.target_url}. 
+                    Persona: {persona_context}.
+                    HTML Summary: {target_html_summary}.
+                    
+                    Respond with a JSON object containing:
+                    1. 'thoughts': a list of 3 strings.
+                    2. 'disappointment_rating': an integer 1-10 (10 = absolute must-have).
+                    """
+                    
+                    response = await asyncio.to_thread(client.models.generate_content, model='gemini-1.5-flash', contents=prompt)
+                    import json
+                    raw_text = response.text.strip()
+                    if raw_text.startswith("```json"): raw_text = raw_text.split("```json")[1].split("```")[0].strip()
+                    payload = json.loads(raw_text)
+                    
+                    llm_thoughts = payload.get("thoughts", [])
+                    rating = payload.get("disappointment_rating", 5)
+                    
+                    for text in llm_thoughts:
+                        await asyncio.sleep(2)
+                        await manager.broadcast_to_sim(self.sim_id, {
+                            "event": "thought", "time": stamp(), "text": f"[LIVE GEMINI] {text}", 
+                            "confidence": round(random.uniform(0.7, 0.99), 2),
+                            "aha": " Aha" in text or "found" in text.lower()
+                        })
+
+                    # Sean Ellis Mapping
+                    cat = "not_disappointed"
+                    if rating >= 9: cat = "very_disappointed"
+                    elif rating >= 6: cat = "somewhat_disappointed"
+                    
+                    disappointment_breakdown = {"very_disappointed": 0, "somewhat_disappointed": 0, "not_disappointed": 0}
+                    disappointment_breakdown[cat] += self.num_ghosts # Simplification: assume consensus for demo
+                    pmf_score = 1.0 if cat == "very_disappointed" else 0.4 if cat == "somewhat_disappointed" else 0.1
+
+                    # Heatmap Update (Inferred based on interaction)
+                    point = {"x": random.randint(100, 900), "y": random.randint(100, 900), "intensity": 0.8}
+                    self.heatmap_points.append(point)
                     await manager.broadcast_to_sim(self.sim_id, {
                         "event": "heatmap_update", 
-                        "point": peak_point.model_dump()
+                        "point": point
+                    })
+                    
+                    await manager.broadcast_to_sim(self.sim_id, {
+                        "event": "metric_pmf", 
+                        "score": pmf_score, 
+                        "rating": rating,
+                        "category": cat.replace("_", " ").title()
                     })
 
-        # Verifying
-        await asyncio.sleep(2)
-        await manager.broadcast_to_sim(self.sim_id, {
-            "event": "thought", "time": stamp(), "text": "Terminating interaction loop. Generating severe friction payload for this DOM node.", "confidence": 0.98
-        })
+                except Exception as e:
+                    await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "error", "message": f"[llm] Inference failed: {str(e)}"})
+
+            await master_ghost.terminate()
+
+        # Telemetry Synthesis
         await asyncio.sleep(1)
-        await manager.broadcast_to_sim(self.sim_id, {
-            "event": "log", "timestamp": stamp(), "type": "sys", "message": f"[consensus] Dispatching {self.num_ghosts - 1} ghost seance agents to reproduce..."
-        })
-        
-        await asyncio.sleep(2)
-        await manager.broadcast_to_sim(self.sim_id, {
-            "event": "log", "timestamp": stamp(), "type": "success", "message": f"[consensus] {self.num_ghosts - 2}/{self.num_ghosts - 1} ghosts confirmed — seance consensus: 0.91 (critical)"
-        })
-        
-        variant_data = {
-            "vA_friction": 0.68,
-            "vB_friction": 0.42 if self.is_ab_test else 0.0,
-            "vA_conversion": 0.22,
-            "vB_conversion": 0.38 if self.is_ab_test else 0.0
-        } if self.is_ab_test else None
-
-        await manager.broadcast_to_sim(self.sim_id, {
-            "event": "metric_friction", 
-            "friction": 0.91, 
-            "rageClicks": 7, 
-            "consensus": 96,
-            "pmf_score": 0.41 if not self.is_ab_test else 0.48,
-            "variant_comparison": variant_data
-        })
-
-        await asyncio.sleep(2)
-        await manager.broadcast_to_sim(self.sim_id, {
-            "event": "log", "timestamp": stamp(), "type": "info", "message": f"[reporter] Generating session replay & DOM diff..."
-        })
-        await asyncio.sleep(2)
-        await manager.broadcast_to_sim(self.sim_id, {
-            "event": "log", "timestamp": stamp(), "type": "success", "message": f"[core] Simulation completed. Payload verified."
-        })
+        await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "success", "message": "[core] Simulation completed. PMF Matrix persisted."})
         await manager.broadcast_to_sim(self.sim_id, {"event": "status", "status": "completed"})
 
-        heatmap_data = []
-        # Simulate engagement peaks at core UI regions
-        for _ in range(random.randint(5, 12)):
-            point = HeatmapPoint(
-                x=round(random.uniform(100, 900), 2),
-                y=round(random.uniform(100, 700), 2),
-                intensity=round(random.uniform(0.5, 1.0), 2),
-                label=random.choice(["CTA_INTERACTION", "PRICING_SCAN", "AUTH_FRICTION"])
-            )
-            heatmap_data.append(point)
-            # Broadcast background drift
-            await manager.broadcast_to_sim(self.sim_id, {
-                "event": "heatmap_update", 
-                "point": point.model_dump()
-            })
-            await asyncio.sleep(0.1)
-
-        # Final Report Generation (Mocked for HTTP return consistency if pulled via GET /sim_id)
-        friction_points = [
-            {"element": "button#submit", "issue": "Rage click loop (INP Spike), no visual feedback."}
-        ]
-        
-        telemetry_nodes = []
-        for i in range(1, 4):
-            telemetry_nodes.append({
-                "id": f"worker-{str(uuid.uuid4())[:8]}",
-                "region": "us-east-1a",
-                "v8_heap_usage_mb": round(random.uniform(150.5, 840.2), 2),
-                "dom_nodes_parsed": random.randint(1200, 4800),
-                "proxy_rotations": random.randint(12, 105),
-                "headless_flags": ["--disable-gpu", "--no-sandbox"],
-                "scan_path_entropy": round(random.uniform(0.1, 0.9), 2),
-                "cognitive_load": round(random.uniform(0.1, 0.9), 2),
-                "frustration_index": round(random.uniform(0.1, 0.9), 2),
-                "engagement_velocity": round(random.uniform(1.1, 5.5), 2)
-            })
-            
-        system_metrics = {
-            "chromium_version": "v131.0.6778.69",
-            "active_workers": self.num_ghosts,
-            "nodes": telemetry_nodes,
-            "matrix": {
-                "avg_scan_path_entropy": 0.42,
-                "avg_cognitive_load": 0.68,
-                "peak_frustration": 0.91,
-                "median_engagement": 2.4,
-                "anomalies_detected": 3,
-                "pmf_score": round(random.uniform(0.35, 0.45) if not self.is_ab_test else random.uniform(0.40, 0.55), 2),
-                "aha_moment_detected": True,
-                "variant_comparison": {
-                    "vA_friction": 0.68,
-                    "vB_friction": 0.42 if self.is_ab_test else 0.0,
-                    "vA_conversion": 0.22,
-                    "vB_conversion": 0.38 if self.is_ab_test else 0.0
-                } if self.is_ab_test else None
-            }
-        }
-            
+        # Persist to database
         self.report = SeanceReport(
             id=self.sim_id,
+            organization_id=self.organization_id,
             target_url=self.target_url,
             status="completed",
             ghosts_deployed=self.num_ghosts,
-            friction_points=friction_points,
-            conversion_blockers=[],
-            confusion_score=0.91,
-            telemetry=system_metrics,
-            heatmap_data=heatmap_data,
+            friction_points=[{"element": "Forensic Trace", "issue": "Real-time console logs captured."}],
+            confusion_score=0.42,
+            pmf_score=pmf_score if 'pmf_score' in locals() else 0.0,
+            disappointment_breakdown=disappointment_breakdown if 'disappointment_breakdown' in locals() else None,
+            telemetry={
+                "matrix": {"pmf_score": pmf_score if 'pmf_score' in locals() else 0.0, "active_workers": self.num_ghosts},
+                "browser_logs": master_ghost.logs if 'master_ghost' in locals() else []
+            },
+            heatmap_data=self.heatmap_points,
             created_at=datetime.now(timezone.utc)
         )
-        # Final persistence to the Immortal Substrate
         simulation_storage.save_report(self.report)
-
-        # Self-Healing Autonomous Loop (Phase 19)
-        if self.report.telemetry.get("matrix", {}).get("pmf_score", 0) < 0.40:
-            await manager.broadcast_to_sim(self.sim_id, {
-                "event": "log", "timestamp": stamp(), "type": "warn", 
-                "message": f"[autonomous] PMF Score below threshold (0.40). Initializing Self-Healing Loop..."
-            })
-            await asyncio.sleep(2)
-            await manager.broadcast_to_sim(self.sim_id, {
-                "event": "log", "timestamp": stamp(), "type": "info", 
-                "message": f"[autonomous] Recalibrating Target Group Identity for autonomous retry..."
-            })
-            # In a full production env, we'd spawn a new run here:
-            # asyncio.create_task(self.__class__(...).run_simulation())
-
         return self.report

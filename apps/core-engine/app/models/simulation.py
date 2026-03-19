@@ -11,6 +11,7 @@ class HeatmapPoint(BaseModel):
 
 class SimulationRequest(BaseModel):
     target_url: HttpUrl
+    organization_id: Optional[str] = None
     num_ghosts: int = 100
     personas: List[Union[str, PersonaRazor]] = ["standard_user"]
     industry: Optional[str] = None
@@ -58,18 +59,20 @@ class GhostActivity(BaseModel):
 
 class SeanceReport(BaseModel):
     id: str
+    organization_id: Optional[str] = None
     target_url: HttpUrl
     status: str
     ghosts_deployed: int
     friction_points: List[dict]
     conversion_blockers: List[dict]
     confusion_score: float
-    telemetry: Optional[SystemTelemetry] = None
+    pmf_score: Optional[float] = None
+    disappointment_breakdown: Optional[Dict[str, int]] = None # e.g., {"very_disappointed": 10, "somewhat_disappointed": 5, "not_disappointed": 2}
+    telemetry: Dict[str, Any]
     heatmap_data: List[HeatmapPoint] = []
     created_at: datetime
     seance_token: Optional[str] = None
     # Persisted metadata for session recovery
     personas: Optional[List[Union[str, PersonaRazor]]] = None
     industry: Optional[str] = None
-    primary_goal: Optional[str] = None
 

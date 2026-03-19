@@ -1,4 +1,4 @@
-  'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,8 +7,10 @@ import {
   UserX, Clock, ShieldAlert, Bot, ArrowRight, Target, Globe, 
   BrainCircuit, User, Zap, Cpu, BugPlay 
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function OnboardingPage() {
+  const { data: session } = useSession();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [url, setUrl] = useState('');
@@ -84,6 +86,7 @@ export default function OnboardingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           target_url: url,
+          organization_id: (session?.user as any)?.organization_id,
           industry,
           goal: primaryGoal,
           persona: razor

@@ -2,24 +2,56 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Play, Activity, SplitSquareHorizontal, Settings2, Globe, Terminal } from 'lucide-react';
+import { Play, Activity, SplitSquareHorizontal, Settings2, Globe, Terminal, Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function NewRun() {
+  const { data: session } = useSession();
   const router = useRouter();
   const [targetUrl, setTargetUrl] = useState('');
   const [isSplitTest, setIsSplitTest] = useState(false);
   const [variantUrl, setVariantUrl] = useState('');
   const [observeMode, setObserveMode] = useState(false);
+  const [numGhosts, setNumGhosts] = useState(50);
+  const [industry, setIndustry] = useState('SaaS / B2B');
+  const [goal, setGoal] = useState('Complete Sign Up');
+  const [loading, setLoading] = useState(false);
   
-  const handleHaunt = () => {
+  const handleHaunt = async () => {
     if (!targetUrl) return;
-    const id = `sim-${Math.random().toString(36).substring(7)}`;
-    const queryParams = new URLSearchParams({
-      observe: observeMode.toString(),
-      is_ab: isSplitTest.toString(),
-      variant: variantUrl
-    });
-    router.push(`/dashboard/simulations/${id}?${queryParams.toString()}`);
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/v1/simulations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          target_url: targetUrl,
+          organization_id: (session?.user as any)?.organization_id,
+          num_ghosts: numGhosts,
+          industry,
+          primary_goal: goal,
+          variant_url: isSplitTest ? variantUrl : null,
+          is_ab_test: isSplitTest,
+          personas: ["standard_user"] // Default for dashboard quick-run
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to initiate simulation');
+      const data = await response.json();
+
+      const queryParams = new URLSearchParams({
+        observe: observeMode.toString(),
+        is_ab: isSplitTest.toString(),
+        token: data.seance_token || ''
+      });
+      
+      router.push(`/dashboard/simulations/${data.id}?${queryParams.toString()}`);
+    } catch (e) {
+      console.error("Simulation trigger failed", e);
+      alert("Failed to establish seance substrate connection.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -91,7 +123,12 @@ export default function NewRun() {
                     <label className="text-[10px] font-bold text-[#8b949e] uppercase tracking-widest">Concurrent Agents</label>
                     <span className="text-xs font-mono text-[#ea580c] bg-[#ea580c]/10 px-2 py-0.5 rounded border border-[#ea580c]/20">50 Ghosts</span>
                  </div>
-                 <input type="range" min="10" max="500" defaultValue="50" className="w-full accent-[#ea580c]" />
+                 <input 
+                   type="range" min="10" max="500" 
+                   value={numGhosts}
+                   onChange={(e) => setNumGhosts(parseInt(e.target.value))}
+                   className="w-full accent-[#ea580c] cursor-pointer" 
+                 />
               </div>
               <p className="text-[10px] font-mono text-[#5c646c] leading-relaxed uppercase tracking-wider">
                 Determines the volume of headless chromium instances provisioned for this payload. High volume may induce artificial latency on the target DB.
@@ -107,11 +144,25 @@ export default function NewRun() {
             <div className="space-y-4">
                <div>
                   <label className="block text-[10px] font-bold text-[#8b949e] uppercase tracking-widest mb-2">Target Demographic</label>
-                  <select className="w-full bg-[#0a0a0c] border border-[#2d2d30] rounded text-xs px-4 py-3 text-[#c9d1d9] font-mono focus:border-[#ea580c] outline-none appearance-none">
-                    <option>tgt-genz-cns (Gen-Z Consumer)</option>
-                    <option>tgt-vp-eng (B2B Executive)</option>
-                    <option>tgt-fuzzer (Chaos Engine)</option>
+                  <select 
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                    className="w-full bg-[#0a0a0c] border border-[#2d2d30] rounded text-xs px-4 py-3 text-[#c9d1d9] font-mono focus:border-[#ea580c] outline-none appearance-none"
+                  >
+                    <option>SaaS / B2B</option>
+                    <option>E-commerce</option>
+                    <option>Fintech</option>
                   </select>
+               </div>
+               
+               <div className="mt-4">
+                  <label className="block text-[10px] font-bold text-[#8b949e] uppercase tracking-widest mb-2">Primary Goal</label>
+                  <input 
+                    type="text"
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value)}
+                    className="w-full bg-[#0a0a0c] border border-[#2d2d30] rounded text-xs px-4 py-3 text-[#c9d1d9] font-mono focus:border-[#ea580c] outline-none"
+                  />
                </div>
                
                <label className="flex items-start gap-4 cursor-pointer p-4 rounded border border-[#8a2be2]/30 bg-[#8a2be2]/5 hover:bg-[#8a2be2]/10 transition-colors group mt-6">
@@ -134,14 +185,15 @@ export default function NewRun() {
         <div className="pt-8 border-t border-[#2d2d30] flex justify-end">
           <button 
             onClick={handleHaunt}
-            disabled={!targetUrl}
+            disabled={!targetUrl || loading}
             className={`flex items-center gap-3 px-8 py-4 rounded text-sm font-bold uppercase tracking-widest transition-all ${
-              targetUrl 
+              targetUrl && !loading
                 ? 'bg-[#ea580c] text-white hover:bg-[#ff7a2d] shadow-[0_0_20px_rgba(234,88,12,0.4)] hover:shadow-[0_0_30px_rgba(234,88,12,0.6)]' 
                 : 'bg-[#2d2d30] text-[#5c646c] cursor-not-allowed'
             }`}
           >
-            <Play className="w-5 h-5" /> Execute Payload
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}
+            {loading ? 'Executing...' : 'Execute Payload'}
           </button>
         </div>
       </div>

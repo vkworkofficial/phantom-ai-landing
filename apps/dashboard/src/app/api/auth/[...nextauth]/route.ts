@@ -37,11 +37,17 @@ const handler = NextAuth({
       return "/waitlist"; // Redirect unauthorized to waitlist
     },
     async jwt({ token, user }) {
-      if (user) token.email = user.email;
+      if (user) {
+        token.email = user.email;
+        token.organization_id = "org-phantom-core"; // Default org for Phase 2 bootstrap
+      }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) session.user.email = token.email as string;
+      if (session.user) {
+        session.user.email = token.email as string;
+        (session.user as any).organization_id = token.organization_id;
+      }
       return session;
     }
   },

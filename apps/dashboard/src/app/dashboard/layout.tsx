@@ -1,8 +1,14 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
 import { LayoutDashboard, Users, Settings, Activity, Cpu, Ghost, Layers } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
+  const orgName = (session?.user as any)?.organization_id === "org-phantom-core" ? "Phantom Core" : "Enterprise Node";
+
   return (
     <div className="min-h-screen bg-[#0a0a0c] text-[#c9d1d9] font-sans selection:bg-[#ea580c]/30 flex">
       {/* Sidebar */}
@@ -54,12 +60,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-1 flex flex-col min-w-0">
         <header className="h-16 border-b border-[#2d2d30] bg-[#111114] sticky top-0 z-30 px-8 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2 text-xs font-mono text-[#8b949e] uppercase tracking-wider">
-            <span className="text-white">Acme Corp</span> 
+            <span className="text-white">{orgName}</span> 
             <span className="text-[#2d2d30]">/</span>
             <span className="flex items-center gap-1.5 text-[#8a2be2]"><Cpu className="w-3.5 h-3.5" /> Project Alpha Node</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded border border-[#ea580c]/30 bg-[#ea580c]/10 flex items-center justify-center text-xs font-bold text-[#ea580c] shadow-[0_0_10px_rgba(234,88,12,0.2)]">AD</div>
+            <div className="w-8 h-8 rounded border border-[#ea580c]/30 bg-[#ea580c]/10 flex items-center justify-center text-xs font-bold text-[#ea580c] shadow-[0_0_10px_rgba(234,88,12,0.2)]">
+              {(session?.user?.email?.[0] || 'A').toUpperCase()}
+            </div>
           </div>
         </header>
         

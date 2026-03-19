@@ -30,6 +30,8 @@ function SimulationContent({ params }: { params: { id: string } }) {
     agentsActive: 0, 
     consensus: 0,
     pmfScore: 0,
+    pmfCategory: 'TBD',
+    pmfRating: 0,
     isAB: searchParams.get('is_ab') === 'true',
     variantComparison: null as any
   });
@@ -99,6 +101,13 @@ function SimulationContent({ params }: { params: { id: string } }) {
                 setStatus(data.status);
             } else if (data.event === 'metric_agents') {
                 setMetrics(m => ({ ...m, agentsActive: data.count }));
+            } else if (data.event === 'metric_pmf') {
+                setMetrics(m => ({
+                    ...m,
+                    pmfScore: data.score ?? m.pmfScore,
+                    pmfCategory: data.category,
+                    pmfRating: data.rating
+                }));
             } else if (data.event === 'metric_friction') {
                 setMetrics(m => ({
                     ...m, 
@@ -411,15 +420,27 @@ function SimulationContent({ params }: { params: { id: string } }) {
             {/* PMF Score Meter */}
             {metrics.pmfScore > 0 && (
               <div className="mb-8 p-4 bg-[#3fb950]/5 border border-[#3fb950]/20 rounded relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-100 transition-opacity">
-                   <Zap className="w-4 h-4 text-[#3fb950]" />
+                <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-100 transition-opacity">
+                   <Zap className="w-5 h-5 text-[#3fb950] drop-shadow-[0_0_8px_#3fb950]" />
                 </div>
-                <div className="text-[10px] font-bold text-[#3fb950] uppercase tracking-widest mb-1">PMF Velocity (Sean Ellis)</div>
-                <div className="text-2xl font-light text-white mb-2">{(metrics.pmfScore * 100).toFixed(1)}% <span className="text-[10px] text-[#8b949e] uppercase tracking-tighter">Ready</span></div>
-                <div className="w-full bg-[#0a0a0c] h-1 rounded-full overflow-hidden">
-                   <div className="h-full bg-[#3fb950] transition-all duration-1000 shadow-[0_0_8px_#3fb950]" style={{ width: `${metrics.pmfScore * 100}%` }} />
+                <div className="text-[10px] font-bold text-[#3fb950] uppercase tracking-[0.2em] mb-1">PMF Velocity (Sean Ellis)</div>
+                <div className="flex items-end gap-3 mb-3">
+                   <div className="text-3xl font-light text-white tracking-tighter">{(metrics.pmfScore * 100).toFixed(1)}%</div>
+                   <div className="mb-1 px-2 py-0.5 rounded bg-[#3fb950]/20 border border-[#3fb950]/30 text-[9px] font-bold text-[#3fb950] uppercase tracking-widest animate-pulse">
+                      {metrics.pmfCategory || 'Validating'}
+                   </div>
                 </div>
-                <p className="text-[9px] text-[#5c646c] mt-2 leading-tight uppercase tracking-wider">Target: 40% for Product-Market Fit consensus.</p>
+                <div className="w-full bg-[#0a0a0c] h-1.5 rounded-full overflow-hidden mb-3">
+                   <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${metrics.pmfScore * 100}%` }}
+                      className="h-full bg-[#3fb950] shadow-[0_0_10px_#3fb950]" 
+                    />
+                </div>
+                <div className="flex justify-between items-center text-[9px] text-[#5c646c] uppercase tracking-wider">
+                   <span>Composite Disappointment: {metrics.pmfRating}/10</span>
+                   <span>Target: 40%</span>
+                </div>
               </div>
             )}
 

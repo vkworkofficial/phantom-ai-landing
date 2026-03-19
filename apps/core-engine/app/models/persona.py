@@ -8,6 +8,7 @@ class PersonaRazor(BaseModel):
     tech_savviness: int = Field(50, ge=0, le=100, description="0 (Novice) to 100 (Expert)")
     patience_level: float = Field(0.5, ge=0.0, le=1.0, description="0.0 (Impatience/Chaos) to 1.0 (Methodical)")
     device_preference: str = Field("desktop", description="'desktop', 'mobile', or 'tablet'")
+    pmf_disappointment_threshold: float = Field(0.4, ge=0.0, le=1.0, description="Threshold at which the user is 'Very Disappointed' if the product disappears")
     
     class Config:
         json_schema_extra = {

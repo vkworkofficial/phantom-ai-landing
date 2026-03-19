@@ -7,11 +7,19 @@ from app.api.deps import get_current_ghost
 from fastapi import Depends
 from collections import defaultdict
 
+from app.services.database import simulation_storage
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+
+@app.on_event("startup")
+async def startup_event():
+    # Bootstrap default organization for early beta/YC demo
+    simulation_storage.bootstrap_org("org-phantom-core", "Phantom Core")
+    print("[substrate] Default Organization 'Phantom Core' initialized.")
 
 import signal
 import sys

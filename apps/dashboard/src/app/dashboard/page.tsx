@@ -1,16 +1,33 @@
-"use client";
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Activity, ShieldAlert, Cpu, Server, Globe, Terminal, GitBranch, Box, Database, Zap, CheckCircle2, Ghost, Download } from 'lucide-react';
+import { Activity, ShieldAlert, Cpu, Server, Globe, Terminal, GitBranch, Box, Database, Zap, CheckCircle2, Ghost, Download, Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function DashboardOverview() {
-  const recentRuns = [
-    { id: 'run-8f92bd1', target: 'staging.acme.com', branch: 'feat/auth-v2', agents: 1000, strategy: 'A/B Split', status: 'completed', time: '12m ago', friction: '0.12' },
-    { id: 'run-3a7cc2e', target: 'acme.com/checkout', branch: 'main', agents: 50, strategy: 'Standard', status: 'failed', time: '1h ago', friction: '0.89' },
-    { id: 'run-91b4ca0', target: 'acme.com/pricing', branch: 'main', agents: 250, strategy: 'Standard', status: 'completed', time: '3h ago', friction: '0.41' },
-    { id: 'run-d481f11', target: 'beta.acme.com', branch: 'hotfix/1.2', agents: 500, strategy: 'A/B Split', status: 'completed', time: 'yesterday', friction: '0.22' },
-  ];
+  const { data: session } = useSession();
+  const [recentRuns, setRecentRuns] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!session?.user) return;
+    
+    const fetchSims = async () => {
+      try {
+        const orgId = (session.user as any).organization_id;
+        const response = await fetch(`/api/v1/simulations?organization_id=${orgId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setRecentRuns(data);
+        }
+      } catch (e) {
+        console.error("Failed to fetch simulations", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSims();
+  }, [session]);
 
   const activeNodes = [
     { region: 'us-east-1a', id: 'wrk-09f1a', status: 'healthy', load: '42%', v8: '1.2GB', domOps: '14.2k/s' },
@@ -86,24 +103,47 @@ export default function DashboardOverview() {
                         </tr>
                     </thead>
                     <tbody className="text-sm divide-y divide-[#2d2d30]">
-                        {recentRuns.map((run, i) => (
-                            <tr key={i} className="hover:bg-[#1a1a1f] transition-colors group cursor-pointer bg-[#111114]">
+                        {loading ? (
+                          <tr>
+                            <td colSpan={5} className="p-12 text-center text-[#5c646c]">
+                              <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 opacity-20" />
+                              <span className="text-[10px] uppercase tracking-widest font-mono">Querying Ethereal Substrate...</span>
+                            </td>
+                          </tr>
+                        ) : recentRuns.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="p-12 text-center text-[#5c646c]">
+                              <Ghost className="w-6 h-6 mx-auto mb-2 opacity-20" />
+                              <p className="text-[10px] uppercase tracking-widest font-mono mb-1">No Active Séances</p>
+                              <Link href="/dashboard/new" className="text-[9px] text-[#ea580c] hover:underline uppercase tracking-widest">Deploy First Payload</Link>
+                            </td>
+                          </tr>
+                        ) : (
+                          recentRuns.map((run, i) => (
+                            <tr 
+                              key={i} 
+                              className="hover:bg-[#1a1a1f] transition-colors group cursor-pointer bg-[#111114]"
+                              onClick={() => {
+                                const tokenParam = run.seance_token ? `?token=${run.seance_token}` : '';
+                                window.location.href = `/dashboard/simulations/${run.id}${tokenParam}`;
+                              }}
+                            >
                                 <td className="p-4 font-mono text-[11px] text-[#ea580c]">{run.id}</td>
                                 <td className="p-4">
-                                    <div className="text-[#c9d1d9] font-medium text-sm mb-0.5 tracking-wide">{run.target}</div>
-                                    <div className="text-[10px] text-[#8b949e] font-mono uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3 h-3" /> {run.branch}</div>
+                                    <div className="text-[#c9d1d9] font-medium text-sm mb-0.5 tracking-wide">{run.target_url}</div>
+                                    <div className="text-[10px] text-[#8b949e] font-mono uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3 h-3" /> {run.industry || 'General'}</div>
                                 </td>
                                 <td className="p-4">
                                     <span className="inline-flex px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest bg-[#0a0a0c] border border-[#2d2d30] text-[#c9d1d9]">
-                                        {run.strategy}
+                                        {run.is_ab_test ? 'A/B Split' : 'Standard'}
                                     </span>
                                 </td>
                                 <td className="p-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-20 h-1 bg-[#2d2d30] rounded-full overflow-hidden">
-                                            <div className="h-full bg-gradient-to-r from-[#ea580c] to-[#ff7a2d]" style={{ width: `${Math.min(parseFloat(run.friction) * 100, 100)}%` }} />
+                                            <div className="h-full bg-gradient-to-r from-[#ea580c] to-[#ff7a2d]" style={{ width: `${Math.min((run.pmf_score || 0) * 10, 100)}%` }} />
                                         </div>
-                                        <span className="font-mono text-xs text-[#8b949e]">{run.friction}</span>
+                                        <span className="font-mono text-xs text-[#8b949e]">{run.pmf_score || '0.00'}</span>
                                     </div>
                                 </td>
                                 <td className="p-4 text-right flex items-center justify-end gap-3">
@@ -122,11 +162,12 @@ export default function DashboardOverview() {
                                     >
                                         <Download className="w-3.5 h-3.5" />
                                     </button>
-                                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#5c646c]">{run.time}</span>
-                                    {run.status === 'completed' ? <CheckCircle2 className="w-4 h-4 text-[#3fb950]" /> : <ShieldAlert className="w-4 h-4 text-[#ff7b72]" />}
+                                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#5c646c]">{new Date(run.created_at).toLocaleDateString()}</span>
+                                    {run.status === 'completed' ? <CheckCircle2 className="w-4 h-4 text-[#3fb950]" /> : <Loader2 className="w-4 h-4 text-[#8a2be2] animate-spin" />}
                                 </td>
                             </tr>
-                        ))}
+                          ))
+                        )}
                     </tbody>
                 </table>
             </div>

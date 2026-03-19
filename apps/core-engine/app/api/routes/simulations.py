@@ -21,6 +21,7 @@ async def start_simulation(request: SimulationRequest, background_tasks: Backgro
     # Store mock state
     report = SeanceReport(
         id=sim_id,
+        organization_id=request.organization_id,
         target_url=request.target_url,
         status="running",
         ghosts_deployed=request.num_ghosts,
@@ -48,6 +49,7 @@ async def start_simulation(request: SimulationRequest, background_tasks: Backgro
         target_url=str(request.target_url), 
         num_ghosts=request.num_ghosts, 
         personas=request.personas,
+        organization_id=request.organization_id,
         industry=request.industry,
         primary_goal=request.primary_goal,
         variant_url=str(request.variant_url) if request.variant_url else None,
