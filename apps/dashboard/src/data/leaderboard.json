@@ -1,0 +1,47 @@
+[
+  {
+    "rank": 1,
+    "company": "Stripe",
+    "score": 98,
+    "status": "Elite",
+    "friction": "Minimal",
+    "lastSéance": "2026-03-19",
+    "framework": "React"
+  },
+  {
+    "rank": 2,
+    "company": "Vercel",
+    "score": 95,
+    "status": "Elite",
+    "friction": "Minimal",
+    "lastSéance": "2026-03-18",
+    "framework": "Next.js"
+  },
+  {
+    "rank": 3,
+    "company": "Linear",
+    "score": 92,
+    "status": "High",
+    "friction": "Low",
+    "lastSéance": "2026-03-19",
+    "framework": "React"
+  },
+  {
+    "rank": 4,
+    "company": "Airbnb",
+    "score": 84,
+    "status": "Good",
+    "friction": "Moderate",
+    "lastSéance": "2026-03-17",
+    "framework": "React"
+  },
+  {
+    "rank": 5,
+    "company": "Salesforce",
+    "score": 42,
+    "status": "Critical",
+    "friction": "Extreme",
+    "lastSéance": "2026-03-19",
+    "framework": "Aura"
+  }
+]

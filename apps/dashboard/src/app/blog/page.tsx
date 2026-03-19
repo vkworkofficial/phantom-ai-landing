@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import fs from 'fs';
 import path from 'path';
-import { BookOpen, Calendar, User, ArrowRight, Tag, Search } from 'lucide-react';
+import { BookOpen, Calendar, User, ArrowRight, Tag, Search, Trophy } from 'lucide-react';
 
 // Server Component helper
 async function getPosts() {
@@ -81,7 +81,30 @@ export default async function BlogListPage() {
                 </div>
               </div>
 
-              <div className="p-6 rounded-xl bg-gradient-to-br from-[#161b22] to-[#0d1117] border border-[#30363d] satin-border">
+              {/* Leaderboard Widget */}
+              <div className="p-6 rounded-xl border border-[#30363d] bg-gradient-to-br from-[#161b22] to-[#0d1117] satin-border">
+                <div className="flex items-center gap-2 mb-6">
+                  <Trophy className="w-4 h-4 text-primary" />
+                  <h3 className="text-[10px] font-bold text-white uppercase tracking-[0.25em]">Forensic Index</h3>
+                </div>
+                <div className="space-y-4">
+                  {[
+                    { name: "Stripe", score: 98 },
+                    { name: "Vercel", score: 95 },
+                    { name: "Linear", score: 92 },
+                  ].map((item, idx) => (
+                    <div key={item.name} className="flex justify-between items-center group cursor-pointer">
+                      <span className="text-[13px] text-[#8b949e] group-hover:text-white transition-colors">{idx + 1}. {item.name}</span>
+                      <span className="text-[13px] font-black text-primary italic">{item.score}</span>
+                    </div>
+                  ))}
+                </div>
+                <Link href="/leaderboard" className="mt-6 block text-[10px] font-bold text-primary uppercase tracking-widest hover:underline flex items-center gap-2">
+                  View Full Rankings <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+              <div className="p-6 rounded-xl bg-[#161b22]/50 border border-[#30363d]">
                 <h4 className="text-sm font-bold text-white mb-2">Subscribe to Forensics</h4>
                 <p className="text-[12px] text-[#8b949e] mb-4">Get the latest simulation benchmarks delivered to your terminal.</p>
                 <div className="flex gap-2">
