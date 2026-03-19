@@ -260,6 +260,6 @@ function renderInline(text: string) {
         </a>
       );
     }
-    return part;
+    return <span key={i}>{part}</span>;
   });
 }

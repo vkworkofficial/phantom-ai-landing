@@ -1,3 +1,5 @@
+"use client";
+
 // --- Standard & Third-party ---
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';

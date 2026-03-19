@@ -6,14 +6,25 @@ import path from 'path';
 
 // Server Component helper
 async function getDocs() {
-  const docsDir = path.join(process.cwd(), "../../docs");
+  const rootDir = process.cwd();
+  let docsDir = path.join(rootDir, "../../docs");
+  
+  // Monorepo support: if running from apps/dashboard, ../../docs is correct.
+  // If running from root, it would be ./docs.
+  if (!fs.existsSync(docsDir)) {
+    docsDir = path.join(rootDir, "docs");
+  }
+
   if (!fs.existsSync(docsDir)) return [];
   
-  const files = fs.readdirSync(docsDir);
+  const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md'));
+  
   return files.map(filename => {
     const slug = filename.replace('.md', '');
-    const content = fs.readFileSync(path.join(docsDir, filename), 'utf8');
+    const filePath = path.join(docsDir, filename);
+    const content = fs.readFileSync(filePath, 'utf8');
     const titleMatch = content.match(/title: "(.*)"/);
+    
     return {
       slug,
       title: titleMatch ? titleMatch[1] : slug,

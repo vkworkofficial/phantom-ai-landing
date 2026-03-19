@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Activity, ShieldAlert, Cpu, Server, Globe, Terminal, GitBranch, Box, Database, Zap, CheckCircle2, Ghost, Download, Loader2 } from 'lucide-react';
