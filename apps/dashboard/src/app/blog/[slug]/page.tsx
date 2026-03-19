@@ -12,7 +12,12 @@ import { cache } from 'react';
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  const blogDir = path.join(process.cwd(), "src/content/blog");
+  const rootDir = process.cwd();
+  let blogDir = path.join(rootDir, "src/content/blog");
+  if (!fs.existsSync(blogDir)) {
+    blogDir = path.join(rootDir, "apps/dashboard/src/content/blog");
+  }
+  
   if (!fs.existsSync(blogDir)) return [];
   const files = fs.readdirSync(blogDir);
   return files.map((file) => ({
@@ -22,7 +27,11 @@ export async function generateStaticParams() {
 
 // Memoized getter for metadata and rendering
 const getPost = cache(async (slug: string) => {
-  const blogDir = path.join(process.cwd(), "src/content/blog");
+  const rootDir = process.cwd();
+  let blogDir = path.join(rootDir, "src/content/blog");
+  if (!fs.existsSync(blogDir)) {
+    blogDir = path.join(rootDir, "apps/dashboard/src/content/blog");
+  }
   const filePath = path.join(blogDir, `${slug}.md`);
   
   if (!fs.existsSync(filePath)) return null;
@@ -74,7 +83,11 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 }
 
 async function getRecentPosts(currentSlug: string) {
-  const blogDir = path.join(process.cwd(), "src/content/blog");
+  const rootDir = process.cwd();
+  let blogDir = path.join(rootDir, "src/content/blog");
+  if (!fs.existsSync(blogDir)) {
+    blogDir = path.join(rootDir, "apps/dashboard/src/content/blog");
+  }
   if (!fs.existsSync(blogDir)) return [];
   const files = fs.readdirSync(blogDir);
   const posts = files.map(filename => {

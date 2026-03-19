@@ -1,0 +1,32 @@
+[
+  {
+    "name": "PostHog",
+    "url": "https://posthog.com",
+    "hfs": 0.0,
+    "status": "analyzed"
+  },
+  {
+    "name": "Hotjar",
+    "url": "https://hotjar.com",
+    "hfs": 0.0,
+    "status": "analyzed"
+  },
+  {
+    "name": "LogRocket",
+    "url": "https://logrocket.com",
+    "hfs": 0.0,
+    "status": "analyzed"
+  },
+  {
+    "name": "FullStory",
+    "url": "https://fullstory.com",
+    "hfs": 0.0,
+    "status": "analyzed"
+  },
+  {
+    "name": "Microsoft Clarity",
+    "url": "https://clarity.microsoft.com",
+    "hfs": 0.0,
+    "status": "analyzed"
+  }
+]

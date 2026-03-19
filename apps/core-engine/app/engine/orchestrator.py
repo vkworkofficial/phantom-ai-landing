@@ -11,6 +11,7 @@ from app.models.simulation import (
 from app.models.persona import PersonaRazor
 from app.engine.personas import get_persona_profile
 from app.services.database import simulation_storage
+from app.services.case_studies import case_story_generator
 from app.core.logging import substrate_logger
 
 class HauntOrchestrator:
@@ -237,4 +238,10 @@ class HauntOrchestrator:
             created_at=datetime.now(timezone.utc)
         )
         simulation_storage.save_report(self.report)
+        
+        # [BETA] Ghost Story Substrate: Generate high-authority case study
+        if self.report.confusion_score > 0.3:
+            story = case_story_generator.generate_story(self.report)
+            substrate_logger.info(f"[{self.sim_id}] Forensic Ghost Story generated for {self.target_url}")
+            
         return self.report

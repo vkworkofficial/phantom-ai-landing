@@ -6,7 +6,14 @@ import { BookOpen, Calendar, User, ArrowRight, Tag, Search, Trophy } from 'lucid
 
 // Server Component helper
 async function getPosts() {
-  const blogDir = path.join(process.cwd(), "src/content/blog");
+  const rootDir = process.cwd();
+  let blogDir = path.join(rootDir, "src/content/blog");
+  
+  // Monorepo support: check apps/dashboard if not in root src
+  if (!fs.existsSync(blogDir)) {
+    blogDir = path.join(rootDir, "apps/dashboard/src/content/blog");
+  }
+
   if (!fs.existsSync(blogDir)) return [];
   
   const files = fs.readdirSync(blogDir);
