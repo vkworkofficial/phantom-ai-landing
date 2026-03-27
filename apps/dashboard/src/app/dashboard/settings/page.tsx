@@ -49,8 +49,8 @@ export default function SettingsPage() {
     if (!keyName) return;
     const fullKey = await generateKey(keyName);
     if (fullKey) {
-       // High-Fidelity Security Handover
-       console.info("Generated new API Key substrate:", fullKey);
+       // Secure Key Generation Handover
+       console.info("Generated new API Key:", fullKey);
     }
   };
 
@@ -88,7 +88,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-lg font-semibold text-white">API Keys</h2>
-                    <p className="text-sm text-[#8b949e] mt-1">Use these keys to authenticate your CI/CD pipelines with the Phantom Orchestration Engine.</p>
+                    <p className="text-sm text-[#8b949e] mt-1">Use these keys to authenticate your CI/CD pipelines with the Phantom Simulation Engine.</p>
                   </div>
                   <button onClick={handleGenerateKey} className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold rounded-md border border-[#30363d] bg-[#161b22] text-[#c9d1d9] hover:text-white hover:border-[#8b949e] transition-colors shadow-sm">
                     <Plus className="w-4 h-4" /> Generate New Key
@@ -149,7 +149,7 @@ export default function SettingsPage() {
                           </tr>
                         ))}
                         {(workspace?.api_keys?.length === 0 || loading) && (
-                          <tr><td colSpan={4} className="px-5 py-8 text-center text-[#8b949e]">{loading ? 'Calibrating Substrate...' : 'No active API keys found.'}</td></tr>
+                          <tr><td colSpan={4} className="px-5 py-8 text-center text-[#8b949e]">{loading ? 'Loading Workspace...' : 'No active API keys found.'}</td></tr>
                         )}
                       </tbody>
                     </table>

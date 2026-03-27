@@ -120,7 +120,7 @@ export default function DashboardOverview() {
                               key={i} 
                               className="hover:bg-[#1a1a1f] transition-colors group cursor-pointer bg-[#0a0a0c]"
                               onClick={() => {
-                                const tokenParam = run.seance_token ? `?token=${run.seance_token}` : '';
+                                const tokenParam = run.simulation_token ? `?token=${run.simulation_token}` : '';
                                 window.location.href = `/dashboard/simulations/${run.id}${tokenParam}`;
                               }}
                             >

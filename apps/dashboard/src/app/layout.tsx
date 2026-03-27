@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Phantom AI — The Synthetic Reality Engine",
     description:
-      "Deploy infinite AI Ghosts against your product. Achieve PMF Velocity 100x faster.",
+      "Deploy optimized synthetic users against your product. Achieve PMF Velocity 100x faster.",
   },
   robots: {
     index: true,
@@ -55,7 +55,7 @@ const jsonLd = {
     "price": "0",
     "priceCurrency": "USD"
   },
-  "description": "Deploy infinite AI Ghosts against your product. Achieve PMF Velocity 100x faster by finding every edge case, broken flow, and conversion blocker in minutes."
+  "description": "Deploy optimized synthetic users against your product. Achieve PMF Velocity 100x faster by finding every edge case, broken flow, and conversion blocker in minutes."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
