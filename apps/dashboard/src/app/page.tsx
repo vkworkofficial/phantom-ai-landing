@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from 'next/link';
-import { Search, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Modular Components
 import { Reveal, PhantomLogo, Button, Input, Badge } from "@/components/landing/Primitives";
@@ -12,6 +12,7 @@ import { CustomizeGhost } from "@/components/landing/Customizer";
 import { ArchitectureStack, AnimatedCodeSnippet } from "@/components/landing/Features";
 import { IssueSlider } from "@/components/landing/SocialProof";
 import { SeanceTeaser } from "@/components/landing/SeanceTeaser";
+import { useConsentState } from "@/components/CookieConsent";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -19,6 +20,15 @@ export default function Home() {
   const [toast, setToast] = useState<{msg: string, type: "success" | "error" | "info"} | null>(null);
   const [showCmdk, setShowCmdk] = useState(false);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const consent = useConsentState();
+
+  // Consent-aware telemetry (Simulated PostHog/Segment Hook)
+  const trackEvent = useCallback((eventName: string, properties?: Record<string, any>) => {
+    if (consent?.analytics) {
+      // In production: posthog.capture(eventName, properties);
+      console.log(`[Telemetry] ${eventName}`, properties);
+    }
+  }, [consent]);
 
   const showToast = useCallback((msg: string, type: "success" | "error" | "info" = "info") => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -49,22 +59,56 @@ export default function Home() {
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       showToast("Please enter a valid email address.", "error");
+      trackEvent("waitlist_error_invalid_email");
       return;
     }
 
     const honeypot = (document.getElementById("company_url") as HTMLInputElement)?.value;
     setLoading(true);
+    trackEvent("waitlist_signup_started");
+
+    // Robust fetch with retry and timeout logic
+    const attemptFetch = async (retries = 2): Promise<Response> => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+        const res = await fetch("/api/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, company_url: honeypot }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
+        if (!res.ok && res.status >= 500 && retries > 0) {
+          await new Promise(r => setTimeout(r, 500)); // Delay before retry
+          return attemptFetch(retries - 1);
+        }
+        return res;
+      } catch (err: any) {
+        if (err.name === 'AbortError' && retries > 0) return attemptFetch(retries - 1);
+        throw err;
+      }
+    };
 
     try {
-      const res = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, company_url: honeypot }) });
+      const res = await attemptFetch();
       if (res.ok) {
         triggerWaitlistSuccess();
+        trackEvent("waitlist_signup_completed");
         setEmail("");
       } else {
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
         showToast(data.error || "Something went wrong.", "error");
+        trackEvent("waitlist_error_api_failure", { status: res.status });
       }
-    } catch { showToast("Network error. Please try again.", "error"); } finally { setLoading(false); }
+    } catch {
+      showToast("Network error or timeout. Please try again.", "error");
+      trackEvent("waitlist_error_network");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -85,8 +129,8 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={() => setShowCmdk(true)} className="hidden md:flex items-center gap-3 text-[13px] text-[#8b949e] border border-[#30363d] bg-[#161b22] px-3 py-1.5 rounded-md hover:border-[#484f58] transition-colors"><Search className="w-3.5 h-3.5" /> <span>Search...</span> <kbd className="font-mono bg-[#0d1117] px-1.5 py-0.5 rounded border border-[#30363d] text-[10px]">⌘K</kbd></button>
-            <Button primary onClick={() => document.getElementById("waitlist-input")?.focus()}>Summon your ghosts</Button>
+            <button aria-label="Search command menu" onClick={() => setShowCmdk(true)} className="hidden md:flex items-center gap-3 text-[13px] text-[#8b949e] border border-[#30363d] bg-[#161b22] px-3 py-1.5 rounded-md hover:border-[#484f58] transition-colors"><Search className="w-3.5 h-3.5" /> <span>Search...</span> <kbd className="font-mono bg-[#0d1117] px-1.5 py-0.5 rounded border border-[#30363d] text-[10px]">⌘K</kbd></button>
+            <Button primary aria-label="Focus waitlist input" onClick={() => document.getElementById("waitlist-input")?.focus()}>Summon your ghosts</Button>
           </div>
         </div>
       </header>
@@ -108,9 +152,15 @@ export default function Home() {
             <Reveal delay={0.4}>
               <div className="w-full max-w-md">
                 <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 relative">
-                  <input type="text" name="company_url" id="company_url" className="hidden" tabIndex={-1} autoComplete="off" />
-                  <Input id="waitlist-input" type="email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} placeholder="you@company.com" required className="h-10 text-[15px] px-3 w-full" disabled={loading} />
-                  <Button primary type="submit" className="h-10 px-6 shrink-0 text-[15px] group" disabled={loading}>{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Join waitlist"}</Button>
+                  {/* Honeypot requires generic label for screen readers to avoid detection */}
+                  <label htmlFor="company_url" className="sr-only">Company URL</label>
+                  <input type="text" name="company_url" id="company_url" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+                  
+                  <label htmlFor="waitlist-input" className="sr-only">Email address for waitlist</label>
+                  <Input id="waitlist-input" type="email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} placeholder="you@company.com" required className="h-10 text-[15px] px-3 w-full" disabled={loading} aria-label="Email address" />
+                  <Button primary type="submit" className="h-10 px-6 shrink-0 text-[15px] group" disabled={loading} aria-label={loading ? "Joining waitlist..." : "Join waitlist"}>
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : "Join waitlist"}
+                  </Button>
                 </form>
               </div>
             </Reveal>
@@ -188,6 +238,31 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Accessible Toast Notification System */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl ${
+              toast?.type === "success" 
+                ? "bg-[#0d1117] border-[#3fb950]/30 text-[#3fb950] shadow-[0_4px_20px_rgba(63,185,80,0.1)]"
+                : toast?.type === "error"
+                ? "bg-[#0d1117] border-[#ff7b72]/30 text-[#ff7b72] shadow-[0_4px_20px_rgba(255,123,114,0.1)]"
+                : "bg-[#161b22] border-[#30363d] text-[#c9d1d9]"
+            }`}
+            role="alert"
+            aria-live="assertive"
+          >
+            {toast?.type === "success" && <CheckCircle2 className="w-5 h-5 flex-shrink-0" aria-hidden="true" />}
+            {toast?.type === "error" && <AlertCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />}
+            <span className="text-sm font-medium">{toast?.msg}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
