@@ -3,6 +3,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Providers } from "./providers";
+import { CookieConsent, PrivacySettingsButton } from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: "Phantom AI — The Synthetic Reality Engine",
@@ -54,12 +55,7 @@ const jsonLd = {
     "price": "0",
     "priceCurrency": "USD"
   },
-  "description": "Deploy infinite AI Ghosts against your product. Achieve PMF Velocity 100x faster by finding every edge case, broken flow, and conversion blocker in minutes.",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "127"
-  }
+  "description": "Deploy infinite AI Ghosts against your product. Achieve PMF Velocity 100x faster by finding every edge case, broken flow, and conversion blocker in minutes."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -73,7 +69,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <CookieConsent />
+          <PrivacySettingsButton />
+        </Providers>
       </body>
     </html>
   );
