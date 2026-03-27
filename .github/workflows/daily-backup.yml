@@ -1,0 +1,82 @@
+name: Daily Backup Snapshot
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 02:00 UTC daily
+  workflow_dispatch:       # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    name: Create Backup Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create Backup Tag
+        run: |
+          BACKUP_TAG="backup-$(date +%Y%m%d)"
+          git config --global user.name "Phantom Backup Bot"
+          git config --global user.email "bot@phantom-ai.com"
+
+          # Check if tag already exists
+          if git rev-parse "$BACKUP_TAG" >/dev/null 2>&1; then
+            echo "Tag $BACKUP_TAG already exists, skipping."
+          else
+            git tag -a "$BACKUP_TAG" -m "Automated daily backup snapshot - $(date +%Y-%m-%d)"
+            git push origin "$BACKUP_TAG"
+            echo "✓ Created and pushed tag: $BACKUP_TAG"
+          fi
+
+      - name: Create Release Archive
+        if: success()
+        run: |
+          BACKUP_TAG="backup-$(date +%Y%m%d)"
+          ARCHIVE_NAME="phantom-snapshot-$(date +%Y%m%d).tar.gz"
+
+          # Create archive excluding build artifacts
+          tar czf "$ARCHIVE_NAME" \
+            --exclude='node_modules' \
+            --exclude='.next' \
+            --exclude='venv_new' \
+            --exclude='venv' \
+            --exclude='backups' \
+            --exclude='.vercel/output' \
+            --exclude='__pycache__' \
+            .
+
+          echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> $GITHUB_ENV
+          echo "BACKUP_TAG=$BACKUP_TAG" >> $GITHUB_ENV
+          echo "✓ Archive created: $ARCHIVE_NAME ($(du -h $ARCHIVE_NAME | cut -f1))"
+
+      - name: Upload to GitHub Release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.BACKUP_TAG }}
+          name: "Daily Snapshot - ${{ env.BACKUP_TAG }}"
+          body: "Automated daily backup of Phantom Labs codebase."
+          files: ${{ env.ARCHIVE_NAME }}
+          make_latest: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup Old Releases (keep last 30)
+        run: |
+          # List all backup releases and delete old ones
+          RELEASES=$(gh release list --limit 100 --json tagName --jq '.[] | select(.tagName | startswith("backup-")) | .tagName' | sort -r)
+          COUNT=0
+          for TAG in $RELEASES; do
+            COUNT=$((COUNT + 1))
+            if [ $COUNT -gt 30 ]; then
+              echo "Pruning old release: $TAG"
+              gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

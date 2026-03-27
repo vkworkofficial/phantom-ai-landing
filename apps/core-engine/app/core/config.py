@@ -5,12 +5,9 @@ class Settings(BaseSettings):
     VERSION: str = "0.1.0"
     API_V1_STR: str = "/api/v1"
     
-    # Database
+    # Database (Production Data Substrate)
     DATABASE_URL: str = ""
-    
-    # Production Data Substrate
     DATABASE_SSL: bool = True
-    DATABASE_URL: str = ""
 
     # Auth & Platform
     SECRET_KEY: str = "phantom_substrate_default_secret_32chars"
@@ -31,6 +28,16 @@ class Settings(BaseSettings):
     # Forensic Security Substrate
     PHANTOM_MASTER_KEY: str = "phantom_master_forensic_key"
     SECURITY_AUDIT_LOGS_ENABLED: bool = True
+
+    # CORS (tighten for production)
+    ALLOWED_ORIGINS: str = "http://localhost:3000,https://tryphantom.dev,https://frontend-pi-wine-58.vercel.app"
+
+    # Observability
+    LOG_LEVEL: str = "INFO"
+
+    # Notion Integration
+    NOTION_TOKEN: str = ""
+    NOTION_PARENT_PAGE_ID: str = ""
     
     model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
 

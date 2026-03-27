@@ -53,6 +53,11 @@ task.md
 implementation_plan.md
 production_requirements.md
 pullpush.json
+
+# Internal-only pages (local dev tools, not shipped)
+apps/dashboard/src/app/cto/
+apps/dashboard/src/app/ceo/
+apps/dashboard/src/app/cmo/
 *.db
 *.sqlite
 *.tmp
