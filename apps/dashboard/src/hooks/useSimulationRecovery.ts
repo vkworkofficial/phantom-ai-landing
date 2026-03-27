@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 
 /**
- * Persists and recovers Séance state in localStorage.
+ * Persists and recovers Simulation state in localStorage.
  * Ensures that if a user refreshes the dashboard during an active run,
  * the status and metrics are not lost.
  */
-export function useSeanceRecovery(simId: string | null) {
+export function useSimulationRecovery(simId: string | null) {
     const [state, setState] = useState<any>(null);
 
     useEffect(() => {
@@ -19,7 +19,7 @@ export function useSeanceRecovery(simId: string | null) {
             try {
                 setState(JSON.parse(saved));
             } catch (e) {
-                console.error("Failed to recover séance state:", e);
+                console.error("Failed to recover simulation state:", e);
             }
         }
     }, [simId]);
