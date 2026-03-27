@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from typing import List
 from pydantic import BaseModel
 from app.api.deps import get_current_ghost
-from app.services.database import simulation_storage
 
 router = APIRouter()
 

@@ -1,7 +1,7 @@
 import uuid
 import jwt
 import logging
-from typing import List, Optional
+from typing import List
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
@@ -10,7 +10,6 @@ from app.engine.orchestrator import HauntOrchestrator
 from app.services.database import simulation_storage
 from app.core.config import settings
 from app.api.deps import get_current_ghost
-from app.services.case_studies import case_story_generator
 
 # Structured Forensic Logging
 logger = logging.getLogger("phantom.forensics")

@@ -4,8 +4,7 @@ import random
 from datetime import datetime, timezone
 from typing import List, Union, Optional
 from app.models.simulation import (
-    SimulationRequest, SeanceReport, HeatmapPoint, 
-    SystemTelemetry, GranularMatrix, NodeTelemetry,
+    SeanceReport, SystemTelemetry, GranularMatrix, NodeTelemetry,
     FrictionPoint, ConversionBlocker
 )
 from app.models.persona import PersonaRazor
@@ -13,6 +12,7 @@ from app.engine.personas import get_persona_profile
 from app.services.database import simulation_storage
 from app.services.case_studies import case_story_generator
 from app.core.logging import substrate_logger
+from app.core.config import settings
 
 class HauntOrchestrator:
     """
@@ -46,7 +46,6 @@ class HauntOrchestrator:
         from app.engine.ghost import ForensicGhost
         from playwright.async_api import async_playwright
         import time
-        import os
         import anthropic
 
         start_time = time.time()
@@ -146,7 +145,8 @@ class HauntOrchestrator:
                         )
                     import json
                     raw_text = response.content[0].text.strip()
-                    if raw_text.startswith("```json"): raw_text = raw_text.split("```json")[1].split("```")[0].strip()
+                    if raw_text.startswith("```json"):
+                        raw_text = raw_text.split("```json")[1].split("```")[0].strip()
                     payload = json.loads(raw_text)
                     
                     llm_thoughts = payload.get("thoughts", [])
@@ -162,8 +162,10 @@ class HauntOrchestrator:
 
                     # Sean Ellis Mapping
                     cat = "not_disappointed"
-                    if rating >= 9: cat = "very_disappointed"
-                    elif rating >= 6: cat = "somewhat_disappointed"
+                    if rating >= 9:
+                        cat = "very_disappointed"
+                    elif rating >= 6:
+                        cat = "somewhat_disappointed"
                     
                     disappointment_breakdown = {"very_disappointed": 0, "somewhat_disappointed": 0, "not_disappointed": 0}
                     disappointment_breakdown[cat] += self.num_ghosts # Simplification: assume consensus for demo

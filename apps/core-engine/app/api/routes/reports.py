@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response
 from app.services.database import simulation_storage
 from app.services.reporting import forensic_reporter
-from app.api.deps import get_current_ghost
 from app.core.logging import substrate_logger
 
 router = APIRouter()

@@ -1,12 +1,10 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.units import inch
 from datetime import datetime
 import io
-import os
-from typing import Optional
 from app.models.simulation import SeanceReport
 
 class ForensicReportGenerator:

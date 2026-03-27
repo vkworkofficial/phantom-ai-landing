@@ -47,12 +47,12 @@ class ConnectionManager:
         try:
             # CTO Mandate: 50ms timeout for telemetry delivery to prioritize orchestrator health
             await asyncio.wait_for(websocket.send_text(data), timeout=0.05)
-        except (asyncio.TimeoutError, Exception) as e:
+        except (asyncio.TimeoutError, Exception):
             logger.warning(f"Telemetry drop for {sim_id}: Client slow or socket congested. Terminating.")
             self.disconnect(websocket, sim_id)
             try:
                 await websocket.close()
-            except:
+            except Exception:
                 pass
 
 manager = ConnectionManager()
@@ -78,7 +78,7 @@ async def websocket_endpoint(websocket: WebSocket, sim_id: str, token: str = Que
     try:
         # Keep connection alive
         while True:
-            data = await websocket.receive_text()
+            await websocket.receive_text()
             # We don't really expect client data, but we listen to keep the socket from closing
     except WebSocketDisconnect:
         manager.disconnect(websocket, sim_id)

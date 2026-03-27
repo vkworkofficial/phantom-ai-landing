@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import Optional
 
 class PersonaRazor(BaseModel):
     """Granular demographic and behavioral metadata for a synthetic ghost."""

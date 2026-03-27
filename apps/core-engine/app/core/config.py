@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     SECURITY_AUDIT_LOGS_ENABLED: bool = True
 
     # CORS (tighten for production)
-    ALLOWED_ORIGINS: str = "http://localhost:3000,https://tryphantom.dev,https://frontend-pi-wine-58.vercel.app"
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "https://tryphantom.dev", "https://frontend-pi-wine-58.vercel.app"]
 
     # Observability
     LOG_LEVEL: str = "INFO"

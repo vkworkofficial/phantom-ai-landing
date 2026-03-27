@@ -4,17 +4,25 @@
   "private": true,
   "description": "AI-powered UX simulation and forensic analysis infrastructure — Load testing for human behavior.",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
-    "dev:dashboard": "npm run dev --workspace=@phantom-labs/dashboard",
-    "dev:engine": "cd apps/core-engine && venv_new/Scripts/uvicorn app.main:app --reload --port 8000",
-    "build:dashboard": "npm run build --workspace=@phantom-labs/dashboard",
-    "vercel-build": "npm run build:dashboard",
-    "test:engine": "cd apps/core-engine && venv_new/Scripts/python -m pytest apps/core-engine/tests",
-    "test:dashboard": "npm run test --workspace=@phantom-labs/dashboard",
-    "lint:dashboard": "npm run lint --workspace=@phantom-labs/dashboard"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "vercel-build": "turbo run build --filter=@phantom-labs/dashboard...",
+    "build:substrate": "npm run build --workspace=@phantom-labs/substrate"
   },
+  "devDependencies": {
+    "@notionhq/client": "^5.15.0",
+    "dotenv": "^17.3.1",
+    "tsx": "^4.21.0",
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "npm@10.9.0",
   "author": "Vedant Kumar",
   "license": "MIT"
 }

@@ -1,5 +1,4 @@
 import logging
-from typing import Dict, Any
 from app.models.simulation import SeanceReport
 
 logger = logging.getLogger("phantom.case_studies")

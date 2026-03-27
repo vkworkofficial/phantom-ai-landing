@@ -2,7 +2,7 @@ import logging
 import json
 import os
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 class SubstrateLogger:
     """
@@ -39,7 +39,7 @@ class SubstrateLogger:
         self.logger.info(f"Ghost {ghost_id} executed {action}")
 
     def log_error(self, error_msg: str, context: Optional[Dict[str, Any]] = None):
-        payload = {
+        {
             "timestamp": datetime.utcnow().isoformat(),
             "error": error_msg,
             "context": context

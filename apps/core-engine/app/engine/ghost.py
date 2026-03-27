@@ -1,8 +1,7 @@
 import asyncio
-import uuid
 import random
 from typing import List, Dict, Any, Optional
-from playwright.async_api import async_playwright, Browser, Page, ConsoleMessage
+from playwright.async_api import Browser, Page, ConsoleMessage
 from app.models.persona import PersonaRazor
 
 class ForensicGhost:

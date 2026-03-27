@@ -1,5 +1,4 @@
 from fastapi.testclient import TestClient
-import os
 
 def test_health_check(client: TestClient):
     response = client.get("/health")

@@ -1,19 +1,16 @@
 # --- Standard Library ---
-import time
 import os
 import sys
 from contextlib import asynccontextmanager
 from collections import defaultdict
 
 # --- Third-party ---
-from fastapi import FastAPI, Request, Depends
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # --- Internal Substrate ---
 from app.core.config import settings
 from app.core.logging import substrate_logger
-from app.api.deps import get_current_ghost
 from app.api.errors import PhantomBaseException, phantom_exception_handler
 from app.services.database import simulation_storage
 from app.middleware.security import StrictSecuritySubstrateMiddleware
@@ -21,7 +18,6 @@ from app.middleware.rate_limit import RateLimitMiddleware
 
 # Rate Limiting & Security logic has been moved to dedicated middleware files.
 
-from contextlib import asynccontextmanager
 
 def handle_exit(sig, frame):
     """
@@ -58,28 +54,27 @@ app.state.rate_limit_points = defaultdict(list)
 # Register Forensic Exception Substrate
 app.add_exception_handler(PhantomBaseException, phantom_exception_handler)
 
-# Rate Limiting & Security Substrate
-app.add_middleware(StrictSecuritySubstrateMiddleware)
-app.add_middleware(RateLimitMiddleware)
-
-# CORS Middleware Configuration
-ALLOWED_ORIGINS = (os.getenv("PHANTOM_ALLOWED_ORIGINS") or "http://localhost:3000,https://tryphantom.dev").split(",")
-
+# CORS Middleware Configuration (SOC 2 aligned)
+# Added early to ensure preflight requests are caught before other logic
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_origin_regex=r"^https://.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Rate Limiting & Security Substrate
+app.add_middleware(StrictSecuritySubstrateMiddleware)
+app.add_middleware(RateLimitMiddleware)
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "service": settings.PROJECT_NAME}
 
-from app.api.routes import simulations, workspace, reports
-from app.api import websockets
+from app.api.routes import simulations, workspace, reports  # noqa: E402
+from app.api import websockets  # noqa: E402
 
 app.include_router(
     simulations.router, 

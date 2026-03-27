@@ -6,18 +6,18 @@ import { Providers } from "./providers";
 import { CookieConsent, PrivacySettingsButton } from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
-  title: "Phantom AI — The Synthetic Reality Engine",
+  title: "Phantom AI — Synthetic User Simulation",
   description:
-    "Deploy infinite AI Ghosts against your product. Achieve PMF Velocity 100x faster by finding every edge case, broken flow, and conversion blocker in minutes.",
+    "Accelerate Product-Market Fit with high-fidelity synthetic user simulation. Find every edge case and conversion blocker at terminal velocity.",
   keywords: [
-    "PMF velocity", "synthetic reality engine", "AI ghosts", "agentic testing",
-    "AI customers", "product-market fit", "CI/CD testing", "headless browser testing",
+    "PMF velocity", "synthetic user simulation", "user testing", "agentic testing",
+    "synthetic reality", "product-market fit", "CI/CD testing", "headless browser testing",
   ],
   metadataBase: new URL("https://tryphantom.dev"),
   openGraph: {
-    title: "Phantom AI — The Synthetic Reality Engine",
+    title: "Phantom AI — Synthetic User Simulation",
     description:
-      "Deploy infinite AI Ghosts against your product. Achieve PMF Velocity 100x faster. Don't launch blind.",
+      "Accelerate Product-Market Fit with high-fidelity synthetic user simulation. Don't launch blind.",
     url: "https://tryphantom.dev",
     siteName: "Phantom AI",
     type: "website",

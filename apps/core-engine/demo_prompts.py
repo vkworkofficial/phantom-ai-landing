@@ -1,5 +1,4 @@
 import asyncio
-import json
 from app.engine.personas.b2b_exec import B2BExecutivePersona
 from app.engine.personas.gen_z_consumer import GenZConsumerPersona
 

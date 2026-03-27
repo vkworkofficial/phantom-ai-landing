@@ -24,9 +24,8 @@ export function Reveal({ children, delay = 0 }: { children: React.ReactNode; del
 export function PhantomLogo({ className = "w-7 h-7" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 100 100" fill="none">
-      <path d="M 23 50 C 23 20, 77 20, 77 50 L 77 90 L 68 81 L 59 90 L 50 81 L 41 90 L 32 81 L 23 90 Z" fill="hsl(var(--primary))" />
-      <circle cx="39" cy="45" r="5" fill="hsl(var(--background))" />
-      <circle cx="61" cy="45" r="5" fill="hsl(var(--background))" />
+      <rect x="25" y="25" width="50" height="50" rx="8" stroke="hsl(var(--primary))" strokeWidth="8" />
+      <path d="M 40 50 L 60 50 M 50 40 L 50 60" stroke="hsl(var(--primary))" strokeWidth="8" strokeLinecap="round" />
     </svg>
   );
 }

@@ -30,10 +30,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # 2. Forensic Threshold Check
         limit = settings.RATE_LIMIT
         
-        # Prune expired points
-        self.points_map[client_ip] = [t for t in self.points_map[client_ip] if t > current_time - self.window]
+        # Prune expired points for this IP
+        if client_ip in self.points_map:
+            activity = [t for t in self.points_map[client_ip] if t > current_time - self.window]
+            if not activity:
+                # IMPORTANT: Delete the key if no longer active to prevent memory leak
+                del self.points_map[client_ip]
+            else:
+                self.points_map[client_ip] = activity
 
-        if len(self.points_map[client_ip]) >= limit:
+        # 3. Frequency Assertion
+        if client_ip in self.points_map and len(self.points_map[client_ip]) >= limit:
             substrate_logger.warning(f"Forensic velocity threshold exceeded for IP: {client_ip} (Limit: {limit}/min).")
             return JSONResponse(
                 status_code=429,

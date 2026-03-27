@@ -57,12 +57,13 @@ function sanitizeEmail(raw: unknown): string | null {
   return trimmed;
 }
 
-/* ─── Allowed Origins (Refined for Vercel/Production) ─── */
+/* ─── Allowed Origins (Hardened for Production) ─── */
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https?:\/\/localhost(:\d+)?$/,
-  /^https?:\/\/.*\.tryphantom\.dev$/,
-  /^https?:\/\/.*\.vercel\.app$/, // Allow Vercel preview/production URLs
-  /^https?:\/\/phantom-ai-landing\.vercel\.app$/
+  /^https:\/\/tryphantom\.dev$/,
+  /^https:\/\/.*\.tryphantom\.dev$/,
+  /^https:\/\/.*\.vercel\.app$/, // Allow Vercel preview URLs
+  /^https:\/\/phantom-ai-landing\.vercel\.app$/
 ];
 
 function isOriginAllowed(origin: string | null): boolean {
@@ -75,23 +76,20 @@ const SECURE_HEADERS = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
-  "Content-Security-Policy": "default-src 'self'; img-src 'self' https://upload.wikimedia.org; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+  "Content-Security-Policy": "default-src 'self'; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
 };
 
-/* ─── Cache CREATE TABLE (once per cold start) ─── */
-let tableCreated = false;
+/* ─── Global State Substrate ─── */
+let tableChecked = false;
 
 /* ─── POST handler ─── */
 export async function POST(request: NextRequest) {
   try {
-    // Origin validation (Forensic hygiene)
+    // 1. Origin Validation
     const origin = request.headers.get("origin");
     if (!isOriginAllowed(origin)) {
-      console.warn(`[waitlist] 403: Forbidden origin detected: ${origin}`);
-      return NextResponse.json(
-        { error: "Forbidden" },
-        { status: 403, headers: SECURE_HEADERS }
-      );
+      console.warn(`[waitlist] 403: Forbidden origin: ${origin}`);
+      return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: SECURE_HEADERS });
     }
 
     const ip =
@@ -108,48 +106,43 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json().catch(() => null);
     
-    // FAANG Bot Prevention: Invisible Honeypot Check
-    // If the hidden 'website' or 'company_url' field is filled, it's a bot.
+    // Honeypot logic
     if (body?.website || body?.company_url) {
-      console.warn(`[waitlist] Bot detected via honeypot from IP: ${ip}`);
-      // Return 200 to trick the bot into thinking it succeeded
-      return NextResponse.json(
-        { success: true, message: "You're on the list." },
-        { status: 200, headers: SECURE_HEADERS }
-      );
+      console.warn(`[waitlist] Bot detected from IP: ${ip}`);
+      return NextResponse.json({ success: true, message: "You're on the list." }, { status: 200, headers: SECURE_HEADERS });
     }
 
     const email = sanitizeEmail(body?.email);
-
     if (!email) {
       return NextResponse.json(
-        { error: "Please enter a valid, corporate or personal email address. Disposable or invalid domains are not permitted." },
+        { error: "Please enter a valid, corporate or personal email address." },
         { status: 400, headers: SECURE_HEADERS }
       );
     }
 
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) {
-      // Graceful fallback when DB is not configured yet
-      console.warn("[waitlist] DATABASE_URL not set — accepting email silently");
-      return NextResponse.json(
-        { success: true, message: "You're on the list." },
-        { status: 200, headers: SECURE_HEADERS }
-      );
+      console.warn("[waitlist] DATABASE_URL missing — accepting email without persistence");
+      return NextResponse.json({ success: true, message: "You're on the list." }, { status: 200, headers: SECURE_HEADERS });
     }
 
     const sql = neon(dbUrl);
 
-    // Auto-create table only on first cold-start request
-    if (!tableCreated) {
-      await sql`
-        CREATE TABLE IF NOT EXISTS waitlist (
-          id SERIAL PRIMARY KEY,
-          email VARCHAR(254) UNIQUE NOT NULL,
-          created_at TIMESTAMPTZ DEFAULT NOW()
-        )
-      `;
-      tableCreated = true;
+    // Optimized table initialization
+    if (!tableChecked) {
+      try {
+        await sql`
+          CREATE TABLE IF NOT EXISTS waitlist (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(254) UNIQUE NOT NULL,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+          )
+        `;
+        tableChecked = true;
+      } catch (e) {
+        console.error("[waitlist] Table initialization error:", e);
+        // Continue anyway; the table might already exist
+      }
     }
 
     await sql`
