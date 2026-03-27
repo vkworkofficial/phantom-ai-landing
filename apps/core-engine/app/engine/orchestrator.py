@@ -47,7 +47,7 @@ class HauntOrchestrator:
         from playwright.async_api import async_playwright
         import time
         import os
-        from google import genai
+        import anthropic
 
         start_time = time.time()
         def stamp():
@@ -63,7 +63,7 @@ class HauntOrchestrator:
         await manager.broadcast_to_sim(self.sim_id, {"event": "metric_agents", "count": self.num_ghosts})
 
         # Feature: Check for Live Model Key
-        api_key = settings.GEMINI_API_KEY
+        api_key = settings.ANTHROPIC_API_KEY
         
         async with async_playwright() as p:
             await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "sys", "message": f"[orchestrator] Spawning {self.num_ghosts} high-fidelity headless instances..."})
@@ -105,7 +105,7 @@ class HauntOrchestrator:
 
             await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "success", "message": f"[dom-observer] Forensic loop completed. Nodes scanned: {trace_data.get('nodes_scanned', 0)}."})
 
-            # LLM Cognitive Inference Loop (Powered by Gemini)
+            # LLM Cognitive Inference Loop (Powered by Claude)
             if api_key:
                 try:
                     await manager.broadcast_to_sim(self.sim_id, {"event": "log", "timestamp": stamp(), "type": "info", "message": "[llm] Initiating cognitive inference based on forensic trace..."})
@@ -137,10 +137,15 @@ class HauntOrchestrator:
                     """
                     
                     if api_key:
-                        client = genai.Client(api_key=api_key)
-                        response = await asyncio.to_thread(client.models.generate_content, model='gemini-1.5-flash', contents=prompt)
+                        client = anthropic.AsyncAnthropic(api_key=api_key)
+                        response = await client.messages.create(
+                            model="claude-3-5-sonnet-latest",
+                            max_tokens=1024,
+                            system="You are a frontend testing AI simulating a specific persona.",
+                            messages=[{"role": "user", "content": prompt}]
+                        )
                     import json
-                    raw_text = response.text.strip()
+                    raw_text = response.content[0].text.strip()
                     if raw_text.startswith("```json"): raw_text = raw_text.split("```json")[1].split("```")[0].strip()
                     payload = json.loads(raw_text)
                     
@@ -150,7 +155,7 @@ class HauntOrchestrator:
                     for text in llm_thoughts:
                         await asyncio.sleep(2)
                         await manager.broadcast_to_sim(self.sim_id, {
-                            "event": "thought", "time": stamp(), "text": f"[LIVE GEMINI] {text}", 
+                            "event": "thought", "time": stamp(), "text": f"[LIVE CLAUDE] {text}", 
                             "confidence": round(random.uniform(0.7, 0.99), 2),
                             "aha": " Aha" in text or "found" in text.lower()
                         })

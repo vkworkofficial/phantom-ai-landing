@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     
     # AI Platform (Forensic Brains)
     OPENAI_API_KEY: str = ""
-    GEMINI_API_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
     PLAYWRIGHT_WS_ENDPOINT: str = ""
     
     # Billing
