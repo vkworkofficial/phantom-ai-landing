@@ -7,12 +7,12 @@ export function HeroTerminalAnimation() {
   const lines = [
     { type: "sys", text: "[core] Bootstrapping Phantom Engine v5.0.0 (Chromium 131)" },
     { type: "sys", text: "[core] Loading behavioral heuristic model..." },
-    { type: "sys", text: "[orchestrator] summoning 500 ghost instances across 12 geos..." },
+    { type: "sys", text: "[orchestrator] Orchestrating 500 synthetic user instances across 12 regions..." },
     { type: "success", text: "[orchestrator] Agent pool ready — 500/500 browsers instrumented" },
-    { type: "sys", text: "[dom-observer] Attaching MutationObserver + IntersectionObserver to 2,847 DOM nodes" },
-    { type: "warn", text: "[agent-017] Friction detected: /signup — CLS 0.42, interaction-to-next-paint: 1,847ms" },
+    { type: "sys", text: "[dom-observer] Attaching MutationObserver + IntersectionObserver to 2,847 nodes" },
+    { type: "warn", text: "[agent-017] Friction detected: /signup — CLS 0.42, INP: 1,847ms" },
     { type: "err", text: "[agent-017] RAGE_CLICK on <button#submit> — 7 clicks in 2.1s, no state change" },
-    { type: "sys", text: "[consensus] Dispatching 49 ghost seance instances to reproduce..." },
+    { type: "sys", text: "[consensus] Dispatching 49 verification agents to reproduce..." },
     { type: "success", text: "[consensus] 47/49 agents confirmed — friction score: 0.91 (critical)" },
     { type: "success", text: "[reporter] Auto-filed: GH-1847 with session replay + DOM diff attached" },
   ];

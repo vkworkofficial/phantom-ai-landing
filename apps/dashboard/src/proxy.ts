@@ -31,7 +31,6 @@ export default withAuth(
 export const config = {
   matcher: [
     "/dashboard/:path*", 
-    "/onboarding/:path*",
     "/((?!api|_next/static|_next/image|favicon.ico).*)" // Match all except static assets for subdomain check
   ],
 };
