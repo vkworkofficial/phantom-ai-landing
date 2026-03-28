@@ -73,8 +73,9 @@ app.add_middleware(RateLimitMiddleware)
 def health_check():
     return {"status": "ok", "service": settings.PROJECT_NAME}
 
-from app.api.routes import simulations, workspace, reports  # noqa: E402
-from app.api import websockets  # noqa: E402
+# --- API Routes & Websockets ---
+from app.api.routes import simulations, workspace, reports
+from app.api import websockets
 
 app.include_router(
     simulations.router, 
