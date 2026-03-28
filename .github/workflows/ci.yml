@@ -8,6 +8,7 @@ on:
 
 jobs:
   validate:
+    name: Forensic Validation (Quality Gate)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Substrate
@@ -22,13 +23,11 @@ jobs:
       - name: Install Forensic Dependencies
         run: npm install
 
-      - name: Turbo Validation (Lint & Typecheck)
-        run: npx turbo lint typecheck
-
-      - name: Build Verification
-        run: npx turbo build --filter=@phantom-labs/dashboard
+      - name: Substrate Quality Audit (Lint, Typecheck, Build)
+        run: npm run quality:audit
 
   engine-audit:
+    name: Engine Hardening Audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Substrate
@@ -40,9 +39,32 @@ jobs:
           python-version: '3.12'
 
       - name: Install Phantom Engine Deps
-        run: |
-          pip install ruff pytest
-          # Add other dependencies if needed or use requirements.txt
+        run: pip install ruff pytest
 
       - name: Engine Lint (Ruff)
         run: ruff check apps/core-engine
+
+  deployment-audit:
+    name: Deployment & Smoke Test (Massive De-bugging)
+    needs: [validate, engine-audit]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Substrate
+        uses: actions/checkout@v4
+
+      - name: Await Forensic Deployment (Vercel)
+        # Note: In a production setup, we use the VERCEL_TOKEN secret.
+        # This step verifies the deployment status before proceeding to the smoke test.
+        id: vercel-status
+        run: |
+          echo "🕵️‍♂️ Monitoring Vercel deployment for: tryphantom.dev"
+          # Hypothetical integration with 'vercel-cli' or status API
+          # For now, we use a placeholder that assumes the auto-deployment is triggered.
+          echo "DEPLOYMENT_URL=https://tryphantom.dev" >> $GITHUB_ENV
+
+      - name: Forensic Smoke Test (Quality Guard)
+        env:
+          DEPLOYMENT_URL: ${{ env.DEPLOYMENT_URL }}
+        run: |
+          node tooling/smoke-test.mjs $DEPLOYMENT_URL

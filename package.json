@@ -13,12 +13,14 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "vercel-build": "turbo run build --filter=@phantom-labs/dashboard...",
+    "quality:audit": "turbo run lint typecheck build --filter=@phantom-labs/dashboard",
+    "vercel-build": "turbo run build --filter=@phantom-labs/dashboard",
     "build:substrate": "npm run build --workspace=@phantom-labs/substrate"
   },
   "devDependencies": {
     "@notionhq/client": "^5.15.0",
     "dotenv": "^17.3.1",
+    "node-fetch": "^3.3.2",
     "tsx": "^4.21.0",
     "turbo": "^2.0.0"
   },

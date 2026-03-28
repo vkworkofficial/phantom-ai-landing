@@ -10,7 +10,6 @@ env/
 .env
 .env.local
 .env.*.local
-
 # Build
 .next/
 .turbo/
@@ -18,32 +17,26 @@ out/
 dist/
 build/
 *.egg-info/
-
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
 # OS
 .DS_Store
 Thumbs.db
-
 # Testing
 coverage/
 .coverage
 htmlcov/
 .pytest_cache/
-
 # Logs
 *.log
 npm-debug.log*
-
 # Misc
 *.tgz
 .vercel
 venv_new/
-
 # Project Specific (Forensic Substrate)
 backups/
 docs/archive/*
@@ -54,7 +47,6 @@ task.md
 implementation_plan.md
 production_requirements.md
 pullpush.json
-
 # Internal-only and developer tools
 apps/dashboard/src/app/cto/
 apps/dashboard/src/app/ceo/
@@ -66,18 +58,11 @@ apps/dashboard/src/app/cmo/
 test_results.txt
 .env*
 !.env.example
-
 # Temporary and local artifacts
-backups/
 tmp/
 *.tsx.bak
 restored_page_*.tsx
 version_*.tsx
-walkthrough.md
-task.md
-implementation_plan.md
-pullpush.json
-
 # Vercel
-.vercel
 .env*.local
+@*.phantom-internal/
