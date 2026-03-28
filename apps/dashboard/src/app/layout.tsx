@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 import { CookieConsent, PrivacySettingsButton } from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
-  title: "Phantom AI — Synthetic User Simulation",
+  title: "Phantom AI - Synthetic User Simulation",
   description:
     "Accelerate Product-Market Fit with high-fidelity synthetic user simulation. Find every edge case and conversion blocker at terminal velocity.",
   keywords: [
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://tryphantom.dev"),
   openGraph: {
-    title: "Phantom AI — Synthetic User Simulation",
+    title: "Phantom AI - Synthetic User Simulation",
     description:
       "Accelerate Product-Market Fit with high-fidelity synthetic user simulation. Don't launch blind.",
     url: "https://tryphantom.dev",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Phantom AI — The Synthetic Reality Engine",
+    title: "Phantom AI - The Synthetic Reality Engine",
     description:
       "Deploy optimized synthetic users against your product. Achieve PMF Velocity 100x faster.",
   },

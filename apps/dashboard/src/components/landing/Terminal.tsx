@@ -8,12 +8,12 @@ export function HeroTerminalAnimation() {
     { type: "sys", text: "[core] Bootstrapping Phantom Engine v5.0.0 (Chromium 131)" },
     { type: "sys", text: "[core] Loading behavioral heuristic model..." },
     { type: "sys", text: "[orchestrator] Orchestrating 500 synthetic user instances across 12 regions..." },
-    { type: "success", text: "[orchestrator] Instance pool ready — 500/500 browsers instrumented" },
+    { type: "success", text: "[orchestrator] Instance pool ready &mdash; 500/500 browsers instrumented" },
     { type: "sys", text: "[dom-observer] Attaching MutationObserver + IntersectionObserver to 2,847 nodes" },
-    { type: "warn", text: "[instance-017] Friction detected: /signup — CLS 0.42, INP: 1,847ms" },
-    { type: "err", text: "[instance-017] INVALID_INTERACTION on <button#submit> — 7 clicks in 2.1s, no state change" },
+    { type: "warn", text: "[instance-017] Friction detected: /signup &mdash; CLS 0.42, INP: 1,847ms" },
+    { type: "err", text: "[instance-017] INVALID_INTERACTION on <button#submit> &mdash; 7 clicks in 2.1s, no state change" },
     { type: "sys", text: "[consensus] Dispatching 49 validation instances to reproduce..." },
-    { type: "success", text: "[consensus] 47/49 instances confirmed — friction score: 0.91 (critical)" },
+    { type: "success", text: "[consensus] 47/49 instances confirmed &mdash; friction score: 0.91 (critical)" },
     { type: "success", text: "[reporter] Auto-filed: GH-1847 with session telemetry + DOM diff attached" },
   ];
 
@@ -38,10 +38,10 @@ export function HeroTerminalAnimation() {
       <div className="p-4 space-y-2 font-mono text-[12px] min-h-[300px]">
         {lines.slice(0, visibleIdx).map((l, i) => (
           <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className={`flex items-start gap-2 ${colorMap[l.type] || "text-[#c9d1d9]"}`}>
-            <span className="text-[#484f58] shrink-0 select-none">›</span><span>{l.text}</span>
+            <span className="text-[#484f58] shrink-0 select-none">&rsaquo;</span><span>{l.text}</span>
           </motion.div>
         ))}
-        {visibleIdx < lines.length && (<div className="flex items-start gap-2"><span className="text-[#484f58] shrink-0">›</span><span className="inline-block w-2 h-4 bg-primary animate-pulse align-middle" /></div>)}
+        {visibleIdx < lines.length && (<div className="flex items-start gap-2"><span className="text-[#484f58] shrink-0">&rsaquo;</span><span className="inline-block w-2 h-4 bg-primary animate-pulse align-middle" /></div>)}
         {visibleIdx >= lines.length && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-3 pt-3 border-t border-[#30363d]">
             <div className="flex justify-between text-xs text-[#8b949e] mb-1.5"><span>Multi-agent consensus verification</span><span className="text-primary font-semibold">47/49 confirmed</span></div>

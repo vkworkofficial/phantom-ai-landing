@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     NOTION_TOKEN: str = ""
     NOTION_PARENT_PAGE_ID: str = ""
     
-    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
+    # Name.com Integrated Substrate
+    NAMECOM_USERNAME: str = ""
+    NAMECOM_TOKEN: str = ""
+    
+    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env", extra="ignore")
 
 settings = Settings()

@@ -4,15 +4,15 @@ import React, { useState, useEffect } from "react";
 import { Cpu, GitBranch, Layers, Search, Activity } from "lucide-react";
 import { Reveal } from "./Primitives";
 
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 /*  ARCHITECTURE LAYERS                                */
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 
 export function ArchitectureStack() {
   const layers = [
     { name: "Phantom Core Engine", desc: "Proprietary behavioral model trained on anonymized real user sessions across SaaS, e-commerce, and fintech", color: "border-primary/60 bg-primary/5", icon: <Cpu className="w-4 h-4 text-primary" /> },
     { name: "Headless Browser Orchestrator", desc: "Chromium pool with MutationObserver, IntersectionObserver, and PerformanceObserver instrumentation per agent", color: "border-[#3fb950]/40 bg-[#3fb950]/5", icon: <Layers className="w-4 h-4 text-[#3fb950]" /> },
-    { name: "Synthetic Consensus Engine", desc: "Multi-agent behavioral validation — no issue ships unless consensus threshold ≥ 0.85", color: "border-[#a5d6ff]/40 bg-[#a5d6ff]/5", icon: <GitBranch className="w-4 h-4 text-[#a5d6ff]" /> },
+    { name: "Synthetic Consensus Engine", desc: "Multi-agent behavioral validation &mdash; no issue ships unless consensus threshold &ge; 0.85", color: "border-[#a5d6ff]/40 bg-[#a5d6ff]/5", icon: <GitBranch className="w-4 h-4 text-[#a5d6ff]" /> },
     { name: "DOM Graph Analyzer", desc: "Real-time subtree diffing, accessibility tree validation, CLS/INP/LCP telemetry", color: "border-[#d2a8ff]/40 bg-[#d2a8ff]/5", icon: <Search className="w-4 h-4 text-[#d2a8ff]" /> },
     { name: "Session Replay & Reporter", desc: "Lossless DOM-level recordings with annotated friction heatmaps, auto-filled to GitHub/Linear", color: "border-[#8b949e]/40 bg-[#8b949e]/10", icon: <Activity className="w-4 h-4 text-[#8b949e]" /> },
   ];
@@ -43,9 +43,9 @@ export function ArchitectureStack() {
   );
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 /*  ANIMATED CODE SNIPPET                              */
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 
 export function AnimatedCodeSnippet() {
   const codeLines = [

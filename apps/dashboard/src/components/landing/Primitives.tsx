@@ -3,9 +3,9 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 /*  REVEAL                                             */
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 
 export function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
@@ -17,9 +17,9 @@ export function Reveal({ children, delay = 0 }: { children: React.ReactNode; del
   );
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 /*  LOGO                                               */
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 
 export function PhantomLogo({ className = "w-7 h-7" }: { className?: string }) {
   return (
@@ -30,9 +30,9 @@ export function PhantomLogo({ className = "w-7 h-7" }: { className?: string }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 /*  BUTTONS                                            */
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 
 export function Button({ children, primary = false, className = "", ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { primary?: boolean }) {
   return (
@@ -40,17 +40,17 @@ export function Button({ children, primary = false, className = "", ...props }: 
   );
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 /*  INPUTS                                             */
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 
 export function Input({ className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input className={`w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-sm text-[#c9d1d9] placeholder:text-[#8b949e] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-inner transition-all duration-300 ${className}`} {...props} />;
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 /*  BADGE                                              */
-/* ═══════════════════════════════════════════════════ */
+/* =================================================== */
 
 export function Badge({ children, className = "", showDot = false }: { children: React.ReactNode; className?: string; showDot?: boolean }) {
   return <span className={`inline-flex items-center rounded-full border border-[#30363d] bg-transparent px-2.5 py-0.5 text-xs font-medium text-[#8b949e] ${className}`}>{showDot && <span className="w-1.5 h-1.5 rounded-full bg-[#e3b341] animate-[pulse_2s_ease-in-out_infinite] mr-2" />}{children}</span>;
