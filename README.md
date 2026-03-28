@@ -29,10 +29,10 @@ Lightweight utilities for real-time friction detection:
 - `ghost-inspector.js`: A console HUD for live behavioral telemetry.
 - `RageClickForensics.ts`: Captures the root cause of digital frustration.
 
-### 3. Programmatic SEO Engine
-Autonomous 24/7 researcher and generator for long-tail growth.
-- **Routes**: `/compare/[competitor]`, `/tools/[framework]`
-- **Automation**: GitHub Actions + AI Keyword Discovery.
+### 3. Forensic Instrumentation
+A lightweight suite of professional utilities for tracking human behavior in real-time.
+- `ghost-inspector.js`: Console HUD for live behavioral telemetry.
+- `RageClickForensics.ts`: Deep integration for identifying friction root causes.
 
 ## 🏗 Stack Duality
 

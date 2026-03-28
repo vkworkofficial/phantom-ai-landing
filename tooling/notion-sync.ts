@@ -55,12 +55,6 @@ const SYNC_MANIFEST: SyncDocument[] = [
     sourcePath: 'CONTRIBUTING.md',
     type: 'page',
   },
-  {
-    title: 'Deferred Features Manifest',
-    emoji: '📋',
-    sourcePath: 'apps/dashboard/src/content/docs/DEFERRED_FEATURES.md',
-    type: 'page',
-  },
 ];
 
 const DATABASE_SCHEMAS = [
@@ -358,11 +352,11 @@ async function syncToNotion() {
       const existingDb = await findPageByTitle(client, schema.title, NOTION_PARENT_PAGE_ID);
       if (!existingDb) {
         console.log(`    + Initializing Database: "${schema.title}"...`);
-        await client.databases.create({
-          parent: { type: 'page_id', page_id: NOTION_PARENT_PAGE_ID },
+        await (client.databases as any).create({
+          parent: { page_id: NOTION_PARENT_PAGE_ID },
           icon: { type: 'emoji', emoji: schema.emoji },
           title: [{ text: { content: schema.title } }],
-          properties: schema.properties as any,
+          properties: schema.properties,
         });
         console.log(`      ✓ Database ready.`);
       } else {

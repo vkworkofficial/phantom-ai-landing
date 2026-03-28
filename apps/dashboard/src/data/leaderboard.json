@@ -1,9 +1,0 @@
-[
-  { "rank": 1, "name": "Stripe", "score": 98, "level": "Elite", "trend": "stable", "tech": "React", "region": "US-EAST-1" },
-  { "rank": 2, "name": "Vercel", "score": 95, "level": "Elite", "trend": "up", "tech": "Next.js", "region": "US-EAST-1" },
-  { "rank": 3, "name": "Linear", "score": 92, "level": "High", "trend": "stable", "tech": "React", "region": "US-WEST-2" },
-  { "rank": 4, "name": "Airbnb", "score": 84, "level": "Good", "trend": "down", "tech": "React", "region": "EU-CENTRAL-1" },
-  { "rank": 5, "name": "Salesforce", "score": 42, "level": "Critical", "trend": "down", "tech": "Aura", "region": "US-EAST-1" },
-  { "rank": 6, "name": "HubSpot", "score": 78, "level": "Good", "trend": "stable", "tech": "React", "region": "US-EAST-1" },
-  { "rank": 7, "name": "Zendesk", "score": 64, "level": "Fair", "trend": "down", "tech": "Ember", "region": "US-WEST-1" }
-]
