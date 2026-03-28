@@ -14,6 +14,10 @@
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "app/**/*.py", "package.json"],
       "cache": true
     },
+    "lint:substrate": {
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "package.json"],
+      "cache": true
+    },
     "typecheck": {
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"],
       "cache": true
