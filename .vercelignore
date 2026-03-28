@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.next/
+*.log
+.git/
+apps/core-engine/venv/
+apps/core-engine/venv_new/
+tmp/
+version_*.tsx
+restored_page_*.tsx
+!apps/dashboard/
+!packages/substrate/
