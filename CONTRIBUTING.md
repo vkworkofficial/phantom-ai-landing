@@ -54,23 +54,34 @@ docs(security): update SOC 2 compliance roadmap
 4. CI will run automatically (build + engine verification).
 5. Request review from a maintainer.
 
-## Code Style
+## 🏛 Component Architecture
+
+We follow a strict modular pattern for the Forensic HUD (Dashboard). New UI features should be added to `apps/dashboard/src/components/landing/` and exported as self-contained units.
+
+### Modular Patterns
+- **Header**: Navigation and operational status HUD.
+- **Hero**: Top-of-page conversion substrate.
+- **EmpathyGap**: Qualitative problem framing.
+- **BackToTop**: Accessibility & navigation utility.
+
+## 🧬 Engineering Standards
 
 ### TypeScript / React
-- Use Server Components by default; add `"use client"` only when necessary.
-- Follow the existing design system (dark theme, mono fonts, uppercase tracking).
-- Use `lucide-react` for icons.
+- **Server-First**: Use React Server Components (RCS) by default.
+- **Type Safety**: No `any` types in forensic logic. Use the root `tsconfig.json` paths.
+- **Styling**: Enforced via `.prettierrc.json` and Utility-First Tailwind.
 
 ### Python
-- Type hints on all function signatures.
-- Pydantic models for all API inputs/outputs.
-- Structured logging via `substrate_logger`.
+- **Engine Rules**: Enforced via `.ruff.toml`.
+- **Typing**: Strict type hints on all signatures.
+- **Forensics**: Structured logging via `substrate_logger` only.
 
-## Security
+## 🚀 CI Substrate
 
-- **Never** commit secrets, API keys, or `.env` files.
-- Report security vulnerabilities via `security@tryphantom.dev` — **not** via GitHub issues.
-- See [SECURITY.md](./SECURITY.md) for the full security policy.
+Every PR triggers the **Phantom Substrate CI**. Ensure your changes pass:
+1. `npx turbo lint`
+2. `npx turbo typecheck`
+3. `npx turbo build`
 
 ## License
 

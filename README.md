@@ -1,5 +1,10 @@
 # Phantom AI: The Forensic Substrate for Human Behavior
 
+![Next.js](https://img.shields.io/badge/Dashboard-Next.js%2016-black?logo=next.js)
+![FastAPI](https://img.shields.io/badge/Engine-FastAPI-blue?logo=fastapi)
+![Turbo](https://img.shields.io/badge/Build-Turbo-ef4444?logo=turborepo)
+![License](https://img.shields.io/badge/License-Forensic%20Engineering-orange)
+
 > **Observe the Ethereal. Quantify the Unseen. Achieve 100x PMF Velocity.**
 
 Phantom AI is a high-fidelity behavioral simulation engine designed for rapid Product-Market Fit (PMF) validation and conversion forensics. We move beyond simplistic "success/fail" analytics to capture the **Cognitive Fingerprint** of digital frustration.
@@ -13,6 +18,19 @@ Traditional QA is reactive. Phantom is proactive. By deploying **Cognitive Ghost
 - **Forensic Tracing**: Sub-millisecond state-capture that survives React hydration gaps.
 - **Ghost Ensemble API**: Headless M2M orchestration for CI/CD behavior validation.
 - **Human Friction Index (HFX)**: A standardized metric for quantifying cognitive load and intent fracture.
+
+## 🏗 Repository Topology
+
+```text
+.
+├── apps/
+│   ├── dashboard/       # Next.js Forensic HUD & Analytics
+│   └── core-engine/     # FastAPI Forensic Engine (Cognitive Personas)
+├── packages/
+│   └── substrate/       # The Core Phantom SDK & CLI
+├── tooling/             # Internal Engineering Substrates (Notion, Vercel)
+└── .github/             # CI/CD Forensics & Community Templates
+```
 
 ## 🛠 Features
 
@@ -28,11 +46,6 @@ curl -X POST https://api.tryphantom.dev/v1/simulations/ensemble \
 Lightweight utilities for real-time friction detection:
 - `ghost-inspector.js`: A console HUD for live behavioral telemetry.
 - `RageClickForensics.ts`: Captures the root cause of digital frustration.
-
-### 3. Forensic Instrumentation
-A lightweight suite of professional utilities for tracking human behavior in real-time.
-- `ghost-inspector.js`: Console HUD for live behavioral telemetry.
-- `RageClickForensics.ts`: Deep integration for identifying friction root causes.
 
 ## 🏗 Stack Duality
 

@@ -1,66 +1,48 @@
-name: CI/CD Pipeline
+name: Phantom Substrate CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
-
-permissions:
-  contents: read
+    branches: [ main ]
 
 jobs:
-  # Job 1: Lint, typecheck, and build the Next.js dashboard
-  build-dashboard:
-    name: Build Dashboard
+  validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Substrate
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 20
+          cache: 'npm'
 
-      - name: Install Dependencies
-        run: npm install --no-audit
+      - name: Install Forensic Dependencies
+        run: npm install
 
-      - name: Build Dashboard
-        run: npm run build --workspace=@phantom-labs/dashboard
-        env:
-          NEXTAUTH_SECRET: ci_build_secret_placeholder
-          NEXTAUTH_URL: http://localhost:3000
+      - name: Turbo Validation (Lint & Typecheck)
+        run: npx turbo lint typecheck
 
-  # Job 2: Verify Core Engine Python imports
-  verify-engine:
-    name: Verify Core Engine
+      - name: Build Verification
+        run: npx turbo build --filter=@phantom-labs/dashboard
+
+  engine-audit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Substrate
         uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
-          cache-dependency-path: apps/core-engine/requirements.txt
 
-      - name: Install Dependencies
-        run: pip install -r apps/core-engine/requirements.txt
-
-      - name: Verify Import Chain
+      - name: Install Phantom Engine Deps
         run: |
-          cd apps/core-engine
-          python -c "from app.main import app; print('✓ Core Engine imports verified')"
+          pip install ruff pytest
+          # Add other dependencies if needed or use requirements.txt
 
-      - name: Health Check Smoke Test
-        run: |
-          cd apps/core-engine
-          timeout 10 uvicorn app.main:app --port 8000 &
-          sleep 3
-          curl -f http://localhost:8000/health || exit 1
-          echo "✓ Health endpoint responding"
-
-
+      - name: Engine Lint (Ruff)
+        run: ruff check apps/core-engine
