@@ -11,9 +11,9 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint lint:substrate",
     "typecheck": "turbo run typecheck",
-    "quality:audit": "turbo run lint typecheck build --filter=@phantom-labs/dashboard",
+    "quality:audit": "turbo run lint lint:substrate typecheck build --filter=@phantom-labs/dashboard",
     "vercel-build": "turbo run build --filter=@phantom-labs/dashboard",
     "build:substrate": "npm run build --workspace=@phantom-labs/substrate"
   },
