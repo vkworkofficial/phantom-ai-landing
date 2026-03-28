@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Providers } from "./providers";
 import { CookieConsent, PrivacySettingsButton } from "@/components/CookieConsent";
+import { UABlock } from "@/components/security/ua-block";
 
 export const metadata: Metadata = {
   title: "Phantom AI - Synthetic User Simulation",
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body suppressHydrationWarning>
+        <UABlock />
         <Providers>
           {children}
           <CookieConsent />
