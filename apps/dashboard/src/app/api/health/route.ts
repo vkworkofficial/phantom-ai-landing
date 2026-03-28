@@ -8,7 +8,7 @@ export async function GET() {
   let engineLatency = -1;
   
   try {
-    const engineUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const engineUrl = process.env.NEXT_PUBLIC_CORE_ENGINE_URL || 'http://localhost:8000';
     const engineStart = Date.now();
     const res = await fetch(`${engineUrl}/health`, { 
       signal: AbortSignal.timeout(3000),
